@@ -13,13 +13,14 @@ require_once(APP . "config/autoload.php");
 
 require_once(APP . "config/upload.php");
 
-/*
-if(isset($config['development']) and $config['development']){
-  error_reporting(E_ALL);
-}else{
-  error_reporting(0);
+if(isset($config["autoload"]["config"]) and sizeof($config["autoload"]["config"]) > 0){
+  foreach($config["autoload"]["config"] as $conf){
+    $path = APP . 'config/' . $conf . '.php';
+    if(file_exists($path)){
+      require_once($path);
+    }
+  }
 }
-*/
 
 $config["autoload"]["helper"][] = "arrayObject";  //Helper arrayObject include
 

@@ -51,3 +51,9 @@ $config["autoload"]["upload"] = true;
  */
 $config["autoload"]["helper"] = array("urls", "welcome");
 
+/**
+ * Specify config to be automatically loaded at system startup.
+ * 
+ * $config["autoload"]["config"] = array();
+ */
+$config["autoload"]["config"] = array();
