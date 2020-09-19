@@ -34,7 +34,7 @@ $config['session'] = true;
  * Site URL - Base URL
  * $config["base_url"] = "http://www.phpxi.net";
  */
-$config["base_url"] = "http://localhost/phpxi/public";
+$config["base_url"] = "http://localhost/phpxi/public_html";
 
 /**
  * If you are going to develop, choose "development".

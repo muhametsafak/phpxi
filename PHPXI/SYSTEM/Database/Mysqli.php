@@ -52,10 +52,12 @@ class DB{
 		}
 		$this->mysqli->set_charset($this->charset);
     $this->mysqli->query("SET NAMES ".$this->charset);
+    return $this;
   }
   
   function disconnect(){
-    return $this->mysqli->close();
+    $this->mysqli->close();
+    return $this;
   }
 
 
@@ -90,35 +92,43 @@ class DB{
     }else{
       $this->select = "*";
     }
+    return $this;
   }
 
   public function from($from){
     $this->from[] = $from;
     $this->selected_from($from);
+    return $this;
   }
 
   public function selected_from($from){
     $this->selected_from = $from;
+    return $this;
   }
 
   public function join($from){
     $this->from($from);
+    return $this;
   }
 
   public function join_where($from, $from_column, $join_from, $join_column){
     $this->where[] = "`".$this->prefix.$from."`.`".$from_column."`=`".$this->prefix.$join_from."`.`".$join_column."`";
+    return $this;
   }
 
   public function where($column, $value, $operator = "="){
     $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+    return $this;
   }
 
   public function and_where($column, $value, $operator = "="){
     $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+    return $this;
   }
 
   public function or_where($column, $value, $operator = "="){
     $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+    return $this;
   }
   
   public function in_where($column, $value, $andor = "and"){
@@ -130,6 +140,7 @@ class DB{
     }else{
       $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` IN (".$value.")";
     }
+    return $this;
   }
   
   public function not_in_where($column, $value, $andor = "and"){
@@ -141,6 +152,7 @@ class DB{
     }else{
       $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
     }
+    return $this;
   }
   
   public function like_where($column, $value, $andor = "and"){
@@ -149,6 +161,7 @@ class DB{
     }else{
       $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE (".$db->escape_string($value).")";
     }
+    return $this;
   }
   
   public function not_like_where($column, $value, $andor = "and"){
@@ -157,10 +170,12 @@ class DB{
     }else{
       $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
     }
+    return $this;
   }
 
   public function limit($limit){
     $this->limit = $limit;
+    return $this;
   }
 
   public function order_by($by = "", $order = "asc", $from = ""){
@@ -173,6 +188,7 @@ class DB{
       $order = "DESC";
     }
     $this->order_by[] = "`".$this->prefix.$from."`.`".$by."` ".$order;
+    return $this;
   }
 
 

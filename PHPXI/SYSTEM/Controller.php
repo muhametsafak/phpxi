@@ -29,6 +29,12 @@ class PHPXI_Controller{
     }
 
     $this->uri = new PHPXI\SYSTEM\Route();
+        
+    $this->server = new PHPXI\SYSTEM\Server();
+    
+    $this->http = new PHPXI\SYSTEM\Http();
+    
+    $this->cookie = new PHPXI\SYSTEM\Cookie();
   }
 
   function view($filename, $data = array()){
@@ -70,4 +76,3 @@ class PHPXI_Controller{
 
 
 }
-

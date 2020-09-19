@@ -1,5 +1,13 @@
 <?php
 
+
+
+$msure = microtime (); 
+$msure = explode (' ', $msure ); 
+$msure = $msure[1] + $msure[0];
+define("TIMER_START", $msure);
+
+
 require_once(PHPXI . "APPLICATION/Config/config.php");
 
 require_once(PHPXI . "APPLICATION/Config/database.php");
@@ -82,6 +90,14 @@ require_once(PHPXI . "/SYSTEM/Form/Form.php");
 
 require_once(PHPXI . "/SYSTEM/File/File.php");
 
+require_once(PHPXI . "/SYSTEM/Server/Server.php");
+
+require_once(PHPXI . "/SYSTEM/Http/Http.php");
+
+require_once(PHPXI . "/SYSTEM/Cookie/Cookie.php");
+
+require_once(PHPXI . "/SYSTEM/Cache/HTML.php");
+
 require_once(PHPXI . "/SYSTEM/Model.php");
 
 require_once(PHPXI . "/SYSTEM/Controller.php");
@@ -139,3 +155,9 @@ class PHPXI{
     }
 
 }
+
+$msure = microtime (); 
+$msure = explode (' ', $msure); 
+$msure = $msure[1] + $msure[0]; 
+define("LOAD_TIMER", round (($msure - TIMER_START), 5));
+define("LOAD_MEMORY", round(memory_get_peak_usage()/1048576, 3));
