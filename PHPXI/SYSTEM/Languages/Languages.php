@@ -2,22 +2,32 @@
 namespace PHPXI\SYSTEM;
 
 class Languages{
-	public $lang;
+	private $lang;
+	private $set;
 
 	function __construct(){
+		global $config;
+		$this->set($config["language"]);
+	}
+
+	public function set($set){
+		$this->set = $set;
 		$this->load();
 	}
 
-	function load($lang = ""){
-		if($lang == ""){
-			global $config;
-			$lang = $config["language"];
+	public function get(){
+		return $this->set;
+	}
+
+	public function load(){
+		$path = PHPXI . "APPLICATION/Languages/" . $this->set . "/app.php";
+		if(file_exists($path)){
+			$lang = array();
+			require_once($path);
+			$this->lang = $lang;
+		}else{
+			die("ERROR : Language file not found. " . $path . "<br />\n");
 		}
-		
-		$path = PHPXI . "APPLICATION/Languages/" . $lang . "/app.php";
-		$lang = array();
-		require_once($path);
-		$this->lang = $lang;
 	}
 	
 	function r($key, $value = array()){
@@ -35,7 +45,7 @@ class Languages{
 	}
 	
 	function e($key, $value = array()){
-		echo $this->lang[$key];
+		echo $this->r($key, $value);
 	}
 
 }

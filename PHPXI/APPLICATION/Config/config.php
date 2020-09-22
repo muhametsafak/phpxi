@@ -31,6 +31,14 @@ $config["controller"] = array(
 $config['session'] = true;
 
 /**
+ * 
+ */
+$config["cookie"] = array(
+    "prefix" => "phpxi_project_",
+    "timeout" => 3600
+);
+
+/**
  * Site URL - Base URL
  * $config["base_url"] = "http://www.phpxi.net";
  */
@@ -39,6 +47,6 @@ $config["base_url"] = "http://localhost/phpxi/public_html";
 /**
  * If you are going to develop, choose "development".
  * You will publish the project. Specify it as "production".
- * define("MODE", "development");
+ * define("ENV", "development");
  */
-define("MODE", "development");
+define("ENV", "development");

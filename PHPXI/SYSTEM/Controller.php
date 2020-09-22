@@ -35,6 +35,9 @@ class PHPXI_Controller{
     $this->http = new PHPXI\SYSTEM\Http();
     
     $this->cookie = new PHPXI\SYSTEM\Cookie();
+
+    $this->benchmark = new PHPXI\SYSTEM\Benchmark();
+
   }
 
   function view($filename, $data = array()){
@@ -46,10 +49,7 @@ class PHPXI_Controller{
     }
     $path = PHPXI . "APPLICATION/View/" . $filename;
     if(file_exists($path)){
-      ob_start();
       require($path);
-      $this->html .= ob_get_contents();
-      ob_get_clean();
     }
   }
 
@@ -67,12 +67,32 @@ class PHPXI_Controller{
       $model_path = PHPXI . 'APPLICATION/Helpers/' . $name . '_helper.php';
       require_once($model_path);
   }
-
-
-  function __destruct(){
-    echo $this->html;
-    $this->html = null;
+  
+  function db_connect($database = array()){
+      if(is_array($database)){
+          if(!isset($database["host"])){
+              $database["host"] = "localhost";
+          }
+          if(!isset($database["user"])){
+              $database["user"] = "root";
+          }
+          if(!isset($database["password"])){
+              $database["password"] = "";
+          }
+          if(!isset($database["name"])){
+              $database["name"] = "";
+          }
+          if(!isset($database[""])){
+              $database["charset"] = "utf8";
+          }
+          if(!isset($database["prefix"])){
+              $database["prefix"] = "";
+          }
+          return new PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
+      }else{
+          $database = $this->config->item("db.".$database);
+          return new PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
+      }
   }
-
-
+  
 }

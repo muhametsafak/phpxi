@@ -45,6 +45,8 @@ class PHPXI_Model{
         
         $this->cookie = new PHPXI\SYSTEM\Cookie();
 
+        $this->benchmark = new PHPXI\SYSTEM\Benchmark();
+
         if(is_array($this->config->item("autoload.model")) and sizeof($this->config->item("autoload.model")) > 0){
             foreach($this->config->item("autoload.model") as $key => $value){
                 $this->model($key, $value);
@@ -67,7 +69,7 @@ class PHPXI_Model{
         require_once($model_path);
     }
 
-    function db_connect($method_name, $database = array()){
+    function db_connect($database = array()){
         if(is_array($database)){
             if(!isset($database["host"])){
                 $database["host"] = "localhost";
@@ -87,10 +89,10 @@ class PHPXI_Model{
             if(!isset($database["prefix"])){
                 $database["prefix"] = "";
             }
-            $this->$method_name = new PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
+            return new PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
         }else{
             $database = $this->config->item("db.".$database);
-            $this->$method_name = new PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
+            return new PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
         }
     }
 }

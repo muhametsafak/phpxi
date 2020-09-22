@@ -30,7 +30,7 @@
       <p><?php echo $this->lang->r("utterances", [utterances(), "Anonymous"]); ?></p>
     </blockquote>
   </div>
-  <div id="footer"> <a target="_blank" href="http://phpxi.net/" title="PHPXI MVC Framework">PHPXI</a> tarafından <?php echo LOAD_TIMER." sn'de ".LOAD_MEMORY." MB bellek kullanılarak"; ?>  oluşturuldu! | Development : <a target="_blank" href="http://www.muhammetsafak.com.tr/" title="PHPXI Developer">Muhammet ŞAFAK</a>
+  <div id="footer"> <a target="_blank" href="http://phpxi.net/" title="PHPXI MVC Framework">PHPXI</a> tarafından <?php echo LOAD_TIME." sn'de ".MEMORY_USE." MB bellek kullanılarak"; ?>  oluşturuldu! | Development : <a target="_blank" href="http://www.muhammetsafak.com.tr/" title="PHPXI Developer">Muhammet ŞAFAK</a>
     </p>
   </div>
   

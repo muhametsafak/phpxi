@@ -10,8 +10,9 @@ class Route{
 
     function __construct(){
         $this->uri = array();
-        if(isset($_GET['uri']) and trim($_GET['uri']) != ""){
-            $this->uri = array_filter(explode('/', $_GET['uri']));
+        $uri = mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8");
+        if($uri != ""){
+          $this->uri = array_filter(explode('/', $uri));
         }
     }
     

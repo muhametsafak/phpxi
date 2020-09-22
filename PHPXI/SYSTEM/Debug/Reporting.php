@@ -9,7 +9,7 @@ function PHPXI_ShutdownHandler(){
 register_shutdown_function('PHPXI_ShutdownHandler');
 
 function PHPXI_ErrorHandler($type, $message, $file, $line){
-    switch(MODE){
+    switch(ENV){
         case "development" :
             $debug = new PHPXI\SYSTEM\Debug($type, $file, $line, $message);
             return die($debug->development());
