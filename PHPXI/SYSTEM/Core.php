@@ -112,7 +112,7 @@ class PHPXI{
     function __construct(){
         $this->config = new PHPXI\SYSTEM\Config();
 
-        $uri = mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8");
+        $uri = trim(mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8"), "/");
         if($uri != ""){
           $uri = array_filter(explode('/', $uri));
         }else{
@@ -180,6 +180,7 @@ class PHPXI{
               }
 
             }else{
+              ob_start();
               if(isset($uri[0]) and trim($uri[0], "/") != ""){
                 $uri_controller = ucfirst($uri[0]).".php";
                 $path = PHPXI . 'APPLICATION/Controller/' . $uri_controller;
@@ -203,8 +204,15 @@ class PHPXI{
               }else{
                   $class->$default_method();
               }
-            }
+              $this->view = ob_get_contents();
+              ob_get_clean();
 
+              if($this->config->item("cache.html_compressor")){
+                echo preg_replace("/\s+/", " ", $this->view);
+              }else{
+                echo $this->view;
+              }
+            }
 
           }
         }

@@ -18,7 +18,7 @@ class PHPXI_Controller{
         $this->input = new PHPXI\SYSTEM\Input();
     }
         
-    if($this->config->item("autoload.session")){
+    if($this->config->item("session")){
         $this->session = new PHPXI\SYSTEM\Session();
     }
     
