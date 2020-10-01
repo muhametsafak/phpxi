@@ -7,7 +7,17 @@ class Languages{
 
 	function __construct(){
 		global $config;
-		$this->set($config["language"]);
+		if(MULTI_LANGUAGES){
+			$request_uri = trim(mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8"), "/");
+			$parse = explode("/", $request_uri);
+			if(isset($parse[0]) and trim($parse[0]) != ""){
+				$this->set($parse[0]);
+			}else{
+				$this->set(DEFAULT_LANGUAGE);
+			}
+		}else{
+			$this->set(DEFAULT_LANGUAGE);
+		}
 	}
 
 	public function set($set){
@@ -26,7 +36,7 @@ class Languages{
 			require_once($path);
 			$this->lang = $lang;
 		}else{
-			die("ERROR : Language file not found. " . $path . "<br />\n");
+			$this->set(DEFAULT_LANGUAGE);
 		}
 	}
 	

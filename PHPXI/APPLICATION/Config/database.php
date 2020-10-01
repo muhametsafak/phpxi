@@ -1,14 +1,11 @@
 <?php
-if(!defined("PHPXI")){
-    die("You cannot access this page.");
-}
 
 /**
  * Specify database connection settings here.
  */
 
 /*
-$config["db"]["example"] = array(
+$config["example"] = array(
     "host"      => "localhost",
     "user"      => "root",
     "password"  => "",
@@ -19,9 +16,9 @@ $config["db"]["example"] = array(
 */
 
 /**
- * To connect to the database you must specify it in the "/phpxi_application/config/autoload.php" file
+ * To connect to the database you must specify it in the "/phpxi/application/config/autoload.php" file
  */
-$config["db"]["default"] = array(
+$config["default"] = array(
     "host"      => "localhost",
     "user"      => "root",
     "password"  => "",
@@ -31,7 +28,7 @@ $config["db"]["default"] = array(
 );
 
 
-$config["db"]["test"] = array(
+$config["test"] = array(
     "host"      => "localhost",
     "user"      => "root",
     "password"  => "",

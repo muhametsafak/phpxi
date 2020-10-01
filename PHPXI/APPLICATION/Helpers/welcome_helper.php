@@ -1,8 +1,4 @@
 <?php
-if(!defined("PHPXI")){
-  die("You cannot access this page.");
-}
-
 
 function utterances(){
   $utterances = array(

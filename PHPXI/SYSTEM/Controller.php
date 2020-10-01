@@ -1,42 +1,44 @@
 <?php
+namespace Controller;
 
-class PHPXI_Controller{
+class XI_Controller{
   
   private $html;
 
   function __construct(){
     
-    $this->config = new PHPXI\SYSTEM\Config();
+    $this->config = new \PHPXI\SYSTEM\Config();
 
-    $this->lang = new PHPXI\SYSTEM\Languages();
+    $this->lang = new \PHPXI\SYSTEM\Languages();
     
-    $this->form = new PHPXI\SYSTEM\Form();
+    $this->form = new \PHPXI\SYSTEM\Form();
     
-    $this->file = new PHPXI\SYSTEM\File();
+    $this->file = new \PHPXI\SYSTEM\File();
 
     if($this->config->item("autoload.input")){
-        $this->input = new PHPXI\SYSTEM\Input();
+        $this->input = new \PHPXI\SYSTEM\Input();
     }
         
     if($this->config->item("session")){
-        $this->session = new PHPXI\SYSTEM\Session();
+        $this->session = new \PHPXI\SYSTEM\Session();
     }
     
-    $this->hook = new PHPXI\SYSTEM\Hook();
+    $this->hook = new \PHPXI\SYSTEM\Hook();
 
     if($this->config->item("autoload.upload")){
-        $this->upload = new PHPXI\SYSTEM\Upload();
+        $this->upload = new \PHPXI\SYSTEM\Upload();
+        $this->upload->config($this->config->item("upload"));
     }
 
-    $this->uri = new PHPXI\SYSTEM\Route();
+    $this->uri = new \PHPXI\SYSTEM\Uri();
         
-    $this->server = new PHPXI\SYSTEM\Server();
+    $this->server = new \PHPXI\SYSTEM\Server();
     
-    $this->http = new PHPXI\SYSTEM\Http();
+    $this->http = new \PHPXI\SYSTEM\Http();
     
-    $this->cookie = new PHPXI\SYSTEM\Cookie();
+    $this->cookie = new \PHPXI\SYSTEM\Cookie();
 
-    $this->benchmark = new PHPXI\SYSTEM\Benchmark();
+    $this->benchmark = new \PHPXI\SYSTEM\Benchmark();
 
   }
 
@@ -82,16 +84,16 @@ class PHPXI_Controller{
           if(!isset($database["name"])){
               $database["name"] = "";
           }
-          if(!isset($database[""])){
+          if(!isset($database["charset"])){
               $database["charset"] = "utf8";
           }
           if(!isset($database["prefix"])){
               $database["prefix"] = "";
           }
-          return new PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
+          return new \PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
       }else{
           $database = $this->config->item("db.".$database);
-          return new PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
+          return new \PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
       }
   }
   

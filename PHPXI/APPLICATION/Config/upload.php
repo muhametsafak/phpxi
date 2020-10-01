@@ -1,38 +1,33 @@
 <?php
-if(!defined("PHPXI")){
-    die("You cannot access this page.");
-}
-$config["uploads"] = array();
-
 /**
  * Must be specified in Byte.
  * Example : 1MB => 1 x (1024 x 1024) = 1048576
  */
-$config["uploads"]["sizeLimit"] = 3145728; //3MB
+$config["sizeLimit"] = 3145728; //3MB
 
 /**
  * Directory path to upload
- * $config["uploads"]["path"] = PATH."/uploads/";
+ * $config["path"] = PATH."/uploads/";
  */
-$config["uploads"]["path"] = PATH."/uploads/";
+$config["path"] = PATH."/uploads/";
 
 /**
  * Upload directory url address
- * $config['upload']['dir_url'] = $config["base_url"]."/uploads";
+ * $config['upload']['dir_url'] = BASE_URL."/uploads/";
  */
-$config['upload']['dir_url'] = $config["base_url"]."/uploads";
+$config['uploads']['dir_url'] = BASE_URL."/uploads/";
 
 /**
  * Specify the types of files to be allowed to upload
- * $config["uploads"]["upload_file_type"] = array("image/png", "image/jpeg", "image/jpg", "image/gif");
+ * $config["file_type"] = array("image/png", "image/jpeg", "image/jpg", "image/gif");
  */
-$config["uploads"]["upload_file_type"] = array("image/png", "image/jpeg", "image/jpg", "image/gif");
+$config["file_type"] = array("image/png", "image/jpeg", "image/jpg", "image/gif");
 
 /**
  * Specify the file extensions that will be allowed to be uploaded.
- * $config["uploads"]["upload_file_extension"] = array("jpg", "jpeg", "png", "gif");
+ * $config["file_extension"] = array("jpg", "jpeg", "png", "gif");
  */
-$config["uploads"]["upload_file_extension"] = array("jpg", "jpeg", "png", "gif");
+$config["file_extension"] = array("jpg", "jpeg", "png", "gif");
 
 /**
  * Choose the amount of compression of "jpg" and "jpeg" type files
@@ -40,9 +35,9 @@ $config["uploads"]["upload_file_extension"] = array("jpg", "jpeg", "png", "gif")
  * The smaller the value, the smaller the file size.
  * Note that this process also affects the quality of the image.
  * Default value : 75
- * $config["uploads"]["upload_jpg_compress"] = 75;
+ * $config["jpg_compress"] = 75;
  */
-$config["uploads"]["upload_jpg_compress"] = 75;
+$config["jpg_compress"] = 75;
 
 /**
  * Choose the amount of compression of "png" type files
@@ -50,6 +45,6 @@ $config["uploads"]["upload_jpg_compress"] = 75;
  * The larger the value, the smaller the file size.
  * Note that this process also affects the quality of the image.
  * Default value : 3
- * $config["uploads"]["upload_png_compress"] = 3;
+ * $config["png_compress"] = 3;
  */
-$config["uploads"]["upload_png_compress"] = 3;
+$config["png_compress"] = 3;

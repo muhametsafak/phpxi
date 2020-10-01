@@ -23,6 +23,8 @@ class DB{
   private $where = array();
   private $and_where = array();
   private $or_where = array();
+  private $having = array();
+  private $group_by = array();
   private $limit;
   private $order_by = array();
   private $get;
@@ -65,7 +67,7 @@ class DB{
     if($select != "*"){
       $selects = explode(",", $select);
       foreach ($selects as $row) {
-        $as_rows = explode("as", strtolower($row));
+        $as_rows = explode(" as ", strtolower($row));
         if(sizeof($as_rows) > 1){
           $as = $as_rows[1];
         }
@@ -96,8 +98,14 @@ class DB{
   }
 
   public function from($from){
-    $this->from[] = $from;
-    $this->selected_from($from);
+    if(strpos($from, " as ") === false){
+      $this->from[] = $from;
+      $this->selected_from($from);
+    }else{
+      $as = explode(" as ", strtolower($from));
+      $this->from[] = $as[0] . " AS " . $as[1];
+      $this->selected_from($as[1]);
+    }
     return $this;
   }
 
@@ -117,60 +125,128 @@ class DB{
   }
 
   public function where($column, $value, $operator = "="){
-    $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+    switch (strtolower($operator)) {
+      case '=':
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`='".$value."'";
+        break;
+      case 'in':
+        if(is_array($value)){
+          $value = implode(", ", $value);
+        }
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` IN (".$value.")";
+        break;
+      case 'not in':
+        if(is_array($value)){
+          $value = implode(", ", $value);
+        }
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
+        break;
+      case 'like':
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$db->escape_string($value)."'";
+        break;
+      case 'not like':
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        break;
+      default:
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+        break;
+    }
     return $this;
   }
 
   public function and_where($column, $value, $operator = "="){
-    $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+    switch (strtolower($operator)) {
+      case '=':
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`='".$value."'";
+        break;
+      case 'in':
+        if(is_array($value)){
+          $value = implode(", ", $value);
+        }
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` IN (".$value.")";
+        break;
+      case 'not in':
+        if(is_array($value)){
+          $value = implode(", ", $value);
+        }
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
+        break;
+      case 'like':
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$db->escape_string($value)."'";
+        break;
+      case 'not like':
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        break;
+      default:
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+        break;
+    }
     return $this;
   }
 
   public function or_where($column, $value, $operator = "="){
-    $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
-    return $this;
-  }
-  
-  public function in_where($column, $value, $andor = "and"){
-    if(is_array($value)){
-      $value = implode(", ", $value);
-    }
-    if(strtolower($andor) == "or"){
-      $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` IN (".$value.")";
-    }else{
-      $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` IN (".$value.")";
-    }
-    return $this;
-  }
-  
-  public function not_in_where($column, $value, $andor = "and"){
-    if(is_array($value)){
-      $value = implode(", ", $value);
-    }
-    if(strtolower($andor) == "or"){
-      $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
-    }else{
-      $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
-    }
-    return $this;
-  }
-  
-  public function like_where($column, $value, $andor = "and"){
-    if(strtolower($andor) == "or"){
-      $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE (".$db->escape_string($value).")";
-    }else{
-      $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE (".$db->escape_string($value).")";
+    switch (strtolower($operator)) {
+      case '=':
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`='".$value."'";
+        break;
+      case 'in':
+        if(is_array($value)){
+          $value = implode(", ", $value);
+        }
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` IN (".$value.")";
+        break;
+      case 'not in':
+        if(is_array($value)){
+          $value = implode(", ", $value);
+        }
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
+        break;
+      case 'like':
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$db->escape_string($value)."'";
+        break;
+      case 'not like':
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        break;
+      default:
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+        break;
     }
     return $this;
   }
+
   
-  public function not_like_where($column, $value, $andor = "and"){
-    if(strtolower($andor) == "or"){
-      $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
-    }else{
-      $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+  public function having($column, $value, $operator = "="){
+    switch (strtolower($operator)) {
+      case '=':
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."`='".$value."'";
+        break;
+      case 'in':
+        if(is_array($value)){
+          $value = implode(", ", $value);
+        }
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` IN (".$value.")";
+        break;
+      case 'not in':
+        if(is_array($value)){
+          $value = implode(", ", $value);
+        }
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
+        break;
+      case 'like':
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$db->escape_string($value)."'";
+        break;
+      case 'not like':
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        break;
+      default:
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
+        break;
     }
     return $this;
+  }
+
+  public function group_by($group = ""){
+    $this->group_by[] = $group;
   }
 
   public function limit($limit){
@@ -227,6 +303,14 @@ class DB{
 
     $sqls['WHERE'] = $this->query_where_create();
 
+    if(sizeof($this->group_by) > 0){
+      $sqls['GROUP BY'] = implode(", ", $this->group_by);
+    }
+
+    if(sizeof($this->having) > 0){
+      $sqls['HAVING'] = implode(" AND ", $this->having);
+    }
+
     if(is_array($this->order_by) and sizeof($this->order_by) > 0){
       $sqls['ORDER BY'] = implode(", ", $this->order_by);
     }
@@ -243,8 +327,10 @@ class DB{
   }
 
 
-
-  public function get(){
+  public function get($from = ""){
+    if($from != ""){
+      $this->from($from);
+    }
     return $this->get = $this->query($this->sql());
   }
 
@@ -271,7 +357,6 @@ class DB{
       return $this->num_rows;
     }
   }
-
 
   public function insert($data = array()){
     if(sizeof($data) > 0){
@@ -325,7 +410,29 @@ class DB{
     $this->query_size++;
 	  $sql = $this->mysqli->query($this->sql());
 	  return $sql->num_rows;
-	}
+  }
+  
+  public function drop($table = ""){
+    if($table == ""){
+      $table = $this->selected_from;
+    }
+    if($this->mysqli->query("DROP TABLE `".$table."`")){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  public function truncate($table = ""){
+    if($table == ""){
+      $table = $this->selected_from;
+    }
+    if($this->mysqli->query("TRUNCATE `".$table."`")){
+      return true;
+    }else{
+      return false;
+    }
+  }
 
 	public function query($sql){
 		$this->query_size = $this->query_size + 1;
@@ -351,6 +458,8 @@ class DB{
     $this->where = array();
     $this->and_where = array();
     $this->or_where = array();
+    $this->having = array();
+    $this->group_by = array();
     $this->limit = "";
     $this->order_by = array();
 	}

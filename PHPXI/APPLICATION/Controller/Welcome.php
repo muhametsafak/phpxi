@@ -1,7 +1,7 @@
 <?php
+namespace Controller;
 
-
-class Welcome extends PHPXI_Controller{
+class Welcome extends XI_Controller{
 
     public function index(){
         $this->benchmark->start("index");
@@ -11,4 +11,10 @@ class Welcome extends PHPXI_Controller{
         $this->benchmark->stop("index");
     }
     
+    public function not_found($param = ""){
+        /**
+         * Error 404 - Page Not Found
+         */
+        echo $param;
+    }
 }

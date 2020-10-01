@@ -1,6 +1,7 @@
 <?php
-define("PATH", dirname("__FILE__"));
+define("PATH", realpath("."));
 define("PHPXI", realpath("../") . '/PHPXI/');
 require_once(PHPXI . "SYSTEM/Core.php");
-new PHPXI();
+$phpxi = new PHPXI();
+$phpxi->autorun();
 unset($db);

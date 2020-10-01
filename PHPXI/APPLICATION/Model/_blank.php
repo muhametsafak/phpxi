@@ -1,5 +1,6 @@
 <?php
+namespace Model;
 
-class _blank extends PHPXI_Model{
+class _blank extends XI_Model{
 
 }

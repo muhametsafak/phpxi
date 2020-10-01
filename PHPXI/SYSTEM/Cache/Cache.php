@@ -38,6 +38,7 @@ class Cache{
 
     public function gzip($gzip){
         $this->gzip_compressor = $gzip;
+        return $this;
     }
 
     public function cache(){
