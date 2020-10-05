@@ -16,4 +16,9 @@ class Server{
         }
     }
 
+    public function set($key, $value){
+        $this->server[$key] = $value;
+        $_SERVER[$key] = $value;
+    }
+
 }

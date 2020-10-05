@@ -10,6 +10,7 @@ class File{
         if($this->exists($path)){
             $this->path = $path;
         }
+        return $this;
     }
 
     public function exists($path = ""){
@@ -127,6 +128,17 @@ class File{
     }
 
     public function rename($new_path, $path = ""){
+        if($path == ""){
+            $path = $this->path;
+        }
+        if(rename($path, $new_path)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function move($new_path, $path = ""){
         if($path == ""){
             $path = $this->path;
         }

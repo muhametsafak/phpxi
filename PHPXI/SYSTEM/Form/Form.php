@@ -45,7 +45,7 @@ class Form{
     $this->return .= $return;
   }
 
-  function add_select($select = array(), $options = array(), $selected_id = "0"){
+  function add_select($select = array(), $options = array(), $selected_id = NULL){
     $this->return .= '<select ';
     foreach ($select as $key => $value) {
       $this->return .= $key.'="'.$value.'" ';

@@ -26,14 +26,19 @@ class Session{
             return false;
         }
     }
-    
-    public function add($key, $value){
+
+    public function set($key, $value){
         $this->session[$key] = $value;
         $_SESSION[$key] = $value;
     }
     
+    public function add($key, $value){
+        $this->set($key, $value);
+    }
+
+    
     public function update($key, $value){
-        $this->add($key, $value);
+        $this->set($key, $value);
     }
     
     public function delete($key){
