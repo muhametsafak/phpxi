@@ -10,7 +10,7 @@ class DB{
   private $prefix;
   private $charset;
   
-  protected $mysqli;
+  public $mysqli;
 	protected $query;
 	
   private $error;
@@ -29,6 +29,9 @@ class DB{
   private $order_by = array();
   private $get;
   private $rows;
+
+  private $cache_status = false;
+  private $cache_timeout = 3600;
   
 
 
@@ -36,9 +39,9 @@ class DB{
 	  $this->host = $host;
 	  $this->user = $user;
 	  $this->password = $password;
-	  $this->name = $name;
-	  $this->prefix = $prefix;
-	  $this->charset = $charset;
+    $this->name = $name;
+    $this->setPrefix($prefix);
+    $this->setCharset($charset);
 	  $this->connect();
 	}
 	
@@ -62,6 +65,19 @@ class DB{
     return $this;
   }
 
+  public function setPrefix($prefix){
+    $this->prefix = $prefix;
+  }
+
+  public function setCharset($charset){
+    $this->charset = $charset;
+  }
+
+  public function cache($status = true, $timeout = 3600){
+    $this->cache_status = $status;
+    $this->cache_timeout = $timeout;
+    return $this;
+  }
 
   public function select($select = "*"){
     if($select != "*"){
@@ -98,14 +114,8 @@ class DB{
   }
 
   public function from($from){
-    if(strpos($from, " as ") === false){
-      $this->from[] = $from;
-      $this->selected_from($from);
-    }else{
-      $as = explode(" as ", strtolower($from));
-      $this->from[] = $as[0] . " AS " . $as[1];
-      $this->selected_from($as[1]);
-    }
+    $this->from[] = $from;
+    $this->selected_from($from);
     return $this;
   }
 
@@ -147,6 +157,12 @@ class DB{
       case 'not like':
         $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
         break;
+      case 'between' : 
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` BETWEEN ".$value[0]." AND ".$value[1];
+        break;
+      case 'not between' : 
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT BETWEEN ".$value[0]." AND ".$value[1];
+        break;
       default:
         $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
         break;
@@ -177,6 +193,12 @@ class DB{
       case 'not like':
         $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
         break;
+      case 'between' : 
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` BETWEEN ".$value[0]." AND ".$value[1];
+        break;
+      case 'not between' : 
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT BETWEEN ".$value[0]." AND ".$value[1];
+        break;
       default:
         $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
         break;
@@ -206,6 +228,12 @@ class DB{
         break;
       case 'not like':
         $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        break;
+      case 'between' : 
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` BETWEEN ".$value[0]." AND ".$value[1];
+        break;
+      case 'not between' : 
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT BETWEEN ".$value[0]." AND ".$value[1];
         break;
       default:
         $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
@@ -238,6 +266,12 @@ class DB{
       case 'not like':
         $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
         break;
+      case 'between' : 
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` BETWEEN ".$value[0]." AND ".$value[1];
+        break;
+      case 'not between' : 
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT BETWEEN ".$value[0]." AND ".$value[1];
+        break;
       default:
         $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."`".$operator."'".$value."'";
         break;
@@ -254,16 +288,20 @@ class DB{
     return $this;
   }
 
-  public function order_by($by = "", $order = "asc", $from = ""){
+  public function order_by($by = "", $order = "", $from = ""){
     if($from == ""){
       $from = $this->selected_from;
     }
-    if(strtolower($order) == "asc"){
-      $order = "ASC";
+    if($order == ""){
+      $this->order_by[] = $by;
     }else{
-      $order = "DESC";
+      if(strtolower($order) == "asc"){
+        $order = "ASC";
+      }else{
+        $order = "DESC";
+      }
+      $this->order_by[] = "`".$this->prefix.$from."`.`".$by."` ".$order;
     }
-    $this->order_by[] = "`".$this->prefix.$from."`.`".$by."` ".$order;
     return $this;
   }
 
@@ -338,7 +376,11 @@ class DB{
     if($query != ""){
       return $query->fetch_assoc();
     }else{
-      return $this->get->fetch_assoc();
+      if($this->cache_status){
+        return $this->get;
+      }else{
+        return $this->get->fetch_assoc();
+      }
     }
   }
   
@@ -346,7 +388,11 @@ class DB{
     if($query != ""){
       return $query->fetch_object();
     }else{
-      return $this->get->fetch_object();
+      if($this->cache_status){
+        return arrayObject($this->get);
+      }else{
+        return $this->get->fetch_object();
+      }
     }
   }
   
@@ -368,6 +414,7 @@ class DB{
       }
 
       $sql = "INSERT INTO `".$this->prefix.$this->selected_from."`(".implode(", ", $keys).") VALUES (".implode(", ", $values).")";
+      $this->cache(false);
       if($this->query($sql)){
         return true;
       }else{
@@ -386,6 +433,7 @@ class DB{
     }else{
       $sql = "DELETE FROM `".$this->prefix.$this->selected_from."` WHERE ".$this->query_where_create();
     }
+    $this->cache(false);
     if($this->query($sql)){
       return true;
     }else{
@@ -399,6 +447,7 @@ class DB{
       $rows[] = "`".$key."`='".$this->escape_string($value)."'";
     }
     $sql = "UPDATE `".$this->prefix.$this->selected_from."` SET ".implode(", ", $rows)." WHERE ".$this->query_where_create();
+    $this->cache(false);
     if($this->query($sql)){
       return true;
     }else{
@@ -413,6 +462,7 @@ class DB{
   }
   
   public function drop($table = ""){
+    $this->query_size++;
     if($table == ""){
       $table = $this->selected_from;
     }
@@ -424,6 +474,7 @@ class DB{
   }
 
   public function truncate($table = ""){
+    $this->query_size++;
     if($table == ""){
       $table = $this->selected_from;
     }
@@ -435,20 +486,53 @@ class DB{
   }
 
 	public function query($sql){
-		$this->query_size = $this->query_size + 1;
-		$res = $this->mysqli->query($sql) or error_log("SQL QUERY ERROR : " . $this->mysqli->error . " QUERY : " . $sql, 0);
-    if(isset($this->mysqli->insert_id)){
-      $this->insert_id = $this->mysqli->insert_id;
+    if($this->cache_status){
+      $path = SQL_CACHE_PATH.md5($sql).".json";
+      if(file_exists($path) and (filemtime($path) > (time() - $this->cache_timeout))){
+        $cache_content = file_get_contents($path);
+        $result = json_decode($cache_content, true);
+        $this->num_rows = $result["num_rows"];
+        $return = $result["results"];
+      }else{
+        $res = $this->mysqli->query($sql) or error_log("SQL QUERY ERROR : " . $this->mysqli->error . " QUERY : " . $sql, 0);
+        if(isset($this->mysqli->insert_id)){
+          $this->insert_id = $this->mysqli->insert_id;
+        }else{
+          $this->insert_id = 0;
+        }
+        if(isset($res->num_rows)){
+          $this->num_rows = $res->num_rows;
+        }else{
+          $this->num_rows = 0;
+        }
+        $results = array();
+        while($row = $res->fetch_assoc()){
+          $results[] = $row;
+        }
+        $result = array(
+          "num_rows" => $this->num_rows,
+          "results" => $results
+        );
+        $return = $results;
+        unset($results);
+        $cache_content = json_encode($result);
+        file_put_contents($path, $cache_content);
+      }
     }else{
-      $this->insert_id = 0;
-    }
-    if(isset($res->num_rows)){
-      $this->num_rows = $res->num_rows;
-    }else{
-      $this->num_rows = 0;
+      $return = $this->mysqli->query($sql) or error_log("SQL QUERY ERROR : " . $this->mysqli->error . " QUERY : " . $sql, 0);
+      if(isset($this->mysqli->insert_id)){
+        $this->insert_id = $this->mysqli->insert_id;
+      }else{
+        $this->insert_id = 0;
+      }
+      if(isset($return->num_rows)){
+        $this->num_rows = $return->num_rows;
+      }else{
+        $this->num_rows = 0;
+      }
     }
     $this->clear();
-    return $res;
+    return $return;
 	}
 	
 	public function clear(){
@@ -484,6 +568,10 @@ class DB{
     }else{
       return false;
     }
+  }
+
+  public function query_size(){
+    return $this->query_size;
   }
   
 }

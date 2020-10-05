@@ -93,7 +93,7 @@ class XI_Model{
             }
             return new \PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
         }else{
-            $database = $this->config->item("db.".$database);
+            $database = $this->config->item("database.".$database);
             return new \PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
         }
     }

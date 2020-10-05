@@ -6,7 +6,7 @@ function str_compressor($str){
 
 function html_compressor($source){
     $source = preg_replace('#^\s*//.+$#m', null, $source); 
-    $source = str_compressor($str);
+    $source = str_compressor($source);
     $source = preg_replace('/<!--(.|\s)*?-->/', null, $source); 
     $source = trim($source); 
     return $source;
