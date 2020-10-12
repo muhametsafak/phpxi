@@ -61,6 +61,8 @@ mb_internal_encoding($config['config']['charset']);
 
 require_once(PHPXI . "SYSTEM/Helpers/Object.php");
 
+require_once(PHPXI . "SYSTEM/Helpers/Current.php");
+
 require_once(PHPXI . "SYSTEM/Helpers/Urls.php");
 
 require_once(PHPXI . "SYSTEM/Helpers/Path.php");

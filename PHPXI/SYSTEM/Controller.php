@@ -19,7 +19,7 @@ class XI_Controller{
         $this->input = new \PHPXI\SYSTEM\Input();
     }
         
-    if($this->config->item("session")){
+    if($this->config->item("config.session")){
         $this->session = new \PHPXI\SYSTEM\Session();
     }
     

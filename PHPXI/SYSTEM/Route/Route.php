@@ -43,11 +43,11 @@ class Route{
     public function notfound($parameters){
         $controller = explode("@", DEFAULT_CONTROLLER_404);
         $controllerFile = PHPXI . '/APPLICATION/Controller/'.ucfirst($controller[0]).'.php';
-        if($controllerFile){
+        if(file_exists($controllerFile)){
             require_once($controllerFile);
-            $className = ucfirst($controller[0]);
             define("CURRENT_CONTROLLER", $className);
             define("CURRENT_CFUNCTION", $controller[1]);
+            $className = "Controller\\".ucfirst($controller[0]);
             $class = new $className;
             if(method_exists($class, $controller[1])){
                 call_user_func_array([$class, $controller[1]], $parameters);

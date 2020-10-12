@@ -1,7 +1,11 @@
 <?php
 
 function base_url($path = ""){
-  $return = rtrim(BASE_URL, "/") . '/' . ltrim($path, "/");
+  if(MULTI_LANGUAGES){
+    $return = rtrim(BASE_URL, "/") . '/' . CURRENT_LANGUAGE . '/' . ltrim($path, "/");
+  }else{
+    $return = rtrim(BASE_URL, "/") . '/' . ltrim($path, "/");
+  }
   return $return;
 }
 
@@ -14,15 +18,7 @@ function site_url($path = "", $echo = true){
   }
 }
 
-function current_url(){
-  if(isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] == "on"){
-    $protocol = "https";
-  }else{
-    $protocol = "http";
-  }
-  $url = $protocol.'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-  return $url;
-}
+
 
 function redirect($url = "", $time = "0"){
   if($url == ""){
