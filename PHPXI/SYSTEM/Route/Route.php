@@ -45,6 +45,7 @@ class Route{
         $controllerFile = PHPXI . '/APPLICATION/Controller/'.ucfirst($controller[0]).'.php';
         if(file_exists($controllerFile)){
             require_once($controllerFile);
+            $className = ucfirst($controller[0]);
             define("CURRENT_CONTROLLER", $className);
             define("CURRENT_CFUNCTION", $controller[1]);
             $className = "Controller\\".ucfirst($controller[0]);
@@ -95,7 +96,11 @@ class Route{
                         if(method_exists($class, $controller[1])){
                             call_user_func_array([$class, $controller[1]], $parameters);
                         }else{
-                            if(FORCE_CONTROLLER_FUNCTION != ""){
+                            if(FORCE_CONTROLLER_NAME != "" and FORCE_CONTROLLER_FUNCTION != ""){
+                                $className = "Controller\\".FORCE_CONTROLLER_NAME;
+                                define("CURRENT_CONTROLLER", FORCE_CONTROLLER_NAME);
+                                define("CURRENT_CFUNCTION", FORCE_CONTROLLER_FUNCTION);
+                                $class = new $className;
                                 call_user_func_array([$class, FORCE_CONTROLLER_FUNCTION], $parameters);
                             }else{
                                 if(ENV == "development"){
@@ -106,10 +111,20 @@ class Route{
                             }
                         }
                     }else{
-                        if(ENV == "development"){
-                            $this->notfound(['ERROR : "'.$controllerFile.'" not found.']);
+                        if(FORCE_CONTROLLER_NAME != "" and FORCE_CONTROLLER_FUNCTION != ""){
+                            $controllerFile = PHPXI . '/APPLICATION/Controller/'.ucfirst(FORCE_CONTROLLER_NAME).'.php';
+                            require_once($controllerFile);
+                            $className = "Controller\\".FORCE_CONTROLLER_NAME;
+                            define("CURRENT_CONTROLLER", FORCE_CONTROLLER_NAME);
+                            define("CURRENT_CFUNCTION", FORCE_CONTROLLER_FUNCTION);
+                            $class = new $className;
+                            call_user_func_array([$class, FORCE_CONTROLLER_FUNCTION], $parameters);
                         }else{
-                            $this->notfound(["404 : Page Not Found"]);
+                            if(ENV == "development"){
+                                $this->notfound(['ERROR : "'.$controllerFile.'" not found.']);
+                            }else{
+                                $this->notfound(["404 : Page Not Found"]);
+                            }
                         }
                     }
                 }

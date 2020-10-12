@@ -5,8 +5,6 @@ class Uri{
 
     public $uri;
     
-    public $controller;
-    public $method;
 
     function __construct(){
         $this->uri = array();
@@ -19,8 +17,10 @@ class Uri{
         }else{
             $request_uri = trim(mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8"), "/");
         }
-        if($request_uri != 0){
-            $this->uri = array_filter(explode('/', $request_uri));
+        if(isset($request_uri) and trim($request_uri) != ""){
+            foreach(array_filter(explode('/', $request_uri)) as $row){
+                $this->uri[] = $row;
+            }
         }
     }
     
@@ -30,6 +30,10 @@ class Uri{
         }else{
             return false;
         }
+    }
+
+    public function request_uri(){
+        return $this->request_uri;
     }
     
 }

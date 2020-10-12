@@ -9,6 +9,15 @@ function base_url($path = ""){
   return $return;
 }
 
+function public_url($path = "", $echo = true){
+  $return = rtrim(BASE_URL, "/") . '/' . ltrim($path, "/");
+  if($echo){
+    echo $return;
+  }else{
+    return $return;
+  }
+}
+
 function site_url($path = "", $echo = true){
   $return = base_url($path, false);
   if($echo){
