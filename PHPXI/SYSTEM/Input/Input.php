@@ -27,8 +27,12 @@ class Input{
         if($key == ""){
             return $this->post;
         }else{
-            if(isset($this->post[$key]) and trim($this->post[$key]) != ""){
-                return trim($this->post[$key]);
+            if(isset($this->post[$key])){
+                if(!is_array($this->post[$key]) and trim($this->post[$key]) != ""){
+                    return trim($this->post[$key]);
+                }else{
+                    return $this->post[$key];
+                }
             }else{
                 return false;
             }

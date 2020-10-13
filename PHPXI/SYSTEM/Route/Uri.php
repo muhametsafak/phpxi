@@ -4,6 +4,7 @@ namespace PHPXI\SYSTEM;
 class Uri{
 
     public $uri;
+    private $request_uri;
     
 
     function __construct(){
@@ -18,6 +19,7 @@ class Uri{
             $request_uri = trim(mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8"), "/");
         }
         if(isset($request_uri) and trim($request_uri) != ""){
+            $this->request_uri = $request_uri;
             foreach(array_filter(explode('/', $request_uri)) as $row){
                 $this->uri[] = $row;
             }

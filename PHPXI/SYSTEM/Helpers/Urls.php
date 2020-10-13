@@ -27,8 +27,6 @@ function site_url($path = "", $echo = true){
   }
 }
 
-
-
 function redirect($url = "", $time = "0"){
   if($url == ""){
     $url = base_url();

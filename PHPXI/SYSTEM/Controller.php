@@ -57,8 +57,8 @@ class XI_Controller{
 
   function model($name, $method, $parameters = ""){
     $model_path = PHPXI . 'APPLICATION/Model/' . $name . '.php';
-    $name = "Model\\".$name;
     require_once($model_path);
+    $name = "Model\\".$name;
     if($parameters == ""){
         return $this->$method = new $name();
     }else{

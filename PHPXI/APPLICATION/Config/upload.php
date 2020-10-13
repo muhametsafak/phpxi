@@ -15,7 +15,7 @@ $config["path"] = PATH."/uploads/";
  * Upload directory url address
  * $config['upload']['dir_url'] = BASE_URL."/uploads/";
  */
-$config['uploads']['dir_url'] = BASE_URL."/uploads/";
+$config['dir_url'] = BASE_URL."/uploads/";
 
 /**
  * Specify the types of files to be allowed to upload

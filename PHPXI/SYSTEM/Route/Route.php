@@ -5,6 +5,9 @@ class Route{
 
     private $url;
 
+    private $current_controller;
+    private $current_cfunction;
+
     public function url(){
         $dirname = dirname($_SERVER['SCRIPT_NAME']);
         $basename = basename($_SERVER['SCRIPT_NAME']);
@@ -46,8 +49,8 @@ class Route{
         if(file_exists($controllerFile)){
             require_once($controllerFile);
             $className = ucfirst($controller[0]);
-            define("CURRENT_CONTROLLER", $className);
-            define("CURRENT_CFUNCTION", $controller[1]);
+            $this->current_controller = $className;
+            $this->current_cfunction = $controller[1];
             $className = "Controller\\".ucfirst($controller[0]);
             $class = new $className;
             if(method_exists($class, $controller[1])){
@@ -88,19 +91,16 @@ class Route{
                     if(file_exists($controllerFile)){
                         require_once($controllerFile);
                         $className = ucfirst($controller[0]);
-                        define("CURRENT_CONTROLLER", $className);
-                        define("CURRENT_CFUNCTION", $controller[1]);
+                        $this->current_controller = $className;
+                        $this->current_cfunction = $controller[1];
                         define("CURRENT_CPARAMETERS", $parameters);
                         $className = "Controller\\".$className;
                         $class = new $className;
                         if(method_exists($class, $controller[1])){
                             call_user_func_array([$class, $controller[1]], $parameters);
                         }else{
-                            if(FORCE_CONTROLLER_NAME != "" and FORCE_CONTROLLER_FUNCTION != ""){
-                                $className = "Controller\\".FORCE_CONTROLLER_NAME;
-                                define("CURRENT_CONTROLLER", FORCE_CONTROLLER_NAME);
-                                define("CURRENT_CFUNCTION", FORCE_CONTROLLER_FUNCTION);
-                                $class = new $className;
+                            if(FORCE_CONTROLLER_FUNCTION != ""){
+                                $this->current_cfunction = FORCE_CONTROLLER_FUNCTION;
                                 call_user_func_array([$class, FORCE_CONTROLLER_FUNCTION], $parameters);
                             }else{
                                 if(ENV == "development"){
@@ -115,8 +115,8 @@ class Route{
                             $controllerFile = PHPXI . '/APPLICATION/Controller/'.ucfirst(FORCE_CONTROLLER_NAME).'.php';
                             require_once($controllerFile);
                             $className = "Controller\\".FORCE_CONTROLLER_NAME;
-                            define("CURRENT_CONTROLLER", FORCE_CONTROLLER_NAME);
-                            define("CURRENT_CFUNCTION", FORCE_CONTROLLER_FUNCTION);
+                            $this->current_controller = FORCE_CONTROLLER_NAME;
+                            $this->current_cfunction = FORCE_CONTROLLER_FUNCTION;
                             $class = new $className;
                             call_user_func_array([$class, FORCE_CONTROLLER_FUNCTION], $parameters);
                         }else{
@@ -128,6 +128,8 @@ class Route{
                         }
                     }
                 }
+                define("CURRENT_CONTROLLER", $this->current_controller);
+                define("CURRENT_CFUNCTION", $this->current_cfunction);
             }
             $view = ob_get_clean();
             ob_end_flush();
