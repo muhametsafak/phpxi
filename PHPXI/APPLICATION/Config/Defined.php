@@ -9,7 +9,7 @@ define("HTML_Compressor", false);
  */
 define("DEFAULT_LANGUAGE", "en");
 
-define("MULTI_LANGUAGES", true);
+define("MULTI_LANGUAGES", false);
 
 
 
