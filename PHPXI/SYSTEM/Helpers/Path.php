@@ -9,9 +9,9 @@ function phpxi_path($path = ""){
 }
 
 function system_path($path = ""){
-    return phpxi_path("SYSTEM/".$path);
+    return rtrim(SYSTEM, "/") . "/" . ltrim(trim($path), "/");
 }
 
 function app_path($path = ""){
-    return phpxi_path("APPLICATION/".$path);
+    return rtrim(APP, "/") . "/" . ltrim(trim($path), "/");
 }
