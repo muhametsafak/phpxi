@@ -3,8 +3,8 @@
 <head>
 <title><?php echo $title; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/css/reset.css"); ?>" media="screen" />
-<link rel="stylesheet" type="text/css" href="<?php echo base_url("assets/css/welcome.css"); ?>" media="screen" />
+<link rel="stylesheet" type="text/css" href="<?php public_url("assets/css/reset.css", true); ?>" media="screen" />
+<link rel="stylesheet" type="text/css" href="<?php public_url("assets/css/welcome.css", true); ?>" media="screen" />
 </head>
 <body>
 <div id="container">
