@@ -1,6 +1,6 @@
 <?php
 
-define("HTML_Compressor", true);
+define("HTML_Compressor", false);
 
 /**
  * For language support, specify the language to be installed by default.
@@ -11,20 +11,7 @@ define("DEFAULT_LANGUAGE", "en");
 
 define("MULTI_LANGUAGES", true);
 
-/**
- * Controller
- */
-define("DEFAULT_CONTROLLER_NAME", "Welcome");
 
-define("DEFAULT_CONTROLLER_FUNCTION", "index");
-
-define("DEFAULT_CONTROLLER_METHOD", "get|post");
-
-define("DEFAULT_CONTROLLER_404", "Welcome@not_found");
-
-define("FORCE_CONTROLLER_NAME", "Home");
-
-define("FORCE_CONTROLLER_FUNCTION", "index");
 
 /**
  * BASE URL

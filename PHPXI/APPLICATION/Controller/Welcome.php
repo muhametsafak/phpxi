@@ -8,13 +8,16 @@ class Welcome extends XI_Controller{
         $data = array();
         $data["title"] = "Welcome to PHPXI";
         $this->view("welcome", $data);
-        $this->benchmark->stop("index");
     }
     
     public function not_found($param = ""){
         /**
          * Error 404 - Page Not Found
          */
+        if($param == ""){
+            $param = "Error 404 - File Not Found";
+        }
+        $this->http->response(404);
         echo $param;
     }
 }

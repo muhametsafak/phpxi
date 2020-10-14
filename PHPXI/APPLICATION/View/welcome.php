@@ -18,8 +18,8 @@
       <li><a href="https://github.com/muhametsafak/phpxi">Go to Githup Project</a></li>
       <li><a href="https://github.com/muhametsafak/phpxi/blob/master/LICENSE">LICENSE</a></li>
       <li><a href="http://www.muhammetsafak.com.tr/phpxi">Blog</a></li>
-      <li><a href="http://docs.phpxi.net">Documents</a></li>
-      <li><a href="http://www.muhammetsafak.com.tr/donate">Donate</a></li>
+      <li><a target="_blank" href="http://docs.phpxi.net">Documents</a></li>
+      <li><a target="_blank" href="http://www.muhammetsafak.com.tr/donate">Donate</a></li>
     </ul>
     <p>Thank you for creating your project with PHPXI. PHPXI develop by <a href="https://www.muhammetsafak.com.tr">Muhammet ŞAFAK</a> is a free and open source framework.</p>
   </div>
@@ -34,7 +34,6 @@
   <div id="footer"> <a target="_blank" href="http://phpxi.net/" title="PHPXI MVC Framework">PHPXI</a> tarafından <?php echo LOAD_TIME." sn'de ".MEMORY_USE." MB bellek kullanılarak"; ?>  oluşturuldu! | Development : <a target="_blank" href="http://www.muhammetsafak.com.tr/" title="PHPXI Developer">Muhammet ŞAFAK</a>
     </p>
   </div>
-  
 </div>
 
 </body>

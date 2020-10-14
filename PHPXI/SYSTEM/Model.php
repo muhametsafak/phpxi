@@ -2,28 +2,25 @@
 namespace Model;
 
 class XI_Model{
-
-
+  
     function __construct(){
-    
-        $this->config = new \PHPXI\SYSTEM\Config();
-        
-        $this->lang = new \PHPXI\SYSTEM\Languages();
+        global $benchmark, $cache, $config, $cookie, $file, $form, $hook, $http, $input, $lang, $server, $session, $upload, $uri, $load, $db;
 
-        $this->form = new \PHPXI\SYSTEM\Form();
-
-        $this->file = new \PHPXI\SYSTEM\File();
-
-        if($this->config->item("autoload.input")){
-            $this->input = new \PHPXI\SYSTEM\Input();
-        }
-        
-        if($this->config->item("config.session")){
-            $this->session = new \PHPXI\SYSTEM\Session();
-        }
+        $this->benchmark = $benchmark;
+        $this->config = $config;
+        $this->cookie = $cookie;
+        $this->file = $file;
+        $this->form = $form;
+        $this->hook = $hook;
+        $this->http = $http;
+        $this->input = $input;
+        $this->lang = $lang;
+        $this->server = $server;
+        $this->session = $session;
+        $this->upload = $upload;
+        $this->uri = $uri;
 
         if($this->config->item("autoload.db")){
-            global $db;
             if(sizeof($this->config->item("autoload.connect_db")) > 1){
                 foreach($this->config->item("autoload.connect_db") as $db_group_name){
                     $this->db->$db_group_name = $db[$db_group_name];
@@ -32,22 +29,6 @@ class XI_Model{
                 $this->db = $db;
             }
         }
-        
-        $this->hook = new \PHPXI\SYSTEM\Hook();
-        if($this->config->item("autoload.upload")){
-            $this->upload = new \PHPXI\SYSTEM\Upload();
-            $this->upload->config($this->config->item("upload"));
-        }
-        
-        $this->uri = new \PHPXI\SYSTEM\Uri();
-        
-        $this->server = new \PHPXI\SYSTEM\Server();
-        
-        $this->http = new \PHPXI\SYSTEM\Http();
-        
-        $this->cookie = new \PHPXI\SYSTEM\Cookie();
-
-        $this->benchmark = new \PHPXI\SYSTEM\Benchmark();
 
         if(is_array($this->config->item("autoload.model")) and sizeof($this->config->item("autoload.model")) > 0){
             foreach($this->config->item("autoload.model") as $key => $value){
@@ -56,8 +37,21 @@ class XI_Model{
         }
     }
 
-    function model($name, $method, $parameters = ""){
-        $model_path = PHPXI . 'APPLICATION/Model/' . $name . '.php';
+    public function view($filename, $data = array()){
+        if(pathinfo($filename, PATHINFO_EXTENSION) != "php"){
+          $filename = $filename.".php";
+        }
+        if(is_array($data) and sizeof($data)){
+          extract($data);
+        }
+        $path = APP . "View/" . $filename;
+        if(file_exists($path)){
+          require($path);
+        }
+      }
+    
+      public function model($name, $method, $parameters = ""){
+        $model_path = APP . 'Model/' . $name . '.php';
         require_once($model_path);
         $name = "Model\\".$name;
         if($parameters == ""){
@@ -65,37 +59,11 @@ class XI_Model{
         }else{
             return $this->$method = new $name($parameters);
         }
-    }
+      }
     
-    function helper($name){
-        $model_path = PHPXI . 'APPLICATION/Helpers/' . $name . '_helper.php';
-        require_once($model_path);
-    }
+      public function helper($name){
+          $model_path = APP . 'Helpers/' . $name . '_helper.php';
+          require_once($model_path);
+      }
 
-    function db_connect($database = array()){
-        if(is_array($database)){
-            if(!isset($database["host"])){
-                $database["host"] = "localhost";
-            }
-            if(!isset($database["user"])){
-                $database["user"] = "root";
-            }
-            if(!isset($database["password"])){
-                $database["password"] = "";
-            }
-            if(!isset($database["name"])){
-                $database["name"] = "";
-            }
-            if(!isset($database["charset"])){
-                $database["charset"] = "utf8";
-            }
-            if(!isset($database["prefix"])){
-                $database["prefix"] = "";
-            }
-            return new \PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
-        }else{
-            $database = $this->config->item("database.".$database);
-            return new \PHPXI\SYSTEM\MYSQLI\DB($database["host"], $database["user"], $database["password"], $database["name"], $database["charset"], $database["prefix"]);
-        }
-    }
 }

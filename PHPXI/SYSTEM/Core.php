@@ -5,8 +5,17 @@ $msure = explode (' ', $msure );
 $msure = $msure[1] + $msure[0];
 define("TIMER_START", $msure);
 
+if(!defined("SYSTEM")){
+  define("SYSTEM", PHPXI . "SYSTEM/");
+}
 
-require_once(PHPXI . "APPLICATION/Config/Defined.php");
+if(!defined("APP")){
+  define("APP", PHPXI . "APPLICATION/");
+}
+
+require_once(SYSTEM . "Autoload.php");
+
+require_once(APP . "Config/Defined.php");
 
 if(!defined("ENV")){
     define("ENV", "production");
@@ -21,16 +30,34 @@ if(ENV == "development"){
   ini_set("display_errors", 0);
 }
 
-require_once(PHPXI . "/SYSTEM/Debug/Debug.php");
-
-require_once(PHPXI . "/SYSTEM/Debug/Reporting.php");
+if(!function_exists("PHPXI_ShutdownHandler")){
+  function PHPXI_ShutdownHandler(){
+    if(@is_array($error = @error_get_last())){
+        return(@call_user_func_array('PHPXI_ErrorHandler', $error));
+    };
+    return(TRUE);
+  };
+}
+register_shutdown_function('PHPXI_ShutdownHandler');
+if(!function_exists("PHPXI_ErrorHandler")){
+  function PHPXI_ErrorHandler($type, $message, $file, $line){
+    switch(ENV){
+        case "development" :
+            $debug = new PHPXI\Debug($type, $file, $line, $message);
+            return die($debug->development());
+        break;
+        default : return false;
+    }
+  }
+}
+$old_error_handler = set_error_handler("PHPXI_ErrorHandler");
 
 
 $configs = array();
-$phpxi_config_file = array("config", "database", "autoload", "upload", "cache", "cookie");
+$phpxi_config_file = array("config", "database", "autoload", "upload", "cache", "cookie", "session", "route");
 foreach($phpxi_config_file as $conf){
   $config = array();
-  $path = PHPXI . 'APPLICATION/Config/' . ucfirst($conf) . '.php';
+  $path = APP . 'Config/' . ucfirst($conf) . '.php';
   require_once($path);
   foreach($config as $key => $value){
     $configs[$conf][$key] = $value;
@@ -41,7 +68,7 @@ unset($phpxi_config_file);
 
 if(isset($configs["autoload"]["config"]) and sizeof($configs["autoload"]["config"]) > 0){
   foreach($configs["autoload"]["config"] as $conf){
-    $path = PHPXI . 'APPLICATION/Config/' . ucfirst($conf) . '.php';
+    $path = APP . 'Config/' . ucfirst($conf) . '.php';
     if(file_exists($path)){
       $config = array();
       require_once($path);
@@ -52,98 +79,117 @@ if(isset($configs["autoload"]["config"]) and sizeof($configs["autoload"]["config
     }
   }
 }
-$config = $configs;
-unset($configs);
 
-date_default_timezone_set($config['config']['timezone']);
+$config = new PHPXI\Config();
 
-mb_internal_encoding($config['config']['charset']);
+if($config->item("config.timezone")){
+  date_default_timezone_set($config->item("config.timezone"));
+}
+if($config->item("config.charset")){
+  mb_internal_encoding($config->item("config.charset"));
+}
 
-require_once(PHPXI . "SYSTEM/Helpers/Object.php");
+$benchmark = new PHPXI\Benchmark();
 
-require_once(PHPXI . "SYSTEM/Helpers/Current.php");
+$cache = new PHPXI\Cache();
 
-require_once(PHPXI . "SYSTEM/Helpers/Urls.php");
+$cookie = new PHPXI\Cookie();
 
-require_once(PHPXI . "SYSTEM/Helpers/Path.php");
+$session = null;
+if($config->item("session.start")){
+  session_save_path($config->item("session.path"));
+  session_start();
+  $session = new PHPXI\Session();
+}
 
-require_once(PHPXI . "/SYSTEM/Helpers/Compressor.php");
+$file = new PHPXI\File();
 
-if(sizeof($config["autoload"]["helper"]) > 0){
-  foreach($config["autoload"]["helper"] as $helper){
-    $path = PHPXI . 'SYSTEM/Helpers/' . ucfirst($helper) . '.php';
+$form = new PHPXI\Form();
+
+$hook = new PHPXI\Hook();
+
+$http = new PHPXI\Http();
+
+$input = new PHPXI\Input();
+
+$lang = new PHPXI\Language();
+
+$server = new PHPXI\Server();
+
+$upload = null;
+if($config->item("autoload.upload")){
+  $upload = new PHPXI\Upload();
+  $upload->config($config->item("upload"));
+}
+
+$uri = new PHPXI\Uri();
+
+$phpxi_helper_file = array("object", "current", "urls", "path", "compressor", "database");
+foreach($phpxi_helper_file as $row){
+  $path = SYSTEM . "Helpers/" . ucfirst($row) . ".php";
+  if(file_exists($path)){
+    require_once($path);
+  }
+}
+unset($phpxi_helper_file);
+
+$application_helper_file = $config->item("autoload.helper");
+if(is_array($application_helper_file) and sizeof($application_helper_file) > 0){
+  foreach($application_helper_file as $row){
+    $path = APP . "Helpers/" . ucfirst($row) . "_helper.php";
     if(file_exists($path)){
       require_once($path);
+    }
+  }
+}
+unset($application_helper_file);
+
+
+$application_libraries_file = $config->item("autoload.libraries");
+if(is_array($application_libraries_file) and sizeof($application_libraries_file) > 0){
+  foreach($application_libraries_file as $library){
+    $path = APP . 'Libraries/' . ucfirst($library) . '.php';
+    if(file_exists($path)){
+      require_once($path);
+    }
+  }
+}
+unset($application_libraries_file);
+
+
+require_once(SYSTEM . "Route.php");
+$route = new Route\XI_Route();
+
+$db = null;
+if($config->item("autoload.db")){
+  $connect_db = $config->item("autoload.connect_db");
+  $connetions = array();
+  if(is_array($connect_db) and sizeof($connect_db) > 0){
+    foreach($connect_db as $row){
+      if($config->item("database.".$row)){
+        $connections[] = $row;
+      }
+    }
+  }
+  $connections_size = sizeof($connections);
+  if($connections_size > 0){
+    if($connections_size == 1){
+      $db = db_connect($connections[0]);
     }else{
-      $path = PHPXI . 'APPLICATION/Helpers/' . ucfirst($helper) . '_helper.php';
-      if(file_exists($path)){
-        require_once($path);
-      }
-    }
-  }
-}
-
-if(sizeof($config["autoload"]["libraries"]) > 0){
-  foreach($config["autoload"]["libraries"] as $library){
-    $path = PHPXI . 'APPLICATION/Libraries/' . ucfirst($library) . '.php';
-    if(file_exists($path)){
-      require_once($path);
-    }
-  }
-}
-
-require_once(PHPXI . "/SYSTEM/Config/Config.php");
-
-require_once(PHPXI . "/SYSTEM/Input/Input.php");
-
-require_once(PHPXI . "/SYSTEM/Languages/Languages.php");
-
-require_once(PHPXI . "/SYSTEM/Database/Mysqli.php");
-
-
-if($config["autoload"]["db"]){
-  if(sizeof($config["autoload"]["connect_db"]) > 1){
       $db = array();
-      foreach($config["autoload"]["connect_db"] as $database){
-          $db_config = $config["database"][$database];
-          $db[$database] = new PHPXI\SYSTEM\MYSQLI\DB($db_config["host"], $db_config["user"], $db_config["password"], $db_config["name"], $db_config["charset"], $db_config["prefix"]);
+      foreach($connections as $row){
+        $db[$row] = db_connect($row);
       }
-  }else{
-      $db_config = $config["database"][$config["autoload"]["connect_db"][0]];
-      $db = new PHPXI\SYSTEM\MYSQLI\DB($db_config["host"], $db_config["user"], $db_config["password"], $db_config["name"], $db_config["charset"], $db_config["prefix"]);
+    }
   }
+  unset($connect_db);
+  unset($connections_size);
+  unset($connections);
 }
 
-require_once(PHPXI . "/SYSTEM/Hook/Hook.php");
+require_once(SYSTEM . "Model.php");
 
-require_once(PHPXI . "/SYSTEM/Upload/Upload.php");
-
-require_once(PHPXI . "/SYSTEM/Route/Route.php");
-
-require_once(PHPXI . "/SYSTEM/Route/Uri.php");
-
-require_once(PHPXI . "/SYSTEM/Session/Session.php");
-
-require_once(PHPXI . "/SYSTEM/Form/Form.php");
-
-require_once(PHPXI . "/SYSTEM/File/File.php");
-
-require_once(PHPXI . "/SYSTEM/Server/Server.php");
-
-require_once(PHPXI . "/SYSTEM/Http/Http.php");
-
-require_once(PHPXI . "/SYSTEM/Cookie/Cookie.php");
-
-require_once(PHPXI . "/SYSTEM/Cache/Cache.php");
-
-require_once(PHPXI . "/SYSTEM/Benchmark/Benchmark.php");
-
-require_once(PHPXI . "/SYSTEM/Model.php");
-
-require_once(PHPXI . "/SYSTEM/Controller.php");
-
-
-
+require_once(SYSTEM . "Controller.php");
 
 
 class PHPXI{
@@ -152,8 +198,9 @@ class PHPXI{
     private $route;
     
     function __construct(){
-      $this->config = new PHPXI\SYSTEM\Config();
-      $this->route = new PHPXI\SYSTEM\Route();
+      global $config, $route;
+      $this->config = $config;
+      $this->route = $route;
     }
 
     public function route($url, $callback, $method = "get"){
@@ -172,7 +219,8 @@ class PHPXI{
 
     public function view(){
       if($this->config->item("cache.status")){
-        $this->cache = new PHPXI\SYSTEM\Cache();
+        global $cache;
+        $this->cache = $cache;
         $this->cache->path($this->config->item("cache.path"))->timeout($this->config->item("cache.timeout"))->file("%%".md5(current_url())."%%.html");
         if(!$this->cache->is() || $this->cache->is_timeout()){
           if(HTML_Compressor){

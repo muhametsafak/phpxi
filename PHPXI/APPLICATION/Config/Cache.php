@@ -4,6 +4,6 @@ $config["status"] = false;
 
 $config["timeout"] = 86400;
 
-$config["path"] = PHPXI . "/APPLICATION/Cache/Html/";
+$config["path"] = PHPXI . "/WEIGHT/HTML/";
 
-define("SQL_CACHE_PATH", PHPXI . "/APPLICATION/Cache/SQL/");
+define("SQL_CACHE_PATH", PHPXI . "/WEIGHT/SQL/");

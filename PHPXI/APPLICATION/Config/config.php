@@ -1,12 +1,6 @@
 <?php
 
 /**
- * If you are going to use sessions, set it to "true".
- * $config['session'] = true;
- */
-$config['session'] = false;
-
-/**
  * Charset
  */
 $config['charset'] = "UTF-8";

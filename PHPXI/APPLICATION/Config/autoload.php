@@ -14,11 +14,6 @@ $config["db"] = false;
  */
 $config["connect_db"] = array("default");
 
-/**
- * Install the Input library?
- * $config["input"] = true;
- */
-$config["input"] = true;
 
 /**
  * Upload the Upload library offered by PHPXI?
