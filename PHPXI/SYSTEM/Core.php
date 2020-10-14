@@ -13,6 +13,10 @@ if(!defined("APP")){
   define("APP", PHPXI . "APPLICATION/");
 }
 
+if(!defined("VERSION")){
+  define("VERSION", "1.3");
+}
+
 require_once(SYSTEM . "Autoload.php");
 
 require_once(APP . "Config/Defined.php");
