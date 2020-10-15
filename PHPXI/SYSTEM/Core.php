@@ -101,7 +101,9 @@ $cookie = new PHPXI\Cookie();
 
 $session = null;
 if($config->item("session.start")){
-  session_save_path($config->item("session.path"));
+  if(file_exists($config->item("session.path"))){
+    session_save_path($config->item("session.path"));
+  }
   session_start();
   $session = new PHPXI\Session();
 }
