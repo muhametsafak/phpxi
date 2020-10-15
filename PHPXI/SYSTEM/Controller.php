@@ -4,7 +4,7 @@ namespace Controller;
 class XI_Controller{
   
     function __construct(){
-        global $benchmark, $cache, $config, $cookie, $file, $form, $hook, $http, $input, $lang, $server, $session, $upload, $uri, $load;
+        global $benchmark, $cache, $config, $cookie, $file, $form, $hook, $http, $input, $lang, $server, $session, $upload, $uri, $load, $models;
 
         $this->benchmark = $benchmark;
         $this->config = $config;
@@ -19,6 +19,12 @@ class XI_Controller{
         $this->session = $session;
         $this->upload = $upload;
         $this->uri = $uri;
+
+        if(is_array($models) and sizeof($models) > 0){
+          foreach($models as $key => $value){
+              $this->$key = $value;
+          }
+        }
     }
 
     public function view($filename, $data = array()){

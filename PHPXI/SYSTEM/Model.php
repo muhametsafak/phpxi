@@ -4,7 +4,7 @@ namespace Model;
 class XI_Model{
   
     function __construct(){
-        global $benchmark, $cache, $config, $cookie, $file, $form, $hook, $http, $input, $lang, $server, $session, $upload, $uri, $load, $db;
+        global $benchmark, $cache, $config, $cookie, $file, $form, $hook, $http, $input, $lang, $server, $session, $upload, $uri, $load, $db, $models;
 
         $this->benchmark = $benchmark;
         $this->config = $config;
@@ -30,27 +30,14 @@ class XI_Model{
             }
         }
 
-        if(is_array($this->config->item("autoload.model")) and sizeof($this->config->item("autoload.model")) > 0){
-            foreach($this->config->item("autoload.model") as $key => $value){
-                $this->model($key, $value);
+        if(is_array($models) and sizeof($models) > 0){
+            foreach($models as $key => $value){
+                $this->$key = $value;
             }
         }
     }
-
-    public function view($filename, $data = array()){
-        if(pathinfo($filename, PATHINFO_EXTENSION) != "php"){
-          $filename = $filename.".php";
-        }
-        if(is_array($data) and sizeof($data)){
-          extract($data);
-        }
-        $path = APP . "View/" . $filename;
-        if(file_exists($path)){
-          require($path);
-        }
-      }
     
-      public function model($name, $method, $parameters = ""){
+    public function model($name, $method, $parameters = ""){
         $model_path = APP . 'Model/' . $name . '.php';
         require_once($model_path);
         $name = "Model\\".$name;
@@ -59,11 +46,11 @@ class XI_Model{
         }else{
             return $this->$method = new $name($parameters);
         }
-      }
-    
-      public function helper($name){
-          $model_path = APP . 'Helpers/' . $name . '_helper.php';
-          require_once($model_path);
-      }
+    }
+
+    public function helper($name){
+        $model_path = APP . 'Helpers/' . $name . '_helper.php';
+        require_once($model_path);
+    }
 
 }

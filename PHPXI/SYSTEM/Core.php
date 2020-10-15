@@ -150,19 +150,6 @@ if(is_array($application_helper_file) and sizeof($application_helper_file) > 0){
 }
 unset($application_helper_file);
 
-
-$application_libraries_file = $config->item("autoload.libraries");
-if(is_array($application_libraries_file) and sizeof($application_libraries_file) > 0){
-  foreach($application_libraries_file as $library){
-    $path = APP . 'Libraries/' . ucfirst($library) . '.php';
-    if(file_exists($path)){
-      require_once($path);
-    }
-  }
-}
-unset($application_libraries_file);
-
-
 require_once(SYSTEM . "Route.php");
 $route = new Route\XI_Route();
 
@@ -196,6 +183,31 @@ if($config->item("autoload.db")){
 require_once(SYSTEM . "Model.php");
 
 require_once(SYSTEM . "Controller.php");
+
+$models = array();
+$application_model_file = $config->item("autoload.model");
+if(is_array($application_model_file) and sizeof($application_model_file) > 0){
+  foreach($application_model_file as $key => $value){
+    $path = APP . 'Model/' . ucfirst($key) . ".php";
+    if(file_exists($path)){
+      require_once($path);
+      $model_name = "Model\\".$key;
+      $models[$value] = new $model_name();
+    }
+  }
+}
+unset($application_model_file);
+
+$application_libraries_file = $config->item("autoload.libraries");
+if(is_array($application_libraries_file) and sizeof($application_libraries_file) > 0){
+  foreach($application_libraries_file as $library){
+    $path = APP . 'Libraries/' . ucfirst($library) . '.php';
+    if(file_exists($path)){
+      require_once($path);
+    }
+  }
+}
+unset($application_libraries_file);
 
 
 class PHPXI{
