@@ -1,5 +1,5 @@
 <?php
-
+$xi_memory_use_starting = memory_get_usage();
 $msure = microtime (); 
 $msure = explode (' ', $msure ); 
 $msure = $msure[1] + $msure[0];
@@ -225,6 +225,7 @@ class PHPXI{
       $this->view = $this->route->run($url, $callback, $method);
       if($this->view != ""){
         $this->view();
+        exit;
       }
     }
 
@@ -270,5 +271,7 @@ class PHPXI{
 $msure = microtime (); 
 $msure = explode (' ', $msure); 
 $msure = $msure[1] + $msure[0]; 
+define("MEMORY_USE", round((memory_get_usage() - $xi_memory_use_starting) / 1048576, 4));
+unset($xi_memory_use_starting);
+define("MEMORY_USE_MAX", round(memory_get_peak_usage()/1048576, 3));
 define("LOAD_TIME", round (($msure - TIMER_START), 5));
-define("MEMORY_USE", round(memory_get_peak_usage()/1048576, 3));

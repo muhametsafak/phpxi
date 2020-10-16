@@ -80,15 +80,18 @@ class XI_Route{
             );
             $url = str_replace(array_keys($patterns), array_values($patterns), $url);
             
-            ob_start();
             if(preg_match('@^'.$url.'$@', $request_uri, $parameters)){
                 unset($parameters[0]);
                 if(is_callable($callback)){
+                    ob_start();
                     call_user_func_array($callback, $parameters);
+                    $view = ob_get_clean();
+                    ob_end_flush();
                 }else{
                     $controller = explode("@", $callback);
                     $controllerFile = APP . 'Controller/'.ucfirst($controller[0]).'.php';
                     if(file_exists($controllerFile)){
+                        ob_start();
                         require_once($controllerFile);
                         $className = ucfirst($controller[0]);
                         $this->current_controller = $className;
@@ -110,7 +113,10 @@ class XI_Route{
                                 }
                             }
                         }
+                        $view = ob_get_clean();
+                        ob_end_flush();
                     }else{
+                        ob_start();
                         if(FORCE_CONTROLLER_NAME != "" and FORCE_CONTROLLER_FUNCTION != ""){
                             $controllerFile = APP . 'Controller/'.ucfirst(FORCE_CONTROLLER_NAME).'.php';
                             if(file_exists($controllerFile)){
@@ -134,13 +140,13 @@ class XI_Route{
                                 $this->notfound(["404 : Page Not Found"]);
                             }
                         }
+                        $view = ob_get_clean();
+                        ob_end_flush();
                     }
                 }
                 define("CURRENT_CONTROLLER", $this->current_controller);
                 define("CURRENT_CFUNCTION", $this->current_cfunction);
             }
-            $view = ob_get_clean();
-            ob_end_flush();
         }
         return $view;
     }
