@@ -21,13 +21,7 @@ class XI_Model{
         $this->uri = $uri;
 
         if($this->config->item("autoload.db")){
-            if(sizeof($this->config->item("autoload.connect_db")) > 1){
-                foreach($this->config->item("autoload.connect_db") as $db_group_name){
-                    $this->db->$db_group_name = $db[$db_group_name];
-                }
-            }else{
-                $this->db = $db;
-            }
+            $this->db = $db;
         }
 
         if(is_array($models) and sizeof($models) > 0){

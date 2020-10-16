@@ -152,10 +152,10 @@ class Mysqli{
         $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
         break;
       case 'like':
-        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$db->escape_string($value)."'";
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$this->escape_string($value)."'";
         break;
       case 'not like':
-        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$this->escape_string($value)."'";
         break;
       case 'between' : 
         $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` BETWEEN ".$value[0]." AND ".$value[1];
@@ -188,10 +188,10 @@ class Mysqli{
         $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
         break;
       case 'like':
-        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$db->escape_string($value)."'";
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$this->escape_string($value)."'";
         break;
       case 'not like':
-        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$this->escape_string($value)."'";
         break;
       case 'between' : 
         $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` BETWEEN ".$value[0]." AND ".$value[1];
@@ -224,10 +224,10 @@ class Mysqli{
         $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
         break;
       case 'like':
-        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$db->escape_string($value)."'";
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$this->escape_string($value)."'";
         break;
       case 'not like':
-        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$this->escape_string($value)."'";
         break;
       case 'between' : 
         $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."` BETWEEN ".$value[0]." AND ".$value[1];
@@ -261,10 +261,10 @@ class Mysqli{
         $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT IN (".$value.")";
         break;
       case 'like':
-        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$db->escape_string($value)."'";
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` LIKE '".$this->escape_string($value)."'";
         break;
       case 'not like':
-        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$db->escape_string($value)."'";
+        $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` NOT LIKE '".$this->escape_string($value)."'";
         break;
       case 'between' : 
         $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."` BETWEEN ".$value[0]." AND ".$value[1];
