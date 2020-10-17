@@ -2,7 +2,8 @@
 namespace Model;
 
 class XI_Model{
-  
+    public $db;
+
     function __construct(){
         global $benchmark, $cache, $config, $cookie, $file, $form, $hook, $http, $input, $lang, $server, $session, $upload, $uri, $load, $db, $models;
 
@@ -46,5 +47,6 @@ class XI_Model{
         $model_path = APP . 'Helpers/' . $name . '_helper.php';
         require_once($model_path);
     }
+
 
 }

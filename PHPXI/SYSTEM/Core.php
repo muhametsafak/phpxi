@@ -14,7 +14,7 @@ if(!defined("APP")){
 }
 
 if(!defined("VERSION")){
-  define("VERSION", "1.3");
+  define("VERSION", "1.4");
 }
 
 require_once(SYSTEM . "Autoload.php");
@@ -169,9 +169,9 @@ if($config->item("autoload.db")){
     if($connections_size == 1){
       $db = db_connect($connections[0]);
     }else{
-      $db = array();
+      $config->set("autoload.conenct_db", $connections);
       foreach($connections as $row){
-        $db[$row] = db_connect($row);
+        $db = new PHPXI\MultiDatabase();
       }
     }
   }

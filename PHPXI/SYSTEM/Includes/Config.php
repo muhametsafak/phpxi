@@ -47,4 +47,17 @@ class Config{
         return $return;
     }
 
+    public function set(string $key, $value){
+        $ids = explode(".", $key);
+        if(sizeof($ids) == 1){
+            $this->config[$key] = $value;
+            return true;
+        }elseif(sizeof($ids) == 2){
+            $this->config[$ids[0]][$ids[1]] = $value;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
