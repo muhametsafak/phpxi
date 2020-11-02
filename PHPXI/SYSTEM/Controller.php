@@ -49,6 +49,9 @@ class XI_Controller{
       }else{
           return $this->$method = new $name($parameters);
       }
+      if(method_exists($this->$method, "autoload")){
+          $this->$method->autoload();
+      }
     }
   
     public function helper($name){

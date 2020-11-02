@@ -193,6 +193,9 @@ if(is_array($application_model_file) and sizeof($application_model_file) > 0){
       require_once($path);
       $model_name = "Model\\".$key;
       $models[$value] = new $model_name();
+      if(method_exists($models[$value], "autoload")){
+        $models[$value]->autoload();
+      }
     }
   }
 }

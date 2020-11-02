@@ -37,9 +37,12 @@ class XI_Model{
         require_once($model_path);
         $name = "Model\\".$name;
         if($parameters == ""){
-            return $this->$method = new $name();
+            $this->$method = new $name();
         }else{
-            return $this->$method = new $name($parameters);
+            $this->$method = new $name($parameters);
+        }
+        if(method_exists($this->$method, "autoload")){
+            $this->$method->autoload();
         }
     }
 
