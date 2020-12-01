@@ -9,5 +9,5 @@ define("PHPXI", realpath("../") . '/PHPXI/');
 require_once(PHPXI . "SYSTEM/Core.php");
 $phpxi = new PHPXI();
 require_once(APP . 'Route/Web.php');
-$phpxi->autorun();
+$phpxi->run();
 unset($db);

@@ -227,6 +227,9 @@ class PHPXI{
 
     public function autorun(){
       $this->route->autorun();
+    }
+
+    public function run(){
       $this->view = $this->route->dispatch();
       if($this->view != ""){
         $this->view();
