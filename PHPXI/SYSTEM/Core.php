@@ -27,7 +27,7 @@ if(!defined("ENV")){
 
 if(ENV == "development"){
   ini_set('error_reporting', E_ALL);
-  error_reporting(-1);
+  error_reporting(E_ALL ^ E_ERROR);
   ini_set("display_errors", 1);
 }else{
   error_reporting(0);
@@ -55,7 +55,6 @@ if(!function_exists("PHPXI_ErrorHandler")){
   }
 }
 $old_error_handler = set_error_handler("PHPXI_ErrorHandler");
-
 
 $configs = array();
 $phpxi_config_file = array("config", "database", "autoload", "upload", "cache", "cookie", "session", "route");
