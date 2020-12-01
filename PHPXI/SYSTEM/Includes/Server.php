@@ -2,13 +2,13 @@
 namespace PHPXI;
 
 class Server{
-    private $server;
+    private array $server = [];
 
     function __construct(){
         $this->server = $_SERVER;
     }
     
-    public function item($key){
+    public function item(string $key){
         if(isset($this->server[$key]) and trim($this->server[$key]) != ""){
             return $this->server[$key];
         }else{
@@ -16,7 +16,7 @@ class Server{
         }
     }
 
-    public function set($key, $value){
+    public function set(string $key, $value): void{
         $this->server[$key] = $value;
         $_SERVER[$key] = $value;
     }

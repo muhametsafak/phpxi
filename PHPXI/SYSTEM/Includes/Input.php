@@ -3,10 +3,10 @@ namespace PHPXI;
 
 class Input{
     
-    public $post;
-    public $get;
-    public $files;
-    public $request;
+    public array $post = [];
+    public array $get = [];
+    public array $files = [];
+    public array $request = [];
     
     function __construct(){
         if(isset($_POST)){
@@ -23,7 +23,7 @@ class Input{
         }
     }
     
-    function post($key = ""){
+    function post(string $key = ""){
         if($key == ""){
             return $this->post;
         }else{
@@ -39,7 +39,7 @@ class Input{
         }
     }
     
-    function get($key = ""){
+    function get(string $key = ""){
         if($key == ""){
             return $this->get;
         }else{
@@ -51,7 +51,7 @@ class Input{
         }
     }
     
-    function files($files = ""){
+    function files(string $files = ""){
         if($files == ""){
             return $this->files;
         }else{
@@ -63,7 +63,7 @@ class Input{
         }
     }
     
-    function request($key = ""){
+    function request(string $key = ""){
         if($key == ""){
             return $this->request;
         }else{

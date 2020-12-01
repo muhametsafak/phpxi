@@ -3,12 +3,11 @@ namespace PHPXI;
 
 class Uri{
 
-    public $uri;
-    private $request_uri;
+    public array $uri = [];
+    private string $request_uri;
     
 
     function __construct(){
-        $this->uri = array();
         
         if(MULTI_LANGUAGES){
             $request_uri = trim(mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8"), "/");
@@ -26,7 +25,7 @@ class Uri{
         }
     }
     
-    public function get($id){
+    public function get(int $id): string{
         if(isset($this->uri[$id])){
             return $this->uri[$id];
         }else{
@@ -34,7 +33,7 @@ class Uri{
         }
     }
 
-    public function request_uri(){
+    public function request_uri(): string{
         return $this->request_uri;
     }
     

@@ -3,7 +3,7 @@ namespace PHPXI;
 
 class Session{
     
-    public $session;
+    private array $session = [];
     
     function __construct(){
         $this->session = $_SESSION;
@@ -24,7 +24,7 @@ class Session{
         return session_id();
     }
 
-    public function item($key){
+    public function item(string $key){
         if(isset($this->session[$key]) and $this->session[$key] != ""){
             return $this->session[$key];
         }else{
@@ -32,21 +32,21 @@ class Session{
         }
     }
 
-    public function set($key, $value){
+    public function set(string $key, $value): void{
         $this->session[$key] = $value;
         $_SESSION[$key] = $value;
     }
     
-    public function add($key, $value){
+    public function add(string $key, $value): void{
         $this->set($key, $value);
     }
 
     
-    public function update($key, $value){
+    public function update(string $key, $value): void{
         $this->set($key, $value);
     }
     
-    public function delete($key){
+    public function delete(string $key): void{
         $this->session[$key] = null;
         $_SESSION[$key] = null;
         unset($this->session[$key]);

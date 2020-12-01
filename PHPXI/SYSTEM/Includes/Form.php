@@ -2,9 +2,9 @@
 namespace PHPXI;
 
 class Form{
-  private $return;
+  private string $return;
 	
-	function start($form = array()){
+	function start(array $form = []): void{
     $this->return = '<form';
     foreach ($form as $key => $value) {
       $this->return .= ' '.$key.'="'.$value.'"';
@@ -12,7 +12,7 @@ class Form{
     $this->return .= '>';
 	}
 
-  function open_div($div = array()){
+  function open_div(array $div = []): void{
     $this->return .= ' <div';
     foreach ($div as $key => $value) {
       $this->return .= ' '.$key.'="'.$value.'" ';
@@ -20,16 +20,16 @@ class Form{
     $this->return .= '> ';
   }
 
-  function close_div(){
+  function close_div(): void{
     $this->return .= ' </div> ';
   }
 
-  function add_label($key = "", $value = ""){
+  function add_label(string $key = "", string $value = ""): void{
     $return = '<label for="'.$key.'">'.$value.'</label>';
     $this->return .= $return;
   }
 
-  function add_input($input = ""){
+  function add_input($input = ""): void{
     $return = '<input ';
     if(is_array($input)){
       if(!isset($input['type'])){
@@ -45,7 +45,7 @@ class Form{
     $this->return .= $return;
   }
 
-  function add_select($select = array(), $options = array(), $selected_id = NULL){
+  function add_select(array $select = [], array $options = [], string $selected_id = NULL): void{
     $this->return .= '<select ';
     foreach ($select as $key => $value) {
       $this->return .= $key.'="'.$value.'" ';
@@ -57,7 +57,7 @@ class Form{
     $this->return .= ' </select>';
   }
 
-  function add_textarea($textarea = array(), $textarea_value = ""){
+  function add_textarea(array $textarea = [], string $textarea_value = ""): void{
     $return = ' <textarea ';
     foreach ($textarea as $key => $value) {
       $return .= $key.'="'.$value.'" ';
@@ -66,7 +66,7 @@ class Form{
     $this->return .= $return;
   }
 
-  function add_button($button = array(), $text = ""){
+  function add_button(array $button = [], string $text = ""): void{
     $return = '<button';
     foreach ($button as $key => $value) {
       $return .= ' '.$key.'="'.$value.'"';
@@ -75,7 +75,7 @@ class Form{
     $this->return .= $return;
   }
 
-  function add_option($key, $value, $selected_id = ""){
+  function add_option(string $key, string $value, string $selected_id = ""): void{
     if($selected_id == $key){
       $return = '<option value="'.$key.'" selected>'.$value.'</option>';
     }else{
@@ -84,11 +84,11 @@ class Form{
     $this->return .= $return;
   }
 
-  function add_html($html = ""){
+  function add_html(string $html = ""): void{
     $this->return .= $html;
   }
 
-  function return(){
+  function return(): string{
     $this->return .= '</form>';
     $return = $this->return;
     $this->return = null;

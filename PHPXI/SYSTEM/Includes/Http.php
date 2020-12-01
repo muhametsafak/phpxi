@@ -2,16 +2,16 @@
 namespace PHPXI;
 
 class Http{
-    private $url;
+    private string $url;
 
-    private $scheme;
-    private $host;
-    private $port;
-    private $user;
-    private $pass;
-    private $path;
-    private $query;
-    private $fragment;
+    private string $scheme;
+    private string $host;
+    private int $port;
+    private string $user;
+    private string $pass;
+    private string $path;
+    private string $query;
+    private string $fragment;
 
     function __construct(){
         if(isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] == "on"){
@@ -23,67 +23,67 @@ class Http{
         $this->parse = parse_url($this->url);
     }
 
-    public function set($url){
+    public function set(string $url): void{
         $this->url = $url;
     }
 
-    public function scheme($url = ""){
+    public function scheme(string $url = ""): string{
         if($url == ""){
             $url = $this->url;
         }
         return parse_url($url, PHP_URL_SCHEME);
     }
 
-    public function host($url = ""){
+    public function host(string $url = ""): string{
         if($url == ""){
             $url = $this->url;
         }
         return parse_url($url, PHP_URL_HOST);
     }
 
-    public function port($url = ""){
+    public function port(string $url = ""): int{
         if($url == ""){
             $url = $this->url;
         }
         return parse_url($url, PHP_URL_PORT);
     }
 
-    public function user($url = ""){
+    public function user(string $url = ""): string{
         if($url == ""){
             $url = $this->url;
         }
         return parse_url($url, PHP_URL_USER);
     }
 
-    public function pass($url = ""){
+    public function pass(string $url = ""): string{
         if($url == ""){
             $url = $this->url;
         }
         return parse_url($url, PHP_URL_PASS);
     }
 
-    public function path($url = ""){
+    public function path(string $url = ""): string{
         if($url == ""){
             $url = $this->url;
         }
         return parse_url($url, PHP_URL_PATH);
     }
 
-    public function query($url = ""){
+    public function query(string $url = ""): string{
         if($url == ""){
             $url = $this->url;
         }
         return parse_url($url, PHP_URL_QUERY);
     }
 
-    public function fragment($url = ""){
+    public function fragment(string $url = ""): string{
         if($url == ""){
             $url = $this->url;
         }
         return parse_url($url, PHP_URL_FRAGMENT);
     }
 
-    public function response($code = 200){
+    public function response(int $code = 200): string{
         switch ($code) {
             case 100: $text = 'Continue'; break;
             case 101: $text = 'Switching Protocols'; break;
@@ -130,7 +130,7 @@ class Http{
         header($protocol . ' ' . $code . ' ' . $text);
     }
 
-    public function userAgent(){
+    public function userAgent(): string{
         return $_SERVER['HTTP_USER_AGENT'];
     }
 

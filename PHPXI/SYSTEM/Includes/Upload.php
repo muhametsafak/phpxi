@@ -3,50 +3,50 @@ namespace PHPXI;
 
 class Upload{
 
-    private $file;
-    private $error;
-    private $continue = true;
+    private array $file;
+    private string $error;
+    private bool $continue = true;
 
-    private $sizeLimit;
-    private $fileName = "";
-    private $path;
-    private $dir_url;
-    private $file_type;
-    private $file_extension;
-    private $jpg_compress;
-    private $png_compress;
-    private $resize = array("width" => "300", "height" => "300");
+    private int $sizeLimit;
+    private string $fileName = "";
+    private string $path;
+    private string $dir_url;
+    private string $file_type;
+    private string $file_extension;
+    private int $jpg_compress;
+    private int $png_compress;
+    private array $resize = ["width" => "300", "height" => "300"];
 
-    private $pathinfo;
-    private $filePath;
-    private $fileUrl;
-    private $thumbnail = array();
+    private array $pathinfo;
+    private string $filePath;
+    private string $fileUrl;
+    private array $thumbnail = [];
 
-    public function config($config){
+    public function config(array $config): object{
         foreach($config as $key => $value){
             $this->$key = $value;
         }
         return $this;
     }
 
-    public function path($path){
+    public function path(string $path): void{
         $this->path = $path;
     }
 
-    public function url($url){
+    public function url(string $url): void{
         $this->dir_url = $url;
     }
 
-    public function name(string $name){
+    public function name(string $name): void{
         $this->fileName = $name;
     }
 
-    public function maxSize(int $size){
+    public function maxSize(int $size): void{
         $this->sizeLimit = $size;
     }
 
 
-    public function return(){
+    public function return(): array{
         if($this->error != ""){
             return $this->error;
         }else{
@@ -63,7 +63,7 @@ class Upload{
         }
     }
 
-    public function file($file){
+    public function file(array $file): object{
         $this->file = $file;
         if(!is_dir($this->path)){
             if(!mkdir($this->path)){
@@ -112,7 +112,7 @@ class Upload{
         return $this;
     }
 
-    public function handle(){
+    public function handle(): object{
         if($this->continue){
             if($this->file["type"] == "image/jpeg" || $this->file["type"] == "image/jpg" || $this->file["type"] == "image/png"){
                 if($this->file["type"] == "image/jpeg" || $this->file["type"] == "image/jpg"){
@@ -133,18 +133,18 @@ class Upload{
         return $this;
     }
 
-    public function thumbnail($width = "300", $height = "300", $prefix = "thumb_"){
+    public function thumbnail(int $width = 300, int $height = 300, string $prefix = "thumb_"): void{
         if($this->continue){
             $this->thumbnail = $this->image_resize($this->filePath, ["width" => $width, "height" => $height], $prefix);
         }
     }
 
-    public function jpg_compress($source, $destination, $quality) {
+    public function jpg_compress(string $source, string $destination, int $quality): image {
         $image = imagecreatefromjpeg($source);
         return imagejpeg($image, $destination, $quality);
     }
   
-    public function png_compress($source, $destination, $quality){
+    public function png_compress(string $source, string $destination, int $quality): image{
         if($quality > 9){
             $quality = 9;
         }
@@ -155,7 +155,7 @@ class Upload{
     }
 
 
-    public function image_resize($path, $resize = array("width" => "300", "height" => "300"), $prefix = "thumb_"){
+    public function image_resize(string $path, array $resize = ["width" => "300", "height" => "300"], string $prefix = "thumb_"): array{
         $pathinfo = pathinfo($path);
     
         $dirname = $pathinfo["dirname"];
