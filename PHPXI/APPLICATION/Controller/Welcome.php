@@ -20,4 +20,8 @@ class Welcome extends XI_Controller{
         $this->http->response(404);
         echo $param;
     }
+
+    public function demo(){
+       echo "Selam burası demo"; 
+    }
 }

@@ -9,16 +9,8 @@ class Config{
         global $configs;
         $this->config = $configs;
     }
-        
-    
-    /**
-     * item
-     *
-     * @param  mixed $key
-     * @param  mixed $type = if true @return object
-     * @return void
-     */
-    public function item($key, $type = false){
+
+    public function item(string $key, bool $type = false){
         $ids = explode(".", $key);
         if(sizeof($ids) > 1){
             if(isset($this->config[$ids[0]])){
@@ -47,7 +39,7 @@ class Config{
         return $return;
     }
 
-    public function set(string $key, $value){
+    public function set(string $key, $value): bool{
         $ids = explode(".", $key);
         if(sizeof($ids) == 1){
             $this->config[$key] = $value;

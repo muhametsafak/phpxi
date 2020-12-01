@@ -3,29 +3,177 @@ namespace Route;
 
 class XI_Route{
 
-    private $url;
+    public array $routes = [];
+    
+    public string $prefix = '';
 
-    private $current_controller;
-    private $current_cfunction;
+    public bool $hasRoute = false;
 
-    public function url(){
-        $dirname = dirname($_SERVER['SCRIPT_NAME']);
-        $basename = basename($_SERVER['SCRIPT_NAME']);
+    private string $url = '';
+
+    private string $current_controller = '';
+
+    private string $current_cfunction = '';
+
+    public array $patterns = [
+        '{int[0-9]?}'       => '([0-9]+)',
+        '{string[0-9]?}'    => '([a-zA-Z0-9-_]+)',
+        ':id[0-9]?'         => '([0-9]+)',
+        ':str[0-9]?'        => '([a-zA-Z0-9-_]+)'
+    ];
+
+    public function route($path, $callback, string $method = 'get'): void{
+        $this->routes[$method][$path] = [
+            'callback' => $callback
+        ];
+    }
+
+    public function getUrl(): string{
         if(MULTI_LANGUAGES){
             $request_uri = "/".trim(mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8"), "/");
             $uris = explode("/", ltrim($request_uri, "/"));
             unset($uris[0]);
             $this->url = "/".implode("/", $uris);
         }else{
-            $this->url = str_replace([$dirname, $basename], null, $_SERVER["REQUEST_URI"]);
+            $dirname = dirname($_SERVER['SCRIPT_NAME']);
+            $basename = basename($_SERVER['SCRIPT_NAME']);
+            $request_uri = str_replace([$dirname, $basename], null, $_SERVER["REQUEST_URI"]);
+            $this->url = $request_uri;
         }
         return $this->url;
     }
 
+    public function getMethod(): string{
+        return strtolower($_SERVER['REQUEST_METHOD']);
+    }
+
+
+    public function name(string $name){
+        $key = array_key_last($this->routes['get']);
+        $this->routes['get'][$key]['name'] = $name;
+    }
+    
+    public function url(string $name, array $params = []): string
+    {
+        $route = array_key_first(array_filter($this->routes['get'], function($route) use($name){
+            return $route['name'] === $name;
+        }));
+        return str_replace(array_keys($params), array_values($params), $route);
+    }
+
+    public function prefix($prefix): Route
+    {
+        $this->prefix = $prefix;
+        return new self();
+    }
+
+    public function group(closure $closure): void
+    {
+        $closure();
+        $this->prefix = '';
+    }
+
+    public function where(string $key, string $pattern): void{
+        $this->patterns[':' . $key] = '(' . $pattern . ')';
+    }
+
+    public function redirect(string $from, string $to, int $status = 301): void{
+        $this->routes['get'][$from] = [
+            'redirect'  => $to,
+            'status'    => $status
+        ];
+    }
+
+    public function to(string $to, int $status = 301): void{
+        header("Location: ".$to, true, $status);
+    }
+
+    public function dispatch(): string{
+        $method = $this->getMethod();
+        $url = $this->getUrl();
+        ob_start();
+        foreach($this->routes[$method] as $path => $probs){
+            foreach($this->patterns as $key => $value){
+                $path = preg_replace('#' . $key . '#', $value, $path);
+            }
+            $path = $this->prefix . $path;
+            $pattern = '#^' . $path . '$#';
+            if(preg_match($pattern, $url, $params)){
+                array_shift($params);
+                $this->hasRoute = true;
+                if(isset($probs['redirect'])){
+                    $this->to($probs['redirect'], $probs['status']);
+                }else{
+                    $callback = $probs['callback'];
+                    if(is_string($callback)){
+                        [$controllerName, $methodName] = explode('@', $callback);
+                        $controllerFilePath = APP . 'Controller/' . ucfirst($controllerName) . '.php';
+                        if(file_exists($controllerFilePath)){
+                            require APP . 'Controller/'.$controllerName.'.php';
+                            $this->current_controller = $controllerName;
+                            $controllerName = 'Controller\\'.$controllerName;
+                        }else{
+                            if(FORCE_CONTROLLER_NAME != "" and FORCE_CONTROLLER_FUNCTION != ""){
+                                $controllerFilePath = APP . 'Controller/' . ucfirst(FORCE_CONTROLLER_NAME) . '.php';
+                                if(file_exists($controllerFilePath)){
+                                    $controllerName = FORCE_CONTROLLER_NAME;
+                                    require APP . 'Controller/'.$controllerName.'.php';
+                                    $this->current_controller = $controllerName;
+                                    $controllerName = 'Controller\\'.$controllerName;
+                                    $methodName = FORCE_CONTROLLER_FUNCTION;
+                                }
+                            }
+                        }
+                        $this->current_cfunction = $methodName;
+                        define("CURRENT_CONTROLLER", $this->current_controller);
+                        define("CURRENT_CFUNCTION", $this->current_cfunction);
+                        $controller = new $controllerName();
+                        call_user_func_array([$controller, $methodName], $params);
+                    }elseif(is_callable($callback)){
+                        call_user_func_array($callback, $params);
+                    }
+                    define("CURRENT_CPARAMETERS", $params);
+                }
+            }
+        }
+        if($this->hasRoute === false){
+            $this->hasRoute();
+        }
+        $view = ob_get_clean();
+        ob_end_flush();
+        return $view;
+    }
+
+
+
+    public function hasRoute(){
+        $params = [];
+        if(DEFAULT_CONTROLLER_404 != ""){
+            $parse = explode("@", DEFAULT_CONTROLLER_404);
+            $controllerName = $parse[0];
+            $methodName = $parse[1];
+            $this->current_controller = $controllerName;
+            $this->current_cfunction = $methodName;
+            define("CURRENT_CONTROLLER", $this->current_controller);
+            define("CURRENT_CFUNCTION", $this->current_cfunction);
+            define("CURRENT_CPARAMETERS", []);
+            $controllerFilePath = APP . 'Controller/' . ucfirst($controllerName) . '.php';
+            if(file_exists($controllerFilePath)){
+                require APP . 'Controller/'.$controllerName.'.php';
+                $controllerName = 'Controller\\'.$controllerName;
+                $controller = new $controllerName();
+                call_user_func_array([$controller, $methodName], $params);
+            }
+        }else{
+            die("Found not page");
+        }
+    }
+
+
     public function autorun(){
-        $uri = $this->url();
+        $uri = $this->getUrl();
         if($uri == "/"){
-            return $this->run("/", DEFAULT_CONTROLLER_NAME.'@'.DEFAULT_CONTROLLER_FUNCTION, DEFAULT_CONTROLLER_METHOD);
+            return $this->route('/', DEFAULT_CONTROLLER_NAME.'@'.DEFAULT_CONTROLLER_FUNCTION);
         }else{
             $parse = explode("/", trim($uri, "/"));
             $className = $parse[0];
@@ -39,118 +187,8 @@ class XI_Route{
                 $this->url = $uri;
             }
             $url = "/".$className."/".$functionName.str_repeat("/{all}", $parameters_size);
-            return $this->run($url, $className.'@'.$functionName, DEFAULT_CONTROLLER_METHOD);
+            return $this->route($url, $className.'@'.$functionName);
         }
     }
 
-    public function notfound($parameters){
-        $controller = explode("@", DEFAULT_CONTROLLER_404);
-        $controllerFile = PHPXI . '/APPLICATION/Controller/'.ucfirst($controller[0]).'.php';
-        if(file_exists($controllerFile)){
-            require_once($controllerFile);
-            $className = ucfirst($controller[0]);
-            $this->current_controller = $className;
-            $this->current_cfunction = $controller[1];
-            $className = "Controller\\".ucfirst($controller[0]);
-            $class = new $className;
-            if(method_exists($class, $controller[1])){
-                call_user_func_array([$class, $controller[1]], $parameters);
-            }else{
-                echo 'ERROR : Method ('.$controller[1].') not found in Controller ('.$className.')';
-                echo "\n";
-            }
-        }else{
-            echo "<b>".$controllerFile."</b> file not found.\n";
-        } 
-    }
-
-    public function run($url, $callback, $method = "get"){
-        $view = null;
-        $request_uri = $this->url;
-        if($request_uri == ""){
-            $request_uri = $this->url();
-            $this->url = $request_uri;
-        }
-        $methods = explode("|", strtoupper($method));
-        if(in_array($_SERVER["REQUEST_METHOD"], $methods)){
-            $patterns = array(
-                '{string}'  => '([a-zA-Z]+)',
-                '{int}'     => '([0-9]+)',
-                '{all}'     => '(.*)'
-            );
-            $url = str_replace(array_keys($patterns), array_values($patterns), $url);
-            
-            if(preg_match('@^'.$url.'$@', $request_uri, $parameters)){
-                unset($parameters[0]);
-                if(is_callable($callback)){
-                    ob_start();
-                    call_user_func_array($callback, $parameters);
-                    $view = ob_get_clean();
-                    ob_end_flush();
-                }else{
-                    $controller = explode("@", $callback);
-                    $controllerFile = APP . 'Controller/'.ucfirst($controller[0]).'.php';
-                    if(file_exists($controllerFile)){
-                        ob_start();
-                        require_once($controllerFile);
-                        $className = ucfirst($controller[0]);
-                        $this->current_controller = $className;
-                        $this->current_cfunction = $controller[1];
-                        define("CURRENT_CPARAMETERS", $parameters);
-                        $className = "Controller\\".$className;
-                        $class = new $className;
-                        if(method_exists($class, $controller[1])){
-                            call_user_func_array([$class, $controller[1]], $parameters);
-                        }else{
-                            if(FORCE_CONTROLLER_FUNCTION != ""){
-                                $this->current_cfunction = FORCE_CONTROLLER_FUNCTION;
-                                call_user_func_array([$class, FORCE_CONTROLLER_FUNCTION], $parameters);
-                            }else{
-                                if(ENV == "development"){
-                                    $this->notfound(['ERROR : Method ('.$controller[1].') not found in Controller ('.$className.')']);
-                                }else{
-                                    $this->notfound(["404 : Page Not Found"]);
-                                }
-                            }
-                        }
-                        $view = ob_get_clean();
-                        ob_end_flush();
-                    }else{
-                        ob_start();
-                        if(FORCE_CONTROLLER_NAME != "" and FORCE_CONTROLLER_FUNCTION != ""){
-                            $controllerFile = APP . 'Controller/'.ucfirst(FORCE_CONTROLLER_NAME).'.php';
-                            if(file_exists($controllerFile)){
-                                require_once($controllerFile);
-                                $className = "Controller\\".FORCE_CONTROLLER_NAME;
-                                $this->current_controller = FORCE_CONTROLLER_NAME;
-                                $this->current_cfunction = FORCE_CONTROLLER_FUNCTION;
-                                $class = new $className;
-                                call_user_func_array([$class, FORCE_CONTROLLER_FUNCTION], $parameters);
-                            }else{
-                                if(ENV == "development"){
-                                    $this->notfound(['ERROR : "'.$controllerFile.'" not found.']);
-                                }else{
-                                    $this->notfound(["404 : Page Not Found"]);
-                                }   
-                            }
-                        }else{
-                            if(ENV == "development"){
-                                $this->notfound(['ERROR : "'.$controllerFile.'" not found.']);
-                            }else{
-                                $this->notfound(["404 : Page Not Found"]);
-                            }
-                        }
-                        $view = ob_get_clean();
-                        ob_end_flush();
-                    }
-                }
-                define("CURRENT_CONTROLLER", $this->current_controller);
-                define("CURRENT_CFUNCTION", $this->current_cfunction);
-            }
-        }
-        return $view;
-    }
-
-
-    
 }

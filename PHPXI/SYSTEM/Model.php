@@ -32,21 +32,18 @@ class XI_Model{
         }
     }
     
-    public function model($name, $method, $parameters = ""){
+    public function model(string $name, string $method, array $parameters = []){
         $model_path = APP . 'Model/' . $name . '.php';
         require_once($model_path);
         $name = "Model\\".$name;
-        if($parameters == ""){
-            $this->$method = new $name();
+        if(sizeof($parameters) == 0){
+            return $this->$method = new $name();
         }else{
-            $this->$method = new $name($parameters);
-        }
-        if(method_exists($this->$method, "autoload")){
-            $this->$method->autoload();
+            return $this->$method = new $name($parameters);
         }
     }
 
-    public function helper($name){
+    public function helper(string $name){
         $model_path = APP . 'Helpers/' . $name . '_helper.php';
         require_once($model_path);
     }

@@ -193,9 +193,6 @@ if(is_array($application_model_file) and sizeof($application_model_file) > 0){
       require_once($path);
       $model_name = "Model\\".$key;
       $models[$value] = new $model_name();
-      if(method_exists($models[$value], "autoload")){
-        $models[$value]->autoload();
-      }
     }
   }
 }
@@ -216,7 +213,7 @@ unset($application_libraries_file);
 class PHPXI{
     public $method;
     private $view;
-    private $route;
+    public $route;
     
     function __construct(){
       global $config, $route;
@@ -225,15 +222,12 @@ class PHPXI{
     }
 
     public function route($url, $callback, $method = "get"){
-      $this->view = $this->route->run($url, $callback, $method);
-      if($this->view != ""){
-        $this->view();
-        exit;
-      }
+      $this->route->route($url, $callback, $method);
     }
 
     public function autorun(){
-      $this->view = $this->route->autorun();
+      $this->route->autorun();
+      $this->view = $this->route->dispatch();
       if($this->view != ""){
         $this->view();
       }

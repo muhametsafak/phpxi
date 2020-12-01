@@ -27,7 +27,7 @@ class XI_Controller{
         }
     }
 
-    public function view($filename, $data = array()){
+    public function view(string $filename, array $data = []){
       if(pathinfo($filename, PATHINFO_EXTENSION) != "php"){
         $filename = $filename.".php";
       }
@@ -40,21 +40,18 @@ class XI_Controller{
       }
     }
   
-    public function model($name, $method, $parameters = ""){
+    public function model(string $name, string $method, array $parameters = []){
       $model_path = APP . 'Model/' . $name . '.php';
       require_once($model_path);
       $name = "Model\\".$name;
-      if($parameters == ""){
+      if(sizeof($parameters) == 0){
           return $this->$method = new $name();
       }else{
           return $this->$method = new $name($parameters);
       }
-      if(method_exists($this->$method, "autoload")){
-          $this->$method->autoload();
-      }
     }
   
-    public function helper($name){
+    public function helper(string $name){
         $model_path = APP . 'Helpers/' . $name . '_helper.php';
         require_once($model_path);
     }

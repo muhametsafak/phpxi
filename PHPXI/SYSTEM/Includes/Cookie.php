@@ -2,9 +2,9 @@
 namespace PHPXI;
 
 class Cookie{
-    private $prefix = "phpxi_project_";
-    private $timeout = 3600;
-    private $cookie = array();
+    private string $prefix = "phpxi_project_";
+    private int $timeout = 3600;
+    private array $cookie = [];
 
     function __construct(){
         global $config;
@@ -22,7 +22,7 @@ class Cookie{
         }
     }
     
-    public function set($key, $value){
+    public function set(string $key, string $value){
         $this->cookie[$key] = $value;
         $time = $this->timeout + time();
         $id = $this->prefix . $key;
