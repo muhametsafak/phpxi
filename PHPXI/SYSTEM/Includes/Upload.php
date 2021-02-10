@@ -11,8 +11,8 @@ class Upload{
     private string $fileName = "";
     private string $path;
     private string $dir_url;
-    private string $file_type;
-    private string $file_extension;
+    private $file_type;
+    private $file_extension;
     private int $jpg_compress;
     private int $png_compress;
     private array $resize = ["width" => "300", "height" => "300"];
