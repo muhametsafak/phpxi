@@ -37,8 +37,15 @@ class XI_Route{
         }else{
             $dirname = dirname($_SERVER['SCRIPT_NAME']);
             $basename = basename($_SERVER['SCRIPT_NAME']);
-            $request_uri = str_replace([$dirname, $basename], null, $_SERVER["REQUEST_URI"]);
+            if($dirname == "/"){
+                $request_uri = str_replace($basename, null, $_SERVER["REQUEST_URI"]);
+            }else{
+                $request_uri = str_replace([$dirname, $basename], null, $_SERVER["REQUEST_URI"]);
+            }
             $this->url = $request_uri;
+        }
+        if($this->url == ""){
+            $this->url = "/";
         }
         return $this->url;
     }
@@ -124,10 +131,14 @@ class XI_Route{
                                 }
                             }
                         }
+                        $controller = new $controllerName();
+                        if(!method_exists($controller, $methodName)){
+                            $methodName = "index";
+                        }
                         $this->current_cfunction = $methodName;
                         define("CURRENT_CONTROLLER", $this->current_controller);
                         define("CURRENT_CFUNCTION", $this->current_cfunction);
-                        $controller = new $controllerName();
+
                         call_user_func_array([$controller, $methodName], $params);
                     }elseif(is_callable($callback)){
                         call_user_func_array($callback, $params);
@@ -140,7 +151,10 @@ class XI_Route{
             $this->hasRoute();
         }
         $view = ob_get_clean();
-        ob_end_flush();
+        if(ob_get_length() > 0){
+            ob_end_flush();
+        }
+        
         return $view;
     }
 

@@ -17,7 +17,7 @@ define("MULTI_LANGUAGES", false);
  * BASE URL
  * define("BASE_URL", "http://localhost/phpxi/public_html");
  */
-define("BASE_URL", "http://localhost/phpxi/public_html");
+define("BASE_URL", "http://localhost");
 
 /**
  * If you are going to develop, choose "development".

@@ -83,7 +83,7 @@ class Http{
         return parse_url($url, PHP_URL_FRAGMENT);
     }
 
-    public function response(int $code = 200): string{
+    public function response(int $code = 200){
         switch ($code) {
             case 100: $text = 'Continue'; break;
             case 101: $text = 'Switching Protocols'; break;
