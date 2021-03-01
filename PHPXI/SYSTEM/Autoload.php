@@ -1,7 +1,7 @@
 <?php
 
 if(!function_exists("phpxi_autoload")){
-    function phpxi_autoload(string $class) {
+    function phpxi_autoload($class) {
 
         // project-specific namespace prefix
         $prefix = 'PHPXI\\';

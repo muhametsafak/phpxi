@@ -25,11 +25,11 @@ class Language{
 		$this->load();
 	}
 
-	public function get(): string{
+	public function get(){
 		return $this->set;
 	}
 
-	public function load(): void{
+	public function load(){
 		$path = PHPXI . "APPLICATION/Languages/" . $this->set . "/app.php";
 		if(file_exists($path)){
 			$lang = array();
@@ -40,7 +40,7 @@ class Language{
 		}
 	}
 	
-	function r(string $key, array $value = []): string{
+	function r($key, $value = []){
 		if(isset($this->lang[$key])){
 		  $return = $this->lang[$key];
 		}else{
@@ -54,7 +54,7 @@ class Language{
 		return $return;
 	}
 	
-	function e(string $key, array $value = []): string{
+	function e($key, $value = []){
 		echo $this->r($key, $value);
 	}
 

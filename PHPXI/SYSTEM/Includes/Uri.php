@@ -3,8 +3,8 @@ namespace PHPXI;
 
 class Uri{
 
-    public array $uri = [];
-    private string $request_uri;
+    public $uri = [];
+    private $request_uri;
     
 
     function __construct(){
@@ -25,7 +25,7 @@ class Uri{
         }
     }
     
-    public function get(int $id): string{
+    public function get($id){
         if(isset($this->uri[$id])){
             return $this->uri[$id];
         }else{
@@ -33,7 +33,7 @@ class Uri{
         }
     }
 
-    public function request_uri(): string{
+    public function request_uri(){
         return $this->request_uri;
     }
     

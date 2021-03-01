@@ -3,35 +3,35 @@ namespace PHPXI;
 
 class Mysqli{
 
-  private string $host;
-  private string $user;
-  private string $password;
-  private string $name;
-  private string $prefix;
-  private string $charset;
+  private $host;
+  private $user;
+  private $password;
+  private $name;
+  private $prefix;
+  private $charset;
   
   public $mysqli;
 	protected $query;
 	
-  private string $error;
-	private int $query_size = 0;
-  private int $insert_id;
-  private int $num_rows;
-  private array $select = [];
-  private array $from = [];
-  private string $selected_from;
-  private array $where = [];
-  private array $and_where = [];
-  private array $or_where = [];
-  private array $having = [];
-  private array $group_by = [];
-  private string $limit;
-  private array $order_by = [];
+  private $error;
+	private $query_size = 0;
+  private $insert_id;
+  private $num_rows;
+  private $select = [];
+  private $from = [];
+  private $selected_from;
+  private $where = [];
+  private $and_where = [];
+  private $or_where = [];
+  private $having = [];
+  private $group_by = [];
+  private $limit;
+  private $order_by = [];
   private $get;
   private $rows;
 
-  private bool $cache_status = false;
-  private int $cache_timeout = 3600;
+  private $cache_status = false;
+  private $cache_timeout = 3600;
   
 
 
@@ -49,7 +49,7 @@ class Mysqli{
 	  $this->disconnect();
 	}
 
-  function connect(): object{
+  function connect(){
 		$this->mysqli = new \mysqli($this->host, $this->user, $this->password, $this->name);
 		if ($this->mysqli->connect_errno) {
       error_log("MySQLI DB Connect ERROR : " . $this->mysqli->connect_errno . " : " . $this->mysqli->connect_error , 0);
@@ -60,26 +60,26 @@ class Mysqli{
     return $this;
   }
   
-  function disconnect(): object{
+  function disconnect(){
     $this->mysqli->close();
     return $this;
   }
 
-  public function setPrefix(string $prefix): void{
+  public function setPrefix($prefix){
     $this->prefix = $prefix;
   }
 
-  public function setCharset(string $charset): void{
+  public function setCharset($charset){
     $this->charset = $charset;
   }
 
-  public function cache(bool $status = true, int $timeout = 3600): object{
+  public function cache($status = true, $timeout = 3600){
     $this->cache_status = $status;
     $this->cache_timeout = $timeout;
     return $this;
   }
 
-  public function select(string $select = "*"): object{
+  public function select($select = "*"){
     if($select != "*"){
       $selects = explode(",", $select);
       foreach ($selects as $row) {
@@ -113,28 +113,28 @@ class Mysqli{
     return $this;
   }
 
-  public function from(string $from): object{
+  public function from($from){
     $this->from[] = $from;
     $this->selected_from($from);
     return $this;
   }
 
-  public function selected_from(string $from): object{
+  public function selected_from($from){
     $this->selected_from = $from;
     return $this;
   }
 
-  public function join(string $from): object{
+  public function join($from){
     $this->from($from);
     return $this;
   }
 
-  public function join_where(string $from, string $from_column, string $join_from, string $join_column): object{
+  public function join_where($from, $from_column, $join_from, $join_column){
     $this->where[] = "`".$this->prefix.$from."`.`".$from_column."`=`".$this->prefix.$join_from."`.`".$join_column."`";
     return $this;
   }
 
-  public function where(string $column, string $value, string $operator = "="): object{
+  public function where($column, $value, $operator = "="){
     switch (strtolower($operator)) {
       case '=':
         $this->where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`='".$value."'";
@@ -170,7 +170,7 @@ class Mysqli{
     return $this;
   }
 
-  public function and_where(string $column, string $value, string $operator = "="): object{
+  public function and_where($column, $value, $operator = "="){
     switch (strtolower($operator)) {
       case '=':
         $this->and_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`='".$value."'";
@@ -206,7 +206,7 @@ class Mysqli{
     return $this;
   }
 
-  public function or_where(string $column, string $value, string $operator = "="): object{
+  public function or_where($column, $value, $operator = "="){
     switch (strtolower($operator)) {
       case '=':
         $this->or_where[] = "`".$this->prefix.$this->selected_from."`.`".$column."`='".$value."'";
@@ -243,7 +243,7 @@ class Mysqli{
   }
 
   
-  public function having(string $column, string $value, string $operator = "="): object{
+  public function having($column, $value, $operator = "="){
     switch (strtolower($operator)) {
       case '=':
         $this->having[] = "`".$this->prefix.$this->selected_from."`.`".$column."`='".$value."'";
@@ -279,16 +279,16 @@ class Mysqli{
     return $this;
   }
 
-  public function group_by(string $group = ""): void{
+  public function group_by($group = ""){
     $this->group_by[] = $group;
   }
 
-  public function limit(string $limit): object{
+  public function limit($limit){
     $this->limit = $limit;
     return $this;
   }
 
-  public function order_by(string $by = "", string $order = "", string $from = ""): object{
+  public function order_by($by = "", $order = "", $from = ""){
     if($from == ""){
       $from = $this->selected_from;
     }
@@ -306,7 +306,7 @@ class Mysqli{
   }
 
 
-  public function query_where_create(): string{
+  public function query_where_create(){
     $wheres = array();
     if(is_array($this->where) and sizeof($this->where) > 0){
       $wheres[] = implode(" AND ", $this->where);
@@ -325,7 +325,7 @@ class Mysqli{
     return $where;
   }
 
-  public function sql(): string{
+  public function sql(){
     $sqls = array();
     if(is_array($this->select) and sizeof($this->select) > 0){
       $sqls['SELECT'] = implode(", ", $this->select);
@@ -365,7 +365,7 @@ class Mysqli{
   }
 
 
-  public function get(string $from = ""){
+  public function get($from = ""){
     if($from != ""){
       $this->from($from);
     }
@@ -396,7 +396,7 @@ class Mysqli{
     }
   }
   
-  public function num_rows($query = ""): int{
+  public function num_rows($query = ""){
     if($query != ""){
       return $query->num_rows;
     }else{
@@ -404,7 +404,7 @@ class Mysqli{
     }
   }
 
-  public function insert(array $data = []): bool{
+  public function insert($data = []){
     if(sizeof($data) > 0){
       $keys = array();
       $values = array();
@@ -423,7 +423,7 @@ class Mysqli{
     }
   }
 
-  public function delete(array $where = []): bool{
+  public function delete($where = []){
     if(sizeof($where) > 0){
       $rows = array();
       foreach ($where as $key => $value) {
@@ -441,7 +441,7 @@ class Mysqli{
     }
   }
 
-  public function update(array $data = []): bool{
+  public function update($data = []){
     $rows = array();
     foreach ($data as $key => $value) {
       $rows[] = "`".$key."`='".$this->escape_string($value)."'";
@@ -455,13 +455,13 @@ class Mysqli{
     }
   }
   
-	public function count(): int{
+	public function count(){
     $this->query_size++;
 	  $sql = $this->mysqli->query($this->sql());
 	  return $sql->num_rows;
   }
   
-  public function drop(string $table = ""): bool{
+  public function drop($table = ""){
     $this->query_size++;
     if($table == ""){
       $table = $this->selected_from;
@@ -473,7 +473,7 @@ class Mysqli{
     }
   }
 
-  public function truncate(string $table = ""): bool{
+  public function truncate($table = ""){
     $this->query_size++;
     if($table == ""){
       $table = $this->selected_from;
@@ -485,7 +485,7 @@ class Mysqli{
     }
   }
 
-	public function query(string $sql){
+	public function query($sql){
     if($this->cache_status){
       $path = SQL_CACHE_PATH.md5($sql).".json";
       if(file_exists($path) and (filemtime($path) > (time() - $this->cache_timeout))){
@@ -535,7 +535,7 @@ class Mysqli{
     return $return;
 	}
 	
-	public function clear(): void{
+	public function clear(){
     $this->select = array();
     $this->from = array();
     $this->selected_from = null;
@@ -548,11 +548,11 @@ class Mysqli{
     $this->order_by = array();
 	}
 	
-	public function insert_id(): int{
+	public function insert_id(){
 	  return $this->insert_id;
 	}
 	
-  public function escape_string(string $string): string{
+  public function escape_string($string){
     $string = $this->mysqli->escape_string($string);
     return $string;
   }
@@ -570,7 +570,7 @@ class Mysqli{
     }
   }
 
-  public function query_size(): int{
+  public function query_size(){
     return $this->query_size;
   }
   

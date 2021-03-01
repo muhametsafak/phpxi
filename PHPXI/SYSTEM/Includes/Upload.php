@@ -3,50 +3,50 @@ namespace PHPXI;
 
 class Upload{
 
-    private array $file;
-    private string $error;
-    private bool $continue = true;
+    private $file;
+    private $error;
+    private $continue = true;
 
-    private int $sizeLimit;
-    private string $fileName = "";
-    private string $path;
-    private string $dir_url;
+    private $sizeLimit;
+    private $fileName = "";
+    private $path;
+    private $dir_url;
     private $file_type;
     private $file_extension;
-    private int $jpg_compress;
-    private int $png_compress;
-    private array $resize = ["width" => "300", "height" => "300"];
+    private $jpg_compress;
+    private $png_compress;
+    private $resize = ["width" => "300", "height" => "300"];
 
-    private array $pathinfo;
-    private string $filePath;
-    private string $fileUrl;
-    private array $thumbnail = [];
+    private $pathinfo;
+    private $filePath;
+    private $fileUrl;
+    private $thumbnail = [];
 
-    public function config(array $config): object{
+    public function config($config){
         foreach($config as $key => $value){
             $this->$key = $value;
         }
         return $this;
     }
 
-    public function path(string $path): void{
+    public function path($path){
         $this->path = $path;
     }
 
-    public function url(string $url): void{
+    public function url($url){
         $this->dir_url = $url;
     }
 
-    public function name(string $name): void{
+    public function name($name){
         $this->fileName = $name;
     }
 
-    public function maxSize(int $size): void{
+    public function maxSize($size){
         $this->sizeLimit = $size;
     }
 
 
-    public function return(): array{
+    public function return(){
         if($this->error != ""){
             return $this->error;
         }else{
@@ -63,7 +63,7 @@ class Upload{
         }
     }
 
-    public function file(array $file): object{
+    public function file($file){
         $this->file = $file;
         if(!is_dir($this->path)){
             if(!mkdir($this->path)){
@@ -112,7 +112,7 @@ class Upload{
         return $this;
     }
 
-    public function handle(): object{
+    public function handle(){
         if($this->continue){
             if($this->file["type"] == "image/jpeg" || $this->file["type"] == "image/jpg" || $this->file["type"] == "image/png"){
                 if($this->file["type"] == "image/jpeg" || $this->file["type"] == "image/jpg"){
@@ -133,18 +133,18 @@ class Upload{
         return $this;
     }
 
-    public function thumbnail(int $width = 300, int $height = 300, string $prefix = "thumb_"): void{
+    public function thumbnail($width = 300, $height = 300, $prefix = "thumb_"){
         if($this->continue){
             $this->thumbnail = $this->image_resize($this->filePath, ["width" => $width, "height" => $height], $prefix);
         }
     }
 
-    public function jpg_compress(string $source, string $destination, int $quality): image {
+    public function jpg_compress($source, $destination, $quality) {
         $image = imagecreatefromjpeg($source);
         return imagejpeg($image, $destination, $quality);
     }
   
-    public function png_compress(string $source, string $destination, int $quality): image{
+    public function png_compress($source, $destination, $quality){
         if($quality > 9){
             $quality = 9;
         }
@@ -155,7 +155,7 @@ class Upload{
     }
 
 
-    public function image_resize(string $path, array $resize = ["width" => "300", "height" => "300"], string $prefix = "thumb_"): array{
+    public function image_resize($path, $resize = ["width" => "300", "height" => "300"], $prefix = "thumb_"){
         $pathinfo = pathinfo($path);
     
         $dirname = $pathinfo["dirname"];

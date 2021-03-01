@@ -3,45 +3,45 @@ namespace PHPXI;
 
 class Cache{
 
-    private string $cache_file;
-    private int $timeout = 86400;
-    private string $content;
-    private string $cache_path;
-    private string $fullpath;
-    private bool $gzip_compressor = false;
+    private $cache_file;
+    private $timeout = 86400;
+    private $content;
+    private $cache_path;
+    private $fullpath;
+    private $gzip_compressor = false;
 
     function __construct(){
         $this->cache_path = PHPXI . '/APPLICATION/Cache/';
     }
 
-    public function path(string $path){
+    public function path($path){
         $this->cache_path = $path;
         $this->fullpath = $this->cache_path . '/' . $this->cache_file;
         return $this;
     }
 
-    public function timeout(int $second = 86400){
+    public function timeout($second = 86400){
         $this->timeout = $second;
         return $this;
     }
 
-    public function content(string $content = ""){
+    public function content($content = ""){
         $this->content = $content;
         return $this;
     }
 
-    public function file(string $file){
+    public function file($file){
         $this->cache_file = $file;
         $this->fullpath = $this->cache_path . '/' . $this->cache_file;
         return $this;
     }
 
-    public function gzip(bool $gzip){
+    public function gzip($gzip){
         $this->gzip_compressor = $gzip;
         return $this;
     }
 
-    public function cache(): string{
+    public function cache(){
         if($this->is()){
             if($this->is_timeout()){
                 return $this->write();
@@ -54,7 +54,7 @@ class Cache{
         return $this->content;
     }
 
-    public function create(): string{
+    public function create(){
         touch($this->fullpath);
         $open = fopen($this->fullpath, "w+");
         fwrite($open, $this->content);
@@ -62,7 +62,7 @@ class Cache{
         return $this->content;
     }
 
-    public function is(): bool{
+    public function is(){
         if(file_exists($this->fullpath)){
             return true;
         }else{
@@ -70,7 +70,7 @@ class Cache{
         }
     }
 
-    public function is_timeout(): bool{
+    public function is_timeout(){
         if((time() - filemtime($this->fullpath)) > $this->timeout){
             return true;
         }else{
@@ -78,14 +78,14 @@ class Cache{
         }
     }
 
-    public function read(): string{
+    public function read(){
         $open = fopen($this->fullpath, "r");
         $this->content = fread($open, filesize($this->fullpath));
         fclose($open);
         return $this->content;
     }
 
-    public function write(): string{
+    public function write(){
         $open = fopen($this->fullpath, "w+");
         fwrite($open, $this->content);
         fclose($open);

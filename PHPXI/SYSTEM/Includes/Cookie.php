@@ -2,12 +2,12 @@
 namespace PHPXI;
 
 class Cookie{
-    private string $prefix = "phpxi_project_";
-    private int $timeout = 3600;
-    private array $cookie = [];
-    private string $path = '/';
-    private string $domain = '';
-    private bool $secure = false;
+    private $prefix = "phpxi_project_";
+    private $timeout = 3600;
+    private $cookie = [];
+    private $path = '/';
+    private $domain = '';
+    private $secure = false;
 
     function __construct(){
         global $config;
@@ -25,27 +25,27 @@ class Cookie{
         }
     }
     
-    public function timeout(int $time = 3600){
+    public function timeout($time = 3600){
         $this->timeout = $time;
         return $this;
     }
 
-    public function path(string $path = '/'){
+    public function path($path = '/'){
         $this->path = $path;
         return $path;
     }
 
-    public function domain(string $domain = ''){
+    public function domain($domain = ''){
         $this->domain = $domain;
         return $this;
     }
 
-    public function secure(bool $secure = false){
+    public function secure($secure = false){
         $this->secure = $secure;
         return $this;
     }
 
-    public function set(string $key, string $value){
+    public function set($key, $value){
         $this->cookie[$key] = $value;
         $time = $this->timeout + time();
         $id = $this->prefix . $key;

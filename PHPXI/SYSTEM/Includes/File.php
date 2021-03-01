@@ -2,18 +2,18 @@
 namespace PHPXI;
 
 class File{
-    public string $path;
+    public $path;
 
-    private string $file;
+    private $file;
 
-    public function load(string $path){
+    public function load($path){
         if($this->exists($path)){
             $this->path = $path;
         }
         return $this;
     }
 
-    public function exists(string $path = ""): bool{
+    public function exists($path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -24,7 +24,7 @@ class File{
         }
     }
     
-    public function read(string $path = ""){
+    public function read($path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -40,7 +40,7 @@ class File{
         }
     }
 
-    public function empty(string $path = ""){
+    public function empty($path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -51,7 +51,7 @@ class File{
         }
     }
 
-    public function write(string $string = "", string $path = ""): bool{
+    public function write($string = "", $path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -67,7 +67,7 @@ class File{
         }
     }
 
-    public function rewrite(string $string = "", string $path = ""): bool{
+    public function rewrite($string = "", $path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -83,7 +83,7 @@ class File{
         }
     }
 
-    public function time(string $path = ""){
+    public function time($path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -94,7 +94,7 @@ class File{
         }
     }
 
-    public function size(string $path = ""){
+    public function size($path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -105,7 +105,7 @@ class File{
         }
     }
 
-    public function mime(string $path = ""){
+    public function mime($path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -116,7 +116,7 @@ class File{
         }
     }
 
-    public function copy(string $copy_path, string $file_path = ""): bool{
+    public function copy($copy_path, $file_path = ""){
         if($file_path == ""){
             $file_path = $this->path;
         }
@@ -127,7 +127,7 @@ class File{
         }
     }
 
-    public function rename(string $new_path, string $path = ""): bool{
+    public function rename($new_path, $path = ""){
         if($path == ""){
             $path = $this->path;
         }
@@ -138,7 +138,7 @@ class File{
         }
     }
 
-    public function move(string $new_path, string $path = ""): bool{
+    public function move($new_path, $path = ""){
         if($path == ""){
             $path = $this->path;
         }

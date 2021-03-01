@@ -10,7 +10,7 @@ class Config{
         $this->config = $configs;
     }
 
-    public function item(string $key, bool $type = false){
+    public function item($key, $type = false){
         $ids = explode(".", $key);
         if(sizeof($ids) > 1){
             if(isset($this->config[$ids[0]])){
@@ -39,7 +39,7 @@ class Config{
         return $return;
     }
 
-    public function set(string $key, $value): bool{
+    public function set($key, $value){
         $ids = explode(".", $key);
         if(sizeof($ids) == 1){
             $this->config[$key] = $value;

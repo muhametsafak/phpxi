@@ -4,19 +4,19 @@ namespace PHPXI;
 class Hook{
 	private $hook;
 
-	function add_action(string $where, string $function, int $primacy){
+	function add_action($where, $function, $primacy){
 		if(!isset($this->hook[$where]))
 			$this->hook[$where] = array();
 
 			$this->hook[$where][$function] = $primacy;
 	}
 
-	function remove_action(string $where, string $function){
+	function remove_action($where, $function){
 		if(isset($this->hook[$where][$function]))
 			unset($this->hook[$where][$function]);
 	}
 
-	function action_work(string $where, $args){
+	function action_work($where, $args){
 		if(isset($this->hook[$where])){
 			$dizi = $this->hook[$where];
 			arsort($dizi);

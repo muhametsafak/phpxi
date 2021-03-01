@@ -27,7 +27,7 @@ class XI_Controller{
         }
     }
 
-    public function view(string $filename, array $data = []){
+    public function view($filename, $data = []){
       if(pathinfo($filename, PATHINFO_EXTENSION) != "php"){
         $filename = $filename.".php";
       }
@@ -40,7 +40,7 @@ class XI_Controller{
       }
     }
   
-    public function model(string $name, string $method, array $parameters = []){
+    public function model($name, $method, $parameters = []){
       $model_path = APP . 'Model/' . $name . '.php';
       require_once($model_path);
       $name = "Model\\".$name;
@@ -51,7 +51,7 @@ class XI_Controller{
       }
     }
   
-    public function helper(string $name){
+    public function helper($name){
         $model_path = APP . 'Helpers/' . $name . '_helper.php';
         require_once($model_path);
     }

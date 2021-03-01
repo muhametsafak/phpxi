@@ -32,7 +32,7 @@ class XI_Model{
         }
     }
     
-    public function model(string $name, string $method, array $parameters = []){
+    public function model($name, $method, $parameters = []){
         $model_path = APP . 'Model/' . $name . '.php';
         require_once($model_path);
         $name = "Model\\".$name;
@@ -43,7 +43,7 @@ class XI_Model{
         }
     }
 
-    public function helper(string $name){
+    public function helper($name){
         $model_path = APP . 'Helpers/' . $name . '_helper.php';
         require_once($model_path);
     }

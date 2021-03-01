@@ -3,14 +3,14 @@ namespace PHPXI;
 
 class Benchmark{
 
-    public function start(string $bench){
+    public function start($bench){
         $mtime = microtime(); 
         $mtime = explode (' ', $mtime); 
         $mtime = $mtime[1] + $mtime[0];
         $this->$bench = $mtime;
     }
 
-    public function stop(string $bench, int $precision = 5){
+    public function stop($bench, $precision = 5){
         $mtime = microtime (); 
         $mtime = explode (' ', $mtime); 
         $mtime = $mtime[1] + $mtime[0]; 

@@ -3,32 +3,32 @@ namespace Route;
 
 class XI_Route{
 
-    public array $routes = [];
+    public $routes = [];
     
-    public string $prefix = '';
+    public $prefix = '';
 
-    public bool $hasRoute = false;
+    public $hasRoute = false;
 
-    private string $url = '';
+    private $url = '';
 
-    private string $current_controller = '';
+    private $current_controller = '';
 
-    private string $current_cfunction = '';
+    private $current_cfunction = '';
 
-    public array $patterns = [
+    public $patterns = [
         '{int[0-9]?}'       => '([0-9]+)',
         '{string[0-9]?}'    => '([a-zA-Z0-9-_]+)',
         ':id[0-9]?'         => '([0-9]+)',
         ':str[0-9]?'        => '([a-zA-Z0-9-_]+)'
     ];
 
-    public function route($path, $callback, string $method = 'get'): void{
+    public function route($path, $callback, $method = 'get'){
         $this->routes[$method][$path] = [
             'callback' => $callback
         ];
     }
 
-    public function getUrl(): string{
+    public function getUrl(){
         if(MULTI_LANGUAGES){
             $request_uri = "/".trim(mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8"), "/");
             $uris = explode("/", ltrim($request_uri, "/"));
@@ -50,17 +50,17 @@ class XI_Route{
         return $this->url;
     }
 
-    public function getMethod(): string{
+    public function getMethod(){
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
 
 
-    public function name(string $name){
+    public function name($name){
         $key = array_key_last($this->routes['get']);
         $this->routes['get'][$key]['name'] = $name;
     }
     
-    public function url(string $name, array $params = []): string
+    public function url($name, $params = [])
     {
         $route = array_key_first(array_filter($this->routes['get'], function($route) use($name){
             return $route['name'] === $name;
@@ -68,34 +68,34 @@ class XI_Route{
         return str_replace(array_keys($params), array_values($params), $route);
     }
 
-    public function prefix($prefix): Route
+    public function prefix($prefix)
     {
         $this->prefix = $prefix;
         return new self();
     }
 
-    public function group(closure $closure): void
+    public function group(closure $closure)
     {
         $closure();
         $this->prefix = '';
     }
 
-    public function where(string $key, string $pattern): void{
+    public function where($key, $pattern){
         $this->patterns[':' . $key] = '(' . $pattern . ')';
     }
 
-    public function redirect(string $from, string $to, int $status = 301): void{
+    public function redirect($from, $to, $status = 301){
         $this->routes['get'][$from] = [
             'redirect'  => $to,
             'status'    => $status
         ];
     }
 
-    public function to(string $to, int $status = 301): void{
+    public function to($to, $status = 301){
         header("Location: ".$to, true, $status);
     }
 
-    public function dispatch(): string{
+    public function dispatch(){
         $method = $this->getMethod();
         $url = $this->getUrl();
         ob_start();
