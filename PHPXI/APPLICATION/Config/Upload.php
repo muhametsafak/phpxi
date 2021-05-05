@@ -7,9 +7,9 @@ $config["sizeLimit"] = 3145728; //3MB
 
 /**
  * Directory path to upload
- * $config["path"] = PATH."/uploads/";
+ * $config["path"] = PUBLIC_PATH . "uploads/";
  */
-$config["path"] = PATH."/uploads/";
+$config["path"] = PUBLIC_PATH . "uploads/";
 
 /**
  * Upload directory url address

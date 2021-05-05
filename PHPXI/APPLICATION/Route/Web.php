@@ -1,5 +1,7 @@
 <?php
+namespace PHPXI;
 
-$phpxi->route("/selam", "Welcome@demo");
+use Route;
 
-$phpxi->autorun();
+Route::get("/", "Welcome@main");
+

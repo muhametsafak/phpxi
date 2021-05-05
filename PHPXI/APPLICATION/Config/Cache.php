@@ -1,9 +1,36 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 
-$config["status"] = false;
+/**
+ * HTML Cache Settings
+ */
+$config['HTML'] = [
+    /**
+     * Set it to true to turn on HTML caching.
+     */
+    "status"    => false,
+    /**
+     * Specifies the validity period of HTML caches in seconds.
+     * 1 hour is 3600 seconds.
+     * 1 day is 86400 seconds.
+     * It has no effect if HTML caching is not enabled.
+     */
+    "timeout"   => 86400,
+    /**
+     * Specifies the full directory path to store HTML caching.
+     */
+    "path"      => WEIGHT_PATH . 'HTML/'
+];
 
-$config["timeout"] = 86400;
-
-$config["path"] = PHPXI . "/WEIGHT/HTML/";
-
-define("SQL_CACHE_PATH", PHPXI . "/WEIGHT/SQL/");
+/**
+ * SQL Cache Settings
+ */
+$config['SQL'] = [
+    /**
+     * Specifies the path where SQL Cache files are stored.
+     */
+    "path"      => WEIGHT_PATH . 'SQL/'
+];
