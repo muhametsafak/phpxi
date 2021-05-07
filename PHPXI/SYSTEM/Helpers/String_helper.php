@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 
 if(!function_exists("str_compressor")){
     function str_compressor($str){

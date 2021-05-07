@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Debugging;
 
 class Debug

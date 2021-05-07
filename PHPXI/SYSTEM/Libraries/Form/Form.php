@@ -1,10 +1,15 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Form;
 
 class Form{
   private static $output;
 	
-	public static function start($form = []){
+	public static function start($form = [])
+  {
     self::$output = '<form';
     foreach ($form as $key => $value) {
       if($key == "action"){

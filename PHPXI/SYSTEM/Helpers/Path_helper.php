@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 
 function public_path($path = ""){
     return rtrim(PUBLIC_PATH, "/") . "/" . ltrim(trim($path), "/");

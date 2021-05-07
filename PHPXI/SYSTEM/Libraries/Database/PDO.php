@@ -8,7 +8,7 @@ namespace PHPXI\Libraries\Database;
 use \PHPXI\Libraries\Debugging\Logger as Logger;
 use \PHPXI\Libraries\Database\SQL as SQL;
 
-class MySQLi
+class PDO
 {
 
     private $host;
@@ -18,8 +18,9 @@ class MySQLi
     private $prefix;
     private $charset;
     private $collation;
+    private $driver;
 
-    public $mysqli;
+    public $pdo = null;
 
     protected $error = [];
 
@@ -27,8 +28,9 @@ class MySQLi
     private $num_rows = 0;
     private $insert_id = 0;
     private $query_size = 0;
-    
-    function __construct(array $config){
+
+    function __contruct(array $config)
+    {
         $this->host = $config['host'];
         $this->user = $config['user'];
         $this->password = $config['password'];
@@ -36,35 +38,40 @@ class MySQLi
         $this->prefix = $config['prefix'];
         $this->charset = $config['charset'];
         $this->collation = $config['collation'];
+        $this->driver = $config['driver'];
         SQL::prefix($this->prefix);
         $this->connect();
     }
-    function __destroy(){
+
+    function __destroy()
+    {
         $this->disconnect();
     }
 
-    public function connect()
+
+    private function connect()
     {
-        $this->mysqli = new \mysqli($this->host, $this->user, $this->password, $this->name);
-        if($this->mysqli->connect_errno){
+        try{
+            $con_link = $this->driver . ":host=" . $this->host . ";dbname=" . $this->name . ";charset=" . $this->charset;
+            $this->pdo = new \PDO($con_link, $this->user, $this->password);
+            $this->pdo->exec("SET NAMES '" . $this->charset . "' COLLATION '" . $this->collation . "'");
+            $this->pdo->exec("SET CHARACTER SET '" . $this->charset . "'");
+            $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
+        }catch(\PDOException $e){
             Logger::system(
-                "MySQLI DB Connect ERROR : {connect_errno} : {connect_error}",
-                [
-                    "connect_errno" => $this->mysqli->connect_errno, 
-                    "connect_error" => $this->mysqli->connect_error
-                ]
+                "PDO DB Connect ERROR : {error}",
+                ["error" => $e->getMessage()]
             );
         }
-        $this->mysqli->set_charset($this->charset);
-        $this->mysqli->query("SET NAMES '" . $this->charset . "' COLLATION '" . $this->collation . "'");
-        $this->mysqli->query("SET CHARACTER SET '" . $this->charset . "'");
         return $this;
     }
 
-    public function disconnect()
+    private function disconnect()
     {
-        $this->mysqli->close();
+        $this->pdo = null;
     }
+
 
     public function select($select = "*")
     {
@@ -145,33 +152,35 @@ class MySQLi
 
     public function row($query = "")
     {
-        if($query != ""){
-            return $query->fetch_object();
+        if($query == ""){
+            return $this->get->fetch();
         }else{
-            return $this->get->fetch_object();
+            return $query->fetch();
         }
     }
 
     public function rows($query = "")
     {
-        $data = [];
-        if($query != ""){
-            while($row = $query->fetch_assoc()){
-                $data[] = $row;
-            }
+        if($query == ""){
+            return $this->get->fetchAll();
         }else{
-            while($row = $this->get->fetch_assoc()){
-                $data[] = $row;
-            }
+            return $query->fetchAll();
         }
-        return arrayObject($data);
     }
 
-    public function count()
-    {
-        $query = $this->mysqli->query(SQL::query());
+    public function count(){
+        $query = $this->pdo->query(SQL::query());
         $this->query_size++;
-        return $query->num_rows;
+        return $query->rowCount();
+    }
+
+    public function column($query = "")
+    {
+        if($query == ""){
+            return $this->get->fetchColumn();
+        }else{
+            return $query->fetchColumn();
+        }
     }
 
     public function build()
@@ -179,28 +188,39 @@ class MySQLi
         return SQL::query();
     }
 
-    public function query($sql)
+    public function query($sql, $params = null)
     {
-        $query = $this->mysqli->query($sql) or Logger::system(
-            "SQL QUERY ERROR : {error} - QUERY : {sql}",
-            [
-                "error" => $this->mysqli->error,
-                "sql" => $sql
-            ]
-        );
-        if(isset($this->mysqli->insert_id)){
-            $this->insert_id = $this->mysqli->insert_id;
+        try {
+            if(is_null($params)){
+                $query = $this->pdo->query($sql);
+            }else{
+                $query = $this->pdo->prepare($sql);
+                $query->execute($params);
+            }
+        } catch (\PDOException $e) {
+            Logger::system(
+                "SQL QUERY ERROR : {error} - QUERY : {sql}",
+                [
+                    "error" => $e->getMessage(),
+                    "sql" => $sql
+                ]
+            );
+        }
+        if($this->pdo->lastInsertId()){
+            $this->insert_id = $this->pdo->lastInsertId();
         }else{
             $this->insert_id = 0;
         }
-        if(isset($query->num_rows)){
-            $this->num_rows = $query->num_rows;
-        }else{
-            $this->num_rows = 0;
-        }
+        $this->num_rows = $query->rowCount();
         SQL::clear();
         $this->query_size++;
         return $query;
+    }
+    
+    public function exec($sql)
+    {
+        $this->query_size++;
+        return $this->pdo->exec($sql);
     }
 
     public function insert(array $data, string $from = "")
@@ -221,19 +241,20 @@ class MySQLi
         if($from == ""){
             $from = SQL::$selected_from;
         }
-        if($this->query(SQL::update($from, $data))){
+        $query = $this->query(SQL::update($from, $data));
+        if($query->rowCount()){
             return true;
         }else{
             return false;
         }
     }
 
-    public function delete(array $where = [], string $from = "")
-    {
+    public function delete(array $where = [], string $from = ""){
         if($from == ""){
-            $from = SQL::$seleted_from;
+            $from = SQL::$selected_from;
         }
-        if($this->query(SQL::delete($from, $where))){
+        $query = $this->query(SQL::delete($from, $data));
+        if($query->rowCount()){
             return true;
         }else{
             return false;
@@ -243,7 +264,7 @@ class MySQLi
     public function num_rows($query = "")
     {
         if($query != ""){
-            return $query->num_rows;
+            return $query->rowCount();
         }else{
             return $this->num_rows;
         }
@@ -260,30 +281,28 @@ class MySQLi
     }
 
     public function drop(string $table){
-        $this->query_size++;
-        return $this->mysqli->query(SQL::drop($table));
+        return $this->exec(SQL::drop($table));
     }
 
     public function truncate(string $table){
-        $this->query_size++;
-        return $this->mysqli->query(SQL::truncate($table));
+        return $this->exec(SQL::truncate($table));
     }
 
     public function maintenance()
     {
-        $query = $this->mysqli->query("SHOW TABLES");
+        $query = $this->pdo->query("SHOW TABLES");
         $this->query_size++;
+        $query->setFetchMode(\PDO::FETCH_NUM);
         if($query){
-            while($table = $query->fetch_row()){
+            foreach($query as $table){
                 if($this->prefix != ""){
                     $len = strlen($this->prefix);
                     $from = substr($table[0], $len, strlen($table[0]));
                     if($table[0] != $from){
-                        $this->mysqli->query(SQL::check($from));
-                        $this->mysqli->query(SQL::analyze($from));
-                        $this->mysqli->query(SQL::repair($from));
-                        $this->mysqli->query(SQL::optimize($from));
-                        $this->query_size += 4;
+                        $this->exec(SQL::check($from));
+                        $this->exec(SQL::analyze($from));
+                        $this->exec(SQL::repair($from));
+                        $this->exec(SQL::optimize($from));
                         Logger::system(
                             "The table {database}.{table} has been maintained.",
                             [
@@ -294,11 +313,10 @@ class MySQLi
                     }
                 }else{
                     $from = $table[0];
-                    $this->mysqli->query(SQL::check($from));
-                    $this->mysqli->query(SQL::analyze($from));
-                    $this->mysqli->query(SQL::repair($from));
-                    $this->mysqli->query(SQL::optimize($from));
-                    $this->query_size += 4;
+                    $this->exec(SQL::check($from));
+                    $this->exec(SQL::analyze($from));
+                    $this->exec(SQL::repair($from));
+                    $this->exec(SQL::optimize($from));
                     Logger::system(
                         "The table {database}.{table} has been maintained.",
                         [

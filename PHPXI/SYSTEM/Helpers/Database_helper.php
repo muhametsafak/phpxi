@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 
 if(!function_exists("db_connect")){
     function db_connect(array $database = []){

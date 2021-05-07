@@ -2,7 +2,7 @@
 <html lang="en" >
     <head>
         <meta charset="UTF-8">
-        <title>phpXI::Hello World!</title>
+        <title><?php echo Lang::r("welcome_title"); ?></title>
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
         <style type="text/css">
@@ -77,11 +77,13 @@
             <h1>&lt;?php<span class="blink">XI</span>?&gt;</h1>
         </div>
         <p>
-            You can start developing from the <code title="<?php echo APPLICATION_PATH; ?>">/PHPXI/APPLICATION/</code> directory.
+            <?php echo $starting; ?>
         </p>
         <div class="footer">
-        
-            <?php echo 'This page was submitted using ' . MEMORY_USE . ' MB memory per ' . LOAD_TIME . ' seconds.'; ?>
+            <?php 
+            //echo 'This page was submitted using ' . MEMORY_USE . ' MB memory per ' . LOAD_TIME . ' seconds.';
+            Lang::e("footer_load_time_info", ["memory_use" => MEMORY_USE, "load_time" => LOAD_TIME]);
+            ?>
         </div>
     </body>
 </html>

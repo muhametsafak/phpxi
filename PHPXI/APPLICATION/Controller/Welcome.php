@@ -1,20 +1,18 @@
 <?php
 namespace Application\Controller;
 
-use Load;
-use MyTwoModel;
+use Load, Lang;
+use MyModel;
 
 class Welcome
 {
     public function main()
     {
         $data = [];
-        MyTwoModel::main();
+        $data['starting'] = MyModel::starting();
+        Lang::set("en");
         Load::view("index", $data);
     }
 
-    public function user($userid){
-        echo $userid;
-    }
 
 }

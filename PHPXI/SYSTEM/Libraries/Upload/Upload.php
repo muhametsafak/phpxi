@@ -1,150 +1,171 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Upload;
 
-class Upload{
+class Upload
+{
 
-    private $file;
-    private $error;
-    private $continue = true;
+    private static $file;
+    private static $error;
+    private static $continue = true;
 
-    private $sizeLimit;
-    private $fileName = "";
-    private $path;
-    private $dir_url;
-    private $file_type;
-    private $file_extension;
-    private $jpg_compress;
-    private $png_compress;
-    private $resize = ["width" => "300", "height" => "300"];
+    private static $sizeLimit;
+    private static $fileName = "";
+    private static $path;
+    private static $dir_url;
+    private static $file_type;
+    private static $file_extension;
+    private static $jpg_compress;
+    private static $png_compress;
+    private static $resize = ["width" => "300", "height" => "300"];
 
-    private $pathinfo;
-    private $filePath;
-    private $fileUrl;
-    private $thumbnail = [];
+    private static $pathinfo;
+    private static $filePath;
+    private static $fileUrl;
+    private static $thumbnail = [];
 
-    public function config($config){
+    public static function config($config)
+    {
         foreach($config as $key => $value){
-            $this->$key = $value;
+            self::$$key = $value;
         }
-        return $this;
+        return new self;
     }
 
-    public function path($path){
-        $this->path = $path;
+    public static function path($path)
+    {
+        self::$path = $path;
+        return new self;
     }
 
-    public function url($url){
-        $this->dir_url = $url;
+    public static function url($url)
+    {
+        self::$dir_url = $url;
+        return new self;
     }
 
-    public function name($name){
-        $this->fileName = $name;
+    public static function name($name)
+    {
+        self::$fileName = $name;
+        return new self;
     }
 
-    public function maxSize($size){
-        $this->sizeLimit = $size;
+    public static function maxSize($size)
+    {
+        self::$sizeLimit = $size;
+        return new self;
     }
 
 
-    public function return(){
-        if($this->error != ""){
-            return $this->error;
+    public static function return()
+    {
+        if(self::$error != ""){
+            return self::$error;
         }else{
             $return = array(
-                "name"  => $this->fileName,
-                "size"  => $this->file["size"],
-                "type"  => $this->file["type"],
-                "path"  => $this->filePath,
-                "url"   => $this->fileUrl,
-                "thumbnail" => $this->thumbnail,
-                "status"    => $this->continue
+                "name"  => self::$fileName,
+                "size"  => self::$file["size"],
+                "type"  => self::$file["type"],
+                "path"  => self::$filePath,
+                "url"   => self::$fileUrl,
+                "thumbnail" => self::$thumbnail,
+                "status"    => self::$continue
             );
             return $return;
         }
     }
 
-    public function file($file){
-        $this->file = $file;
-        if(!is_dir($this->path)){
-            if(!mkdir($this->path)){
-                $this->error = "ERROR : Could not create path : " . $this->path;
-                $this->continue = false;
+    public static function file($file)
+    {
+        self::$file = $file;
+        if(!is_dir(self::$path)){
+            if(!mkdir($self::path)){
+                self::$error = "ERROR : Could not create path : " . self::$path;
+                self::$continue = false;
             }
         }
-        if($this->continue){
+        if(self::$continue){
             if(isset($file['error']) and $file['error'] != 0){
-                $this->error = "ERROR : File Error : " . $file['error'];
-                $this->continue = false;
-            }elseif($file['size'] > $this->sizeLimit){
-                $this->error = "ERROR : Max File Limit : " . $this->sizeLimit;
-                $this->continue = false;
-            }elseif(!in_array(strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)), $this->file_extension)){
-                $this->error = "ERROR : Unsupported File Extension! Supported : ".implode(", ", $this->file_extension);
-                $this->continue = false;
-            }elseif(!in_array($file['type'], $this->file_type) and !in_array(mime_content_type($file["tmp_name"]), $this->file_type)){
-                $this->error = "ERROR : Unsupported File Type! Supported : ".implode(", ", $this->file_type);
-                $this->continue = false;
+                self::$error = "ERROR : File Error : " . $file['error'];
+                self::$continue = false;
+            }elseif($file['size'] > self::$sizeLimit){
+                self::$error = "ERROR : Max File Limit : " . self::$sizeLimit;
+                self::$continue = false;
+            }elseif(!in_array(strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)), self::$file_extension)){
+                self::$error = "ERROR : Unsupported File Extension! Supported : ".implode(", ", self::$file_extension);
+                self::$continue = false;
+            }elseif(!in_array($file['type'], self::$file_type) and !in_array(mime_content_type($file["tmp_name"]), self::$file_type)){
+                self::$error = "ERROR : Unsupported File Type! Supported : ".implode(", ", self::$file_type);
+                self::$continue = false;
             }else{
-                if($this->fileName == ""){
-                    $this->fileName = basename($this->file["name"]);
+                if(self::$fileName == ""){
+                    self::$fileName = basename(self::$file["name"]);
                 }
-                $this->filePath = $this->path . $this->fileName;
-                $this->pathinfo = pathinfo($this->filePath);
-                if(file_exists($this->filePath)){
+                self::$filePath = self::$path . self::$fileName;
+                self::$pathinfo = pathinfo(self::$filePath);
+                if(file_exists(self::$filePath)){
                     $i = 0;
                     do{
                         $i++;
-                        $this->fileName = $this->pathinfo["filename"] . '-' . $i . '.' . $this->pathinfo["extension"];
-                        $this->filePath = $this->path . $this->fileName;
-                        if(file_exists($this->filePath)){
-                        $re_file_path_while = true;
+                        self::$fileName = self::$pathinfo["filename"] . '-' . $i . '.' . self::$pathinfo["extension"];
+                        self::$filePath = self::$path . self::$fileName;
+                        if(file_exists(self::$filePath)){
+                            $re_file_path_while = true;
                         }else{
                             $re_file_path_while = false;
                         }
                     }while($re_file_path_while);
                 }
-                $this->pathinfo = pathinfo($this->filePath);
-                $this->file_valid_ext = $this->pathinfo['extension'];
-                $this->fileUrl = $this->dir_url . "/" . $this->fileName;
-                $this->continue = true;
+                self::$pathinfo = pathinfo(self::$filePath);
+                self::$file_valid_ext = self::$pathinfo['extension'];
+                self::$fileUrl = self::$dir_url . "/" . self::$fileName;
+                self::$continue = true;
             }
         }
-        return $this;
+        return new self;
     }
 
-    public function handle(){
-        if($this->continue){
-            if($this->file["type"] == "image/jpeg" || $this->file["type"] == "image/jpg" || $this->file["type"] == "image/png"){
-                if($this->file["type"] == "image/jpeg" || $this->file["type"] == "image/jpg"){
-                    $upload = $this->jpg_compress($this->file['tmp_name'], $this->filePath, $this->jpg_compress);
+    public static function handle()
+    {
+        if(self::$continue){
+            if(self::$file["type"] == "image/jpeg" || self::$file["type"] == "image/jpg" || self::$file["type"] == "image/png"){
+                if(self::$file["type"] == "image/jpeg" || self::$file["type"] == "image/jpg"){
+                    $upload = self::jpg_compress(self::$file['tmp_name'], self::$filePath, self::$jpg_compress);
                 }else{
-                    $upload = $this->png_compress($this->file['tmp_name'], $this->filePath, $this->png_compress);
+                    $upload = self::png_compress(self::$file['tmp_name'], self::$filePath, self::$png_compress);
                 }
             }else{
-                $upload = move_uploaded_file($this->file['tmp_name'], $this->filePath);
+                $upload = move_uploaded_file(self::$file['tmp_name'], self::$filePath);
             }
             if($upload){
-                $this->continue = true;
+                self::$continue = true;
             }else{
-                $this->error = "";
-                $this->continue = false;
+                self::$error = "";
+                self::$continue = false;
             }
         }
-        return $this;
+        return new self;
     }
 
-    public function thumbnail($width = 300, $height = 300, $prefix = "thumb_"){
-        if($this->continue){
-            $this->thumbnail = $this->image_resize($this->filePath, ["width" => $width, "height" => $height], $prefix);
+    public static function thumbnail(int $width = 300, int $height = 300, string $prefix = "thumb_")
+    {
+        if(self::$continue){
+            self::$thumbnail = self::image_resize(self::$filePath, ["width" => $width, "height" => $height], $prefix);
         }
+        return new self;
     }
 
-    public function jpg_compress($source, $destination, $quality) {
+    private static function jpg_compress($source, $destination, $quality)
+    {
         $image = imagecreatefromjpeg($source);
         return imagejpeg($image, $destination, $quality);
     }
   
-    public function png_compress($source, $destination, $quality){
+    private static function png_compress($source, $destination, $quality)
+    {
         if($quality > 9){
             $quality = 9;
         }
@@ -155,7 +176,8 @@ class Upload{
     }
 
 
-    public function image_resize($path, $resize = ["width" => "300", "height" => "300"], $prefix = "thumb_"){
+    private static function image_resize($path, $resize = ["width" => "300", "height" => "300"], $prefix = "thumb_")
+    {
         $pathinfo = pathinfo($path);
     
         $dirname = $pathinfo["dirname"];
@@ -177,7 +199,7 @@ class Upload{
                 }
             }while($re_file_path_while);
         }
-        $return = array("path" => $re_file_path, "url" => $this->dir_url . "/" . $re_basename);
+        $return = array("path" => $re_file_path, "url" => self::$dir_url . "/" . $re_basename);
     
         $getImageSize = getimagesize($path);
         if ($getImageSize[0] > $getImageSize[1]) {
@@ -210,7 +232,5 @@ class Upload{
         }
         return $return;
       }
-
-
-
+      
 }

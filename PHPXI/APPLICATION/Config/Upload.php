@@ -1,5 +1,10 @@
 <?php
 /**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
+
+/**
  * Must be specified in Byte.
  * Example : 1MB => 1 x (1024 x 1024) = 1048576
  */

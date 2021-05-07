@@ -4,6 +4,7 @@
  * Project: PHPXI MVC Framework <phpxi.net>
  */
 
+
 /**
  * Specify helpers to be automatically loaded at system startup.
  * 
@@ -26,6 +27,5 @@ $config["config"] = [];
  * you must define it in $config['model'].
  */
 $config["model"] = [
-    "MyOneModel" => "\\Application\\Model\\MyOneModel",
-    "MyTwoModel" => "\\Application\\Model\\MyTwoModel"
+    "MyModel" => "\\Application\\Model\\MyModel"
 ];

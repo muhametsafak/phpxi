@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 
 $config['repository'] = WEIGHT_PATH . 'Session/';
 
@@ -12,4 +16,4 @@ $config['secure'] = false; //SSL
 
 $config['httponly'] = true;
 
-$config['regenerate_id'] = true;
+$config['regenerate_id'] = false;

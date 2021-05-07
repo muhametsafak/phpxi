@@ -1,14 +1,20 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Language;
 
 use \PHPXI\Libraries\Config\Config as Config;
 use \PHPXI\Libraries\Debugging\Logger as Logger;
 
-class Language{
+class Language
+{
 	private static $lang;
 	private static $set;
 
-	public static function autoload(){
+	public static function autoload()
+	{
 		if(Config::get("language.multi")){
 			$request_uri = trim(mb_strtolower(mb_substr($_SERVER["PHP_SELF"], strlen($_SERVER["SCRIPT_NAME"]), strlen($_SERVER["PHP_SELF"]), "UTF-8"), "UTF-8"), "/");
 			$parse = explode("/", $request_uri);
@@ -22,16 +28,19 @@ class Language{
 		}
 	}
 
-	public static function set($set){
+	public static function set($set)
+	{
 		self::$set = $set;
 		self::load();
 	}
 
-	public static function get(){
+	public static function get()
+	{
 		return self::$set;
 	}
 
-	public static function load(){
+	public static function load()
+	{
 		$path = APPLICATION_PATH . "Languages/" . self::$set . "/app.php";
 		if(file_exists($path) || DEVELOPMENT){
 			$lang = array();
@@ -42,22 +51,37 @@ class Language{
 			Logger::system("Default (" . self::$set . ") language file loaded because defined language file could not be found");
 		}
 	}
+
+    private static function interpolate($message, array $context = array())
+    {
+        $replace = array();
+		$i = 0;
+        foreach ($context as $key => $val) {
+            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
+                $replace['{' . $key . '}'] = $val;
+				$replace['{' . $i . '}'] = $val;
+				$i++;
+            }
+        }
+        return strtr($message, $replace);
+    }
 	
-	public static function r($key, $value = []){
+	public static function r($key, $value = [])
+	{
 		if(isset(self::$lang[$key])){
 		  $return = self::$lang[$key];
 		}else{
 		  $return = $key;
 		}
 		if(sizeof($value) > 0){
-		  for ($i=0; $i < sizeof($value); $i++) {
-			$return = str_replace("{".$i."}", $value[$i], $return);
-		  }
+			$return = self::interpolate($return, $value);
 		}
 		return $return;
 	}
+
 	
-	public static function e($key, $value = []){
+	public static function e($key, $value = [])
+	{
 		echo self::r($key, $value);
 	}
 

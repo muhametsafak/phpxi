@@ -1,7 +1,12 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Http;
 
-class Http{
+class Http
+{
     private static $url;
 
     private static $parse;
@@ -15,7 +20,8 @@ class Http{
     private static $query;
     private static $fragment;
 
-    public static function autoload(){
+    public static function autoload()
+    {
         if(isset($_SERVER['HTTPS']) and $_SERVER['HTTPS'] == "on"){
             $scheme = "https";
         }else{
@@ -25,67 +31,77 @@ class Http{
         self::$parse = parse_url(self::$url);
     }
 
-    public static function set($url){
+    public static function set($url)
+    {
         self::$url = $url;
     }
 
-    public static function scheme($url = ""){
+    public static function scheme($url = "")
+    {
         if($url == ""){
             $url = self::$url;
         }
         return parse_url($url, PHP_URL_SCHEME);
     }
 
-    public static function host($url = ""){
+    public static function host($url = "")
+    {
         if($url == ""){
             $url = self::$url;
         }
         return parse_url($url, PHP_URL_HOST);
     }
 
-    public static function port($url = ""){
+    public static function port($url = "")
+    {
         if($url == ""){
             $url = self::$url;
         }
         return parse_url($url, PHP_URL_PORT);
     }
 
-    public static function user($url = ""){
+    public static function user($url = "")
+    {
         if($url == ""){
             $url = self::$url;
         }
         return parse_url($url, PHP_URL_USER);
     }
 
-    public static function pass($url = ""){
+    public static function pass($url = "")
+    {
         if($url == ""){
             $url = self::$url;
         }
         return parse_url($url, PHP_URL_PASS);
     }
 
-    public static function path($url = ""){
+    public static function path($url = "")
+    {
         if($url == ""){
             $url = self::$url;
         }
         return parse_url($url, PHP_URL_PATH);
     }
 
-    public static function query($url = ""){
+    public static function query($url = "")
+    {
         if($url == ""){
             $url = self::$url;
         }
         return parse_url($url, PHP_URL_QUERY);
     }
 
-    public static function fragment($url = ""){
+    public static function fragment($url = "")
+    {
         if($url == ""){
             $url = self::$url;
         }
         return parse_url($url, PHP_URL_FRAGMENT);
     }
 
-    public static function response($code = 200){
+    public static function response($code = 200)
+    {
         switch ($code) {
             case 100: $text = 'Continue'; break;
             case 101: $text = 'Switching Protocols'; break;
@@ -132,7 +148,8 @@ class Http{
         header($protocol . ' ' . $code . ' ' . $text);
     }
 
-    public static function userAgent(){
+    public static function userAgent()
+    {
         return $_SERVER['HTTP_USER_AGENT'];
     }
 

@@ -1,4 +1,8 @@
 <?php 
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Config;
 
 use \PHPXI\Libraries\Debugging\Logger as Logger;
@@ -19,8 +23,8 @@ class Config{
 
     private static $config = [];
 
-    public static function main(){
-        Logger::system("Config dosyaları çağırılıyor...");
+    public static function main()
+    {
             
         foreach(self::$application_config_file as $file){
             self::load($file);
@@ -32,15 +36,12 @@ class Config{
                 self::load($row);
             }
         }
-        
-        Logger::system("Config dosyaları çekildi ve yükledi.");
     }
 
     protected static function load($fileName)
     {
         $path = APPLICATION_PATH . 'Config/' . ucfirst($fileName) . '.php';
         if(file_exists($path) || DEVELOPMENT){
-            Logger::system("Config/".$fileName.".php yükleniyor...");
             $config = [];
             require $path;
             foreach($config as $key => $value){

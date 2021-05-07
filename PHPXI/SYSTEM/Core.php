@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI;
 
 use \PHPXI\Libraries\Config\Config as Config;
@@ -6,7 +10,8 @@ use \PHPXI\Libraries\Debugging\Logger as Logger;
 use \PHPXI\Libraries\Routing\Route as Route;
 use \PHPXI\Libraries\Cache\Cache as Cache;
 
-class Core{
+class Core
+{
 
     private static $html_output;
 

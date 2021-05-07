@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Validation;
 
 class Validation
@@ -143,7 +147,8 @@ class Validation
         }
     }
 
-    public static function regex($value, $pattern){
+    public static function regex($value, $pattern)
+    {
         if(preg_match(self::pattern_regex($pattern), $value)){
             return true;
         }else{
@@ -152,11 +157,13 @@ class Validation
         }
     }
 
-    public static function alpha($value){
+    public static function alpha($value)
+    {
         return self::regex($value, "alpha");
     }
 
-    public static function date($value){
+    public static function date($value)
+    {
         $isDate = false;
         if ($value instanceof \DateTime) {
             $isDate = true;
@@ -169,7 +176,8 @@ class Validation
         return $isDate;
     }
 
-    public static function dateFormat($value, $format){
+    public static function dateFormat($value, $format)
+    {
         $dateFormat = date_parse_from_format($format, $value);
 
         if($dateFormat['error_count'] === 0 && $dateFormat['warning_count'] === 0){
@@ -180,7 +188,8 @@ class Validation
         }
     }
 
-    public static function required($value){
+    public static function required($value)
+    {
         if(trim($value) != ""){
             return true;
         }else{
@@ -205,7 +214,8 @@ class Validation
         ];
     }
 
-    public static function ruleExecutive($rule, $data){
+    public static function ruleExecutive($rule, $data)
+    {
         if(is_string($data)){
             $data = [$data];
         }
@@ -219,7 +229,8 @@ class Validation
         call_user_func_array([__CLASS__, $method], $data);
     }
 
-    public static function validation(){
+    public static function validation()
+    {
         self::$error = [];
         foreach(self::$rule as $rule){
             foreach($rule['rule'] as $rule_row){
@@ -241,7 +252,8 @@ class Validation
         return self::$error;
     }
 
-    private static function clear(){
+    private static function clear()
+    {
         self::$error = [];
         self::$rule = [];
     }

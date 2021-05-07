@@ -1,14 +1,20 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Input;
 
-class Input{
+class Input
+{
     
     private static $post = [];
     private static $get = [];
     private static $files = [];
     private static $request = [];
     
-    public static function autoload(){
+    public static function autoload()
+    {
         if(isset($_GET)){
             self::$get = self::allClear($_GET);
         }
@@ -60,7 +66,8 @@ class Input{
         }
     }
     
-    public static function get($key = ""){
+    public static function get($key = "")
+    {
         if($key == ""){
             return self::$get;
         }else{
@@ -72,7 +79,8 @@ class Input{
         }
     }
     
-    public static function files($files = ""){
+    public static function files($files = "")
+    {
         if($files == ""){
             return self::$files;
         }else{
@@ -84,7 +92,8 @@ class Input{
         }
     }
     
-    public static function request($key = ""){
+    public static function request($key = "")
+    {
         if($key == ""){
             return self::$request;
         }else{

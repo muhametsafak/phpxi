@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Server;
 
 class Server{
@@ -9,7 +13,8 @@ class Server{
         self::$server = $_SERVER;
     }
     
-    public static function get($key){
+    public static function get($key)
+    {
         if(isset(self::$server[$key]) and trim(self::$server[$key]) != ""){
             return self::$server[$key];
         }else{
@@ -17,7 +22,8 @@ class Server{
         }
     }
 
-    public static function set($key, $value){
+    public static function set($key, $value)
+    {
         self::$server[$key] = $value;
         $_SERVER[$key] = $value;
     }

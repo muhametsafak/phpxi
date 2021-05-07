@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 
 if(!isset($line) and !isset($coding) and !isset($message) and !isset($name) and !isset($file)){
     exit;

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 if(phpversion() < "7.1"){
     echo "Your PHP Version : ".phpversion()."\n";
     echo "Please, Upgrade PHP (7.1) Version";

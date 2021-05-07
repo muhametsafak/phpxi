@@ -1,6 +1,10 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI;
-define("VERSION", "1.5.0");
+define("VERSION", "1.5.1");
 
 $memory_use_starting = memory_get_usage();
 $msure = microtime (); 

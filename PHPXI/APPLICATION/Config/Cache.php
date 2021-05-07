@@ -24,13 +24,3 @@ $config['HTML'] = [
      */
     "path"      => WEIGHT_PATH . 'HTML/'
 ];
-
-/**
- * SQL Cache Settings
- */
-$config['SQL'] = [
-    /**
-     * Specifies the path where SQL Cache files are stored.
-     */
-    "path"      => WEIGHT_PATH . 'SQL/'
-];

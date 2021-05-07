@@ -1,4 +1,8 @@
 <?php
+/**
+ * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * Project: PHPXI MVC Framework <phpxi.net>
+ */
 namespace PHPXI\Libraries\Cache;
 
 class Cache
@@ -23,7 +27,8 @@ class Cache
         self::$timeout = $second;
     }
 
-    public static function content($content = ""){
+    public static function content($content = "")
+    {
         self::$content = $content;
     }
 
