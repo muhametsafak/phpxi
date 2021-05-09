@@ -7,7 +7,7 @@ namespace Application\Filters;
 
 interface FilterInterface
 {
-    public function before();
+    public function before($request);
 
-    public function after();
+    public function after($request, $responsive);
 }

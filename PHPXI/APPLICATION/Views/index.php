@@ -53,14 +53,7 @@
                 font-size: 1.5em;
                 animation: blink-anim 0.8s ease 0.3s infinite alternate;
             }
-            /*
-            @keyframes blink-anim
-            {
-                from { opacity: 1; }
-                to { opacity: 0.2; }
-            }
-            */
-            
+
             .footer
             {
                 display: flex;
@@ -80,10 +73,10 @@
             <?php echo $starting; ?>
         </p>
         <div class="footer">
-            <?php 
-            //echo 'This page was submitted using ' . MEMORY_USE . ' MB memory per ' . LOAD_TIME . ' seconds.';
-            Lang::e("footer_load_time_info", ["memory_use" => MEMORY_USE, "load_time" => LOAD_TIME]);
-            ?>
+<?php
+//echo 'This page was submitted using ' . MEMORY_USE . ' MB memory per ' . LOAD_TIME . ' seconds.';
+Lang::e("footer_load_time_info", ["memory_use" => MEMORY_USE, "load_time" => LOAD_TIME]);
+?>
         </div>
     </body>
 </html>

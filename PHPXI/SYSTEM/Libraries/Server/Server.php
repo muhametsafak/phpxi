@@ -5,27 +5,20 @@
  */
 namespace PHPXI\Libraries\Server;
 
-class Server{
-    private static $server = [];
+use \PHPXI\Libraries\Base\Base as Base;
 
-    public static function autoload()
-    {
-        self::$server = $_SERVER;
-    }
-    
+class Server
+{
+
     public static function get($key)
     {
-        if(isset(self::$server[$key]) and trim(self::$server[$key]) != ""){
-            return self::$server[$key];
-        }else{
-            return false;
-        }
+        return Base::get($key, "server");
     }
 
     public static function set($key, $value)
     {
-        self::$server[$key] = $value;
-        $_SERVER[$key] = $value;
+        Base::set($key, $value, "server");
+        return new self();
     }
 
 }

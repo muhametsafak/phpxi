@@ -19,7 +19,7 @@ class Cache
     {
         self::$cache_path = $path;
         self::$fullpath = self::$cache_path . '/' . self::$cache_file;
-        
+
     }
 
     public static function timeout($second = 86400)
@@ -45,13 +45,13 @@ class Cache
 
     public static function cache()
     {
-        if(self::is()){
-            if(self::is_timeout()){
+        if (self::is()) {
+            if (self::is_timeout()) {
                 return self::write();
-            }else{
+            } else {
                 return self::read();
             }
-        }else{
+        } else {
             self::create();
         }
         return self::$content;
@@ -68,18 +68,18 @@ class Cache
 
     public static function is()
     {
-        if(file_exists(self::$fullpath)){
+        if (file_exists(self::$fullpath)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     public static function is_timeout()
     {
-        if((time() - filemtime(self::$fullpath)) > self::$timeout){
+        if ((time() - filemtime(self::$fullpath)) > self::$timeout) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

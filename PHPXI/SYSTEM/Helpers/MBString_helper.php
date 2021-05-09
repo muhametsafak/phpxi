@@ -4,7 +4,7 @@
  * Project: PHPXI MVC Framework <phpxi.net>
  */
 
-if(!function_exists("mb_substr")){
+if (!function_exists("mb_substr")) {
 
     function mb_substr($str, $start, $lenght = null, $encoding = null)
     {
@@ -13,7 +13,7 @@ if(!function_exists("mb_substr")){
 
 }
 
-if(!function_exists("mb_strtolower")){
+if (!function_exists("mb_strtolower")) {
 
     function mb_strtolower($str, $encoding = null)
     {
@@ -22,7 +22,7 @@ if(!function_exists("mb_strtolower")){
 
 }
 
-if(!function_exists("mb_strlen")){
+if (!function_exists("mb_strlen")) {
 
     function mb_strlen($str, $encoding = null)
     {
@@ -31,7 +31,7 @@ if(!function_exists("mb_strlen")){
 
 }
 
-if(!function_exists("mb_strpos")){
+if (!function_exists("mb_strpos")) {
 
     function mb_strpos($haystack, $needle, $offset = 0, $encoding = null)
     {

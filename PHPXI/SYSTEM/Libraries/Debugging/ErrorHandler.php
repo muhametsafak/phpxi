@@ -14,7 +14,7 @@ class ErrorHandler
     private $message;
     private $name;
 
-    function __construct($type, $file, $line, $message)
+    public function __construct($type, $file, $line, $message)
     {
         $this->type = $type;
         $this->file = $file;
@@ -25,7 +25,7 @@ class ErrorHandler
 
     private function error_name()
     {
-        $_ERRORS = Array(
+        $_ERRORS = array(
             0x0001 => 'E_ERROR',
             0x0002 => 'E_WARNING',
             0x0004 => 'E_PARSE',
@@ -40,9 +40,9 @@ class ErrorHandler
             0x0800 => 'E_STRICT',
             0x1000 => 'E_RECOVERABLE_ERROR',
             0x2000 => 'E_DEPRECATED',
-            0x4000 => 'E_USER_DEPRECATED'
+            0x4000 => 'E_USER_DEPRECATED',
         );
-        if(!@is_string($name = @array_search($this->type, @array_flip($_ERRORS)))){
+        if (!@is_string($name = @array_search($this->type, @array_flip($_ERRORS)))) {
             $name = 'E_UNKNOWN';
         }
         $this->name = $name;
@@ -51,15 +51,15 @@ class ErrorHandler
     private function file_read_lines()
     {
         $lines = array();
-        for($i = ($this->line - 1); $i >= ($this->line - 8); $i--){
-            if($i >= 0){
+        for ($i = ($this->line - 1); $i >= ($this->line - 8); $i--) {
+            if ($i >= 0) {
                 $lines[] = $i;
             }
         }
         $lines = array_reverse($lines);
         $lines[] = $this->line;
-        for($i = ($this->line + 1); $i <= ($this->line + 8); $i++){
-            if(!in_array($i, $lines)){
+        for ($i = ($this->line + 1); $i <= ($this->line + 8); $i++) {
+            if (!in_array($i, $lines)) {
                 $lines[] = $i;
             }
         }
@@ -68,50 +68,49 @@ class ErrorHandler
 
     private function file_read()
     {
-        if(file_exists($this->file)){
+        if (file_exists($this->file)) {
             $file_error_lines = array();
             $open = file($this->file);
-            foreach($this->file_read_lines() as $row){
+            foreach ($this->file_read_lines() as $row) {
                 $line = $row - 1;
-                if(isset($open[$line])){
+                if (isset($open[$line])) {
                     $file_error_lines[$row] = str_replace(array("<", ">"), array("&lt;", "&gt;"), $open[$line]);
                 }
             }
             return $file_error_lines;
-        }else{
+        } else {
             return false;
         }
     }
 
     public function testing()
     {
-        $return = $this->name . " - Error in file " . $this->file . " at line " . $this->line . " : ".$this->message."\n";
+        $return = $this->name . " - Error in file " . $this->file . " at line " . $this->line . " : " . $this->message . "\n";
         return $return;
     }
 
-    public function printr(){
+    public function printr()
+    {
         $read = $this->file_read();
-        if(is_array($read)){
+        if (is_array($read)) {
             $coding = '<pre class="first">';
-            foreach($read as $line => $code){
-                if($line == $this->line){
+            foreach ($read as $line => $code) {
+                if ($line == $this->line) {
                     $coding .= '<code class="error"><div class="line">' . $line . '</div>' . $code . '</code>';
-                }else{
+                } else {
                     $coding .= '<code><div class="line">' . $line . '</div>' . $code . '</code>';
                 }
-                
+
             }
             $coding .= '</pre>';
         }
-        
+
         $line = $this->line;
         $file = $this->file;
         $name = $this->name;
         $message = $this->message;
 
-
         require SYSTEM_PATH . "Libraries/Debugging/ErrorHandler.template.php";
     }
-
 
 }

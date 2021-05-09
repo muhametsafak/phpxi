@@ -1,0 +1,7 @@
+/PHPXI/WEIGHT/Session/sess_*
+/PHPXI/WEIGHT/HTML/*.html
+/PHPXI/WEIGHT/Logs/*.log
+/PHPXI/WEIGHT/SQL/*.json
+
+.vscode/*
+.idea/*

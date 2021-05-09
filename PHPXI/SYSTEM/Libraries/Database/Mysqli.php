@@ -5,8 +5,8 @@
  */
 namespace PHPXI\Libraries\Database;
 
-use \PHPXI\Libraries\Debugging\Logger as Logger;
 use \PHPXI\Libraries\Database\SQL as SQL;
+use \PHPXI\Libraries\Debugging\Logger as Logger;
 
 class MySQLi
 {
@@ -27,8 +27,9 @@ class MySQLi
     private $num_rows = 0;
     private $insert_id = 0;
     private $query_size = 0;
-    
-    function __construct(array $config){
+
+    public function __construct(array $config)
+    {
         $this->host = $config['host'];
         $this->user = $config['user'];
         $this->password = $config['password'];
@@ -39,19 +40,20 @@ class MySQLi
         SQL::prefix($this->prefix);
         $this->connect();
     }
-    function __destroy(){
+    public function __destroy()
+    {
         $this->disconnect();
     }
 
     public function connect()
     {
         $this->mysqli = new \mysqli($this->host, $this->user, $this->password, $this->name);
-        if($this->mysqli->connect_errno){
+        if ($this->mysqli->connect_errno) {
             Logger::system(
                 "MySQLI DB Connect ERROR : {connect_errno} : {connect_error}",
                 [
-                    "connect_errno" => $this->mysqli->connect_errno, 
-                    "connect_error" => $this->mysqli->connect_error
+                    "connect_errno" => $this->mysqli->connect_errno,
+                    "connect_error" => $this->mysqli->connect_error,
                 ]
             );
         }
@@ -83,7 +85,7 @@ class MySQLi
         SQL::join($from);
         return $this;
     }
-    
+
     public function join_where($join_table, $join_column, $from_table, $from_column)
     {
         SQL::join_where(
@@ -137,7 +139,7 @@ class MySQLi
 
     public function get($from = "")
     {
-        if($from != ""){
+        if ($from != "") {
             SQL::from($from);
         }
         return $this->get = $this->query(SQL::query());
@@ -145,9 +147,9 @@ class MySQLi
 
     public function row($query = "")
     {
-        if($query != ""){
+        if ($query != "") {
             return $query->fetch_object();
-        }else{
+        } else {
             return $this->get->fetch_object();
         }
     }
@@ -155,12 +157,12 @@ class MySQLi
     public function rows($query = "")
     {
         $data = [];
-        if($query != ""){
-            while($row = $query->fetch_assoc()){
+        if ($query != "") {
+            while ($row = $query->fetch_assoc()) {
                 $data[] = $row;
             }
-        }else{
-            while($row = $this->get->fetch_assoc()){
+        } else {
+            while ($row = $this->get->fetch_assoc()) {
                 $data[] = $row;
             }
         }
@@ -185,17 +187,17 @@ class MySQLi
             "SQL QUERY ERROR : {error} - QUERY : {sql}",
             [
                 "error" => $this->mysqli->error,
-                "sql" => $sql
+                "sql" => $sql,
             ]
         );
-        if(isset($this->mysqli->insert_id)){
+        if (isset($this->mysqli->insert_id)) {
             $this->insert_id = $this->mysqli->insert_id;
-        }else{
+        } else {
             $this->insert_id = 0;
         }
-        if(isset($query->num_rows)){
+        if (isset($query->num_rows)) {
             $this->num_rows = $query->num_rows;
-        }else{
+        } else {
             $this->num_rows = 0;
         }
         SQL::clear();
@@ -205,11 +207,11 @@ class MySQLi
 
     public function insert(array $data, string $from = "")
     {
-        if($from == ""){
+        if ($from == "") {
             $from = SQL::$seleted_from;
         }
-        if(sizeof($data) > 0){
-            if($this->query(SQL::insert($from, $data))){
+        if (sizeof($data) > 0) {
+            if ($this->query(SQL::insert($from, $data))) {
                 return true;
             }
         }
@@ -218,33 +220,33 @@ class MySQLi
 
     public function update(array $data, string $from = "")
     {
-        if($from == ""){
+        if ($from == "") {
             $from = SQL::$selected_from;
         }
-        if($this->query(SQL::update($from, $data))){
+        if ($this->query(SQL::update($from, $data))) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     public function delete(array $where = [], string $from = "")
     {
-        if($from == ""){
+        if ($from == "") {
             $from = SQL::$seleted_from;
         }
-        if($this->query(SQL::delete($from, $where))){
+        if ($this->query(SQL::delete($from, $where))) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     public function num_rows($query = "")
     {
-        if($query != ""){
+        if ($query != "") {
             return $query->num_rows;
-        }else{
+        } else {
             return $this->num_rows;
         }
     }
@@ -259,12 +261,14 @@ class MySQLi
         return $this->query_size;
     }
 
-    public function drop(string $table){
+    public function drop(string $table)
+    {
         $this->query_size++;
         return $this->mysqli->query(SQL::drop($table));
     }
 
-    public function truncate(string $table){
+    public function truncate(string $table)
+    {
         $this->query_size++;
         return $this->mysqli->query(SQL::truncate($table));
     }
@@ -273,12 +277,12 @@ class MySQLi
     {
         $query = $this->mysqli->query("SHOW TABLES");
         $this->query_size++;
-        if($query){
-            while($table = $query->fetch_row()){
-                if($this->prefix != ""){
+        if ($query) {
+            while ($table = $query->fetch_row()) {
+                if ($this->prefix != "") {
                     $len = strlen($this->prefix);
                     $from = substr($table[0], $len, strlen($table[0]));
-                    if($table[0] != $from){
+                    if ($table[0] != $from) {
                         $this->mysqli->query(SQL::check($from));
                         $this->mysqli->query(SQL::analyze($from));
                         $this->mysqli->query(SQL::repair($from));
@@ -288,11 +292,11 @@ class MySQLi
                             "The table {database}.{table} has been maintained.",
                             [
                                 "database" => $this->name,
-                                "table" => $table[0]
+                                "table" => $table[0],
                             ]
                         );
                     }
-                }else{
+                } else {
                     $from = $table[0];
                     $this->mysqli->query(SQL::check($from));
                     $this->mysqli->query(SQL::analyze($from));
@@ -303,7 +307,7 @@ class MySQLi
                         "The table {database}.{table} has been maintained.",
                         [
                             "database" => $this->name,
-                            "table" => $from
+                            "table" => $from,
                         ]
                     );
                 }

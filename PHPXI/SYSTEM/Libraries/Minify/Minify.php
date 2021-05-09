@@ -15,9 +15,9 @@ class Minify
     // Variables
     private static $html;
 
-    function __construct($html)
+    public function __construct($html)
     {
-        if (!empty($html)){
+        if (!empty($html)) {
             self::parseHTML($html);
         }
     }
@@ -30,7 +30,7 @@ class Minify
     public static function parseHTML($html)
     {
         self::$html = self::minifyHTML($html);
-        if (self::$info_comment){
+        if (self::$info_comment) {
             self::$html .= "\n" . self::bottomComment($html, self::$html);
         }
     }
@@ -39,12 +39,12 @@ class Minify
     {
         $raw = strlen($raw);
         $compressed = strlen($compressed);
-        
-        $savings = ($raw-$compressed) / $raw * 100;
-        
+
+        $savings = ($raw - $compressed) / $raw * 100;
+
         $savings = round($savings, 2);
-        
-        return '<!--HTML compressed, size saved '.$savings.'%. From '.$raw.' bytes, now '.$compressed.' bytes-->';
+
+        return '<!--HTML compressed, size saved ' . $savings . '%. From ' . $raw . ' bytes, now ' . $compressed . ' bytes-->';
     }
 
     private static function minifyHTML($html)
@@ -55,63 +55,63 @@ class Minify
         $raw_tag = false;
         // Variable reused for output
         $html = '';
-        foreach ($matches as $token){
+        foreach ($matches as $token) {
             $tag = (isset($token['tag'])) ? strtolower($token['tag']) : null;
-            
+
             $content = $token[0];
-            
-            if (is_null($tag)){
-                if ( !empty($token['script']) ){
+
+            if (is_null($tag)) {
+                if (!empty($token['script'])) {
                     $strip = self::$compress_js;
-                }else if ( !empty($token['style']) ){
+                } else if (!empty($token['style'])) {
                     $strip = self::$compress_css;
-                }else if ($content == '<!--wp-html-compression no compression-->'){
+                } else if ($content == '<!--wp-html-compression no compression-->') {
                     $overriding = !$overriding;
-                    
+
                     // Don't print the comment
                     continue;
-                }else if (self::$remove_comments){
-                    if (!$overriding && $raw_tag != 'textarea'){
+                } else if (self::$remove_comments) {
+                    if (!$overriding && $raw_tag != 'textarea') {
                         // Remove any HTML comments, except MSIE conditional comments
                         $content = preg_replace('/<!--(?!\s*(?:\[if [^\]]+]|<!|>))(?:(?!-->).)*-->/s', '', $content);
                     }
                 }
-            }else{
-                if ($tag == 'pre' || $tag == 'textarea'){
+            } else {
+                if ($tag == 'pre' || $tag == 'textarea') {
                     $raw_tag = $tag;
-                }elseif ($tag == '/pre' || $tag == '/textarea'){
+                } elseif ($tag == '/pre' || $tag == '/textarea') {
                     $raw_tag = false;
-                }else{
-                    if ($raw_tag || $overriding){
+                } else {
+                    if ($raw_tag || $overriding) {
                         $strip = false;
-                    }else{
+                    } else {
                         $strip = true;
-                        
+
                         // Remove any empty attributes, except:
                         // action, alt, content, src
                         $content = preg_replace('/(\s+)(\w++(?<!\baction|\balt|\bcontent|\bsrc)="")/', '$1', $content);
-                        
+
                         // Remove any space before the end of self-closing XHTML tags
                         // JavaScript excluded
                         $content = str_replace(' />', '/>', $content);
                     }
                 }
             }
-            
-            if ($strip){
+
+            if ($strip) {
                 $content = self::removeWhiteSpace($content);
             }
             $html .= $content;
         }
         return $html;
     }
-    
+
     private static function removeWhiteSpace($str)
     {
         $str = str_replace("\t", ' ', $str);
-        $str = str_replace("\n",  '', $str);
-        $str = str_replace("\r",  '', $str);
-        while (stristr($str, '  ')){
+        $str = str_replace("\n", '', $str);
+        $str = str_replace("\r", '', $str);
+        while (stristr($str, '  ')) {
             $str = str_replace('  ', ' ', $str);
         }
         return $str;

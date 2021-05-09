@@ -1,10 +1,12 @@
 <?php
 namespace Application\Controller;
 
-use Load, Lang;
+use Config;
+use Lang;
+use Load;
 use MyModel;
 
-class Welcome
+class Welcome extends Controller
 {
     public function main()
     {
@@ -13,6 +15,5 @@ class Welcome
         Lang::set("en");
         Load::view("index", $data);
     }
-
 
 }

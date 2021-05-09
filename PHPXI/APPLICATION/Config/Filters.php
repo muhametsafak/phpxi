@@ -1,34 +1,34 @@
-<?php 
+<?php
 /**
  * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * Project: PHPXI MVC Framework <phpxi.net>
  */
 
- /**
-  * Under "global", specify the Filters you want to apply in all URL addresses in your project. 
-  * 
-  */
+/**
+ * Under "global", specify the Filters you want to apply in all URL addresses in your project.
+ *
+ */
 $config["globals"] = [
-    "filters"    => [
+    "filters" => [
 
     ],
 
-    "before"    => [
-        
+    "before" => [
+
     ],
 
-    "after"     => [
-        
-    ]
+    "after" => [
+
+    ],
 ];
 
 $config["filters"] = [
     "myFilter" => [
         "before" => [
-            "/:any"
+            "/:any",
         ],
         "after" => [
-            "/:any"
-        ]
-    ]
+            "/:any",
+        ],
+    ],
 ];

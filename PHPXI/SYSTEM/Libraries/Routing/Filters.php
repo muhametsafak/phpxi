@@ -6,6 +6,8 @@
 namespace PHPXI\Libraries\Routing;
 
 use \PHPXI\Libraries\Config\Config as Config;
+use \PHPXI\Libraries\Http\Request as Request;
+use \PHPXI\Libraries\Http\Responsive as Responsive;
 
 class Filters
 {
@@ -20,16 +22,16 @@ class Filters
     private static $run_after = [];
 
     public static $patterns = [
-        '{int[0-9]?}'       => '([0-9]+)',
-        '{string[0-9]?}'    => '([a-zA-Z0-9-_]+)',
-        ':id[0-9]?'         => '([0-9]+)',
-        ':str[0-9]?'        => '([a-zA-Z0-9-_]+)',
-        ':any'              => '(.*)'
+        '{int[0-9]?}' => '([0-9]+)',
+        '{string[0-9]?}' => '([a-zA-Z0-9-_]+)',
+        ':id[0-9]?' => '([0-9]+)',
+        ':str[0-9]?' => '([a-zA-Z0-9-_]+)',
+        ':any' => '(.*)',
     ];
 
     private static function filter_load($name)
     {
-        if(!in_array($name, self::$filters)){
+        if (!in_array($name, self::$filters)) {
             $filterName = "\\Application\\Filters\\" . ucfirst($name);
             self::$filters[$name] = new $filterName();
         }
@@ -43,14 +45,14 @@ class Filters
 
     public static function add_before(string $name)
     {
-        if(!in_array($name, self::$only_before)){
+        if (!in_array($name, self::$only_before)) {
             self::$only_before[] = $name;
         }
     }
 
     public static function add_after(string $name)
     {
-        if(!in_array($name, self::$only_after)){
+        if (!in_array($name, self::$only_after)) {
             self::$only_after[] = $name;
         }
     }
@@ -58,22 +60,22 @@ class Filters
     public static function prepare()
     {
         $global_filters = Config::get("filters.globals.filters");
-        if(is_array($global_filters) and sizeof($global_filters) > 0){
-            foreach($global_filters as $row){
+        if (is_array($global_filters) and sizeof($global_filters) > 0) {
+            foreach ($global_filters as $row) {
                 self::add($row);
             }
         }
-        
+
         $global_before = Config::get("filters.globals.before");
-        if(is_array($global_before) and sizeof($global_before) > 0){
-            foreach($global_before as $row){
+        if (is_array($global_before) and sizeof($global_before) > 0) {
+            foreach ($global_before as $row) {
                 self::add_before($row);
             }
         }
-        
+
         $global_after = Config::get("filters.globals.after");
-        if(is_array($global_after) and sizeof($global_after) > 0){
-            foreach($global_after as $row){
+        if (is_array($global_after) and sizeof($global_after) > 0) {
+            foreach ($global_after as $row) {
                 self::add_after($row);
             }
         }
@@ -81,12 +83,12 @@ class Filters
 
     public static function route_filter($filters)
     {
-        if(is_array($filters) and sizeof($filters) > 0){
-            foreach($filters as $row){
+        if (is_array($filters) and sizeof($filters) > 0) {
+            foreach ($filters as $row) {
                 self::add($filters);
             }
         }
-        if(is_string($filters) and $filters != ""){
+        if (is_string($filters) and $filters != "") {
             self::add($filters);
         }
     }
@@ -94,28 +96,28 @@ class Filters
     public static function global_route_filter($url)
     {
         $filters = Config::get("filters.filters");
-        if(is_array($filters) and sizeof($filters) > 0){
-            foreach($filters as $filterName => $apply){
+        if (is_array($filters) and sizeof($filters) > 0) {
+            foreach ($filters as $filterName => $apply) {
 
-                if(isset($apply['before']) and is_array($apply['before']) and sizeof($apply['before']) > 0){
-                    foreach($apply['before'] as $path){
-                        foreach(self::$patterns as $key => $value){
+                if (isset($apply['before']) and is_array($apply['before']) and sizeof($apply['before']) > 0) {
+                    foreach ($apply['before'] as $path) {
+                        foreach (self::$patterns as $key => $value) {
                             $path = preg_replace('#' . $key . '#', $value, $path);
                         }
                         $pattern = '#^' . $path . '$#';
-                        if(preg_match($pattern, $url, $params)){
+                        if (preg_match($pattern, $url, $params)) {
                             self::add_before($filterName);
                         }
                     }
                 }
 
-                if(isset($apply['after']) and is_array($apply['after']) and sizeof($apply['after']) > 0){
-                    foreach($apply['after'] as $path){
-                        foreach(self::$patterns as $key => $value){
+                if (isset($apply['after']) and is_array($apply['after']) and sizeof($apply['after']) > 0) {
+                    foreach ($apply['after'] as $path) {
+                        foreach (self::$patterns as $key => $value) {
                             $path = preg_replace('#' . $key . '#', $value, $path);
                         }
                         $pattern = '#^' . $path . '$#';
-                        if(preg_match($pattern, $url, $params)){
+                        if (preg_match($pattern, $url, $params)) {
                             self::add_after($filterName);
                         }
                     }
@@ -127,11 +129,11 @@ class Filters
 
     public static function before()
     {
-        if(is_array(self::$only_before) and sizeof(self::$only_before) > 0){
-            foreach(self::$only_before as $row){
+        if (is_array(self::$only_before) and sizeof(self::$only_before) > 0) {
+            foreach (self::$only_before as $row) {
                 self::filter_load($row);
-                if(!in_array($row, self::$run_before)){
-                    if(self::$filters[$row]->before() === false){
+                if (!in_array($row, self::$run_before)) {
+                    if (self::$filters[$row]->before(new Request()) === false) {
                         return false;
                     }
                     self::$run_before[] = $row;
@@ -143,11 +145,11 @@ class Filters
 
     public static function after()
     {
-        if(is_array(self::$only_after) and sizeof(self::$only_after) > 0){
-            foreach(self::$only_after as $row){
+        if (is_array(self::$only_after) and sizeof(self::$only_after) > 0) {
+            foreach (self::$only_after as $row) {
                 self::filter_load($row);
-                if(!in_array($row, self::$run_after)){
-                    if(self::$filters[$row]->after() === false){
+                if (!in_array($row, self::$run_after)) {
+                    if (self::$filters[$row]->after(new Request(), new Responsive()) === false) {
                         return false;
                     }
                     self::$run_after[] = $row;
@@ -156,6 +158,5 @@ class Filters
         }
         return true;
     }
-
 
 }

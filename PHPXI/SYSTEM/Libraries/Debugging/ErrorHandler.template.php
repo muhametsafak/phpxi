@@ -4,10 +4,10 @@
  * Project: PHPXI MVC Framework <phpxi.net>
  */
 
-if(!isset($line) and !isset($coding) and !isset($message) and !isset($name) and !isset($file)){
+if (!isset($line) and !isset($coding) and !isset($message) and !isset($name) and !isset($file)) {
     exit;
-}else{
-    @header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+} else {
+    @header('HTTP/1.1 500 Internal Server Error', true, 500);
 }
 
 ?><!DOCTYPE html>
@@ -17,7 +17,7 @@ if(!isset($line) and !isset($coding) and !isset($message) and !isset($name) and 
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <title>Debug :: ErrorHandle | PHPXI</title>
         <meta name="robots" content="noindex" />
-        <style tpye="text/css"><?php require SYSTEM_PATH . 'Libraries/Debugging/assets/style.css.php'; ?></style>
+        <style tpye="text/css"><?php require SYSTEM_PATH . 'Libraries/Debugging/assets/style.css.php';?></style>
     </head>
     <body>
         <div class="d-flex" id="wrapper">
@@ -51,7 +51,7 @@ if(!isset($line) and !isset($coding) and !isset($message) and !isset($name) and 
                         <strong>
                         <?php echo $file; ?>
                         </strong>
-                        at line 
+                        at line
                         <strong>
                         <?php echo $line; ?>
                         </strong><br />

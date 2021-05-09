@@ -4,9 +4,9 @@
  * Project: PHPXI MVC Framework <phpxi.net>
  */
 
- /**
-  * Defines the public_html or www URL address of your project.
-  */
+/**
+ * Defines the public_html or www URL address of your project.
+ */
 define("BASE_URL", "http://xi.lvh.me");
 
 /**

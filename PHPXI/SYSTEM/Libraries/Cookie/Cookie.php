@@ -6,82 +6,75 @@
 namespace PHPXI\Libraries\Cookie;
 
 use \PHPXI\Libraries\Config\Config as Config;
+use \PHPXI\Libraries\Base\Base as Base;
 
 class Cookie
 {
-    
-    private static $prefix = "phpxi_project_";
-    private static $timeout = 3600;
+
+    private static $prefix = null;
+    private static $timeout = null;
     private static $cookie = [];
     private static $path = '/';
     private static $domain = '';
     private static $secure = false;
 
-
-    public static function autoload()
-    {
-        self::$prefix = Config::get("cookie.prefix");
-        self::$timeout = Config::get("cookie.timeout");
-        
-        foreach($_COOKIE as $key => $value){
-            if(mb_substr($key, 0, strlen(self::$prefix)) == self::$prefix){
-                $id = mb_substr($key, strlen(self::$prefix), strlen($key));
-                self::$cookie[$id] = $value;
-            }
-        }
-    }
-    
     public static function timeout($time = 3600)
     {
         self::$timeout = $time;
+        return new self();
     }
 
     public static function path($path = '/')
     {
         self::$path = $path;
-        return $path;
+        return new self();
     }
 
     public static function domain($domain = '')
     {
         self::$domain = $domain;
+        return new self();
     }
 
     public static function secure($secure = false)
     {
         self::$secure = $secure;
+        return new self();
     }
 
     public static function set($key, $value)
     {
-        self::$cookie[$key] = $value;
+        if(is_null(self::$prefix)){
+            self::$prefix = Config::get("cookie.prefix");
+        }
+        if(is_null(self::$timeout)){
+            self::$timeout =Config::get("cookie.timeout");
+        }
+        Base::set($key, $value, "cookie");
         $time = self::$timeout + time();
         $id = self::$prefix . $key;
         setcookie($id, $value, $time, self::$path, self::$domain, self::$secure, true);
+        return new self();
     }
 
     public static function get($key)
     {
-        if(isset(self::$cookie[$key]) and self::$cookie[$key] != ""){
-            return self::$cookie[$key];
-        }else{
-            return false;
-        }
+        return Base::get($key, "cookie");
     }
 
     public static function add($key, $value)
     {
-        self::set($key, $value);
+        return self::set($key, $value);
     }
 
     public static function update($key, $value)
     {
-        self::set($key, $value);
+        return self::set($key, $value);
     }
 
     public static function delete($key)
     {
-        unset(self::$cookie[$key]);
+        self::set($key, null);
         $time = time() - 3600;
         $id = self::$prefix . $key;
         setcookie($id, null, $time);

@@ -32,43 +32,44 @@ class SQL
 
     public static function select($select)
     {
-        if($select != '*'){
+        if ($select != '*') {
             $selects = explode(',', $select);
-            foreach($selects as $row){
+            foreach ($selects as $row) {
                 $as_rows = explode(' as ', strtolower($row));
-                if(sizeof($as_rows) > 1){
+                if (sizeof($as_rows) > 1) {
                     $as = $as_rows[1];
                 }
                 $rows = explode('.', $as_rows[0]);
-                if(sizeof($rows) > 1){
-                    if(trim($rows[1]) == '*'){
+                if (sizeof($rows) > 1) {
+                    if (trim($rows[1]) == '*') {
                         self::$select[] = '`' . trim($rows[0]) . '`.*';
-                    }else{
-                        if(isset($as) and $as != ''){
+                    } else {
+                        if (isset($as) and $as != '') {
                             self::$select[] = '`' . trim($rows[0]) . '`.`' . trim($rows[1]) . '` AS `' . $as . '`';
-                        }else{
+                        } else {
                             self::$select[] = '`' . trim($rows[0]) . '`.`' . trim($rows[1]) . '`';
                         }
                     }
-                }else{
-                    if(isset($as) && $as != ''){
+                } else {
+                    if (isset($as) && $as != '') {
                         self::$select[] = '`' . trim($rows[0]) . '` AS `' . $as . '`';
-                    }else{
+                    } else {
                         self::$select[] = '`' . trim($rows[0]) . '`';
                     }
                 }
                 $as = null;
             }
-        }else{
+        } else {
             self::$select = '*';
         }
-        
+
     }
 
-    public static function from($from){
+    public static function from($from)
+    {
         self::$from[] = $from;
         self::selected_from($from);
-        
+
     }
 
     public static function selected_from($from)
@@ -84,12 +85,11 @@ class SQL
     public static function join_where(array $join_column, array $from_column)
     {
         $join = '`' . self::$prefix . $join_column[0] . '`.`' . $join_column[1] . '`';
-        
+
         $from = '`' . self::$prefix . $from_column[0] . '`.`' . $from_column[1] . '`';
 
         self::$where[] = $from . '=' . $join;
 
-        
     }
 
     public static function where($column, $value, $operator)
@@ -112,51 +112,52 @@ class SQL
         self::$having[] = self::operator_where($column, $value, $operator);
     }
 
-    private static function operator_where($column, $value, $operator){
+    private static function operator_where($column, $value, $operator)
+    {
         $table = self::$prefix . self::$selected_from;
 
-        if(is_string($value)){
+        if (is_string($value)) {
             $value = self::escape_string($value);
         }
-        if(is_array($value)){
+        if (is_array($value)) {
             $values = [];
-            foreach($value as $val){
+            foreach ($value as $val) {
                 $values[] = self::escape_string($val);
             }
             $value = $values;
         }
         $return = "";
-        switch(strtolower($operator)){
-            case '=': 
-                $return = "`".$table."`.`".$column."` = '" . $value . "'";
-            break;
-            case 'in': 
-                if(is_array($value)){
+        switch (strtolower($operator)) {
+            case '=':
+                $return = "`" . $table . "`.`" . $column . "` = '" . $value . "'";
+                break;
+            case 'in':
+                if (is_array($value)) {
                     $value = implode(", ", $value);
                 }
                 $return = "`" . $table . "`.`" . $column . "` IN (" . $value . ")";
-            break;
+                break;
             case 'not in':
-                if(is_array($value)){
+                if (is_array($value)) {
                     $value = implode(", ", $value);
                 }
                 $return = "`" . $table . "`.`" . $column . "` NOT IN (" . $value . ")";
-            break;
-            case 'like': 
+                break;
+            case 'like':
                 $return = "`" . $table . "`.`" . $column . "` LIKE '" . $value . "'";
-            break;
+                break;
             case 'not like':
                 $return = "`" . $table . "`.`" . $column . "` NOT LIKE '" . $value . "'";
-            break;
+                break;
             case 'between':
                 $return = "`" . $table . "`.`" . $column . "` BETWEEN '" . $value[0] . " AND " . $value[1] . "'";
-            break;
+                break;
             case 'not between':
                 $return = "`" . $table . "`.`" . $column . "` NOT BETWEEN '" . $value[0] . " AND " . $value[1] . "'";
-            break;
+                break;
             default:
-                $return = "`" . $table . "`.`" . $column . "` " .$operator . " '".$value."'";
-            break;
+                $return = "`" . $table . "`.`" . $column . "` " . $operator . " '" . $value . "'";
+                break;
         }
         return $return;
     }
@@ -173,77 +174,78 @@ class SQL
 
     public static function order_by($by = "", $oder = "", $from = "")
     {
-        if($from == ""){
+        if ($from == "") {
             $from = self::$selected_from;
         }
-        if($order == ""){
+        if ($order == "") {
             self::$order_by[] = $by;
-        }else{
-            if(strtolower($order) == "asc"){
+        } else {
+            if (strtolower($order) == "asc") {
                 $order = "ASC";
-            }else{
+            } else {
                 $order = "DESC";
             }
             self::$order_by[] = "`" . self::$prefix . $from . "`.`" . $by . "` " . $order;
         }
-        
+
     }
 
     private static function query_where_create()
     {
         $wheres = [];
-        if(is_array(self::$where) && sizeof(self::$where) > 0){
+        if (is_array(self::$where) && sizeof(self::$where) > 0) {
             $wheres[] = implode(" AND ", self::$where);
         }
-        if(is_array(self::$and_where) && sizeof(self::$and_where) > 0){
+        if (is_array(self::$and_where) && sizeof(self::$and_where) > 0) {
             $wheres[] = implode(" AND ", self::$and_where);
         }
-        if(is_array(self::$or_where) && sizeof(self::$or_where) > 0){
+        if (is_array(self::$or_where) && sizeof(self::$or_where) > 0) {
             $wheres[] = implode(" OR ", self::$or_where);
         }
-        if(sizeof($wheres) > 0){
+        if (sizeof($wheres) > 0) {
             $where = implode(" AND ", $wheres);
-        }else{
+        } else {
             $where = '1';
         }
         return $where;
     }
 
-    public static function query(){
+    public static function query()
+    {
         $sqls = [];
-        
-        if(is_array(self::$select) && sizeof(self::$select) > 0){
+
+        if (is_array(self::$select) && sizeof(self::$select) > 0) {
             $sqls['SELECT'] = implode(", ", self::$select);
-        }else{
+        } else {
             $sqls['SELECT'] = self::$select;
         }
 
         $froms = [];
-        foreach(self::$from as $row){
+        foreach (self::$from as $row) {
             $froms[] = "`" . self::$prefix . $row . "`";
         }
         $sqls['FROM'] = implode(", ", $froms);
 
         $sqls['WHERE'] = self::query_where_create();
 
-        if(sizeof(self::$group_by) > 0){
+        if (sizeof(self::$group_by) > 0) {
             $sqls['GROUP BY'] = implode(", ", self::$group_by);
         }
 
-        if(sizeof(self::$having) > 0){
+        if (sizeof(self::$having) > 0) {
             $sqls['HAVING'] = implode(" AND ", self::$having);
         }
-        
-        if(is_array(self::$order_by) && sizeof(self::$order_by) > 0){
+
+        if (is_array(self::$order_by) && sizeof(self::$order_by) > 0) {
             $sqls['ORDER BY'] = implode(", ", self::$order_by);
         }
 
-        if(trim(self::$limit) != ""){
+        if (trim(self::$limit) != "") {
             $sqls['LIMIT'] = self::$limit;
         }
 
         $sql = null;
-        foreach($sqls as $key => $value){
+        foreach ($sqls as $key => $value) {
             $sql .= " " . $key . " " . $value;
         }
         return $sql;
@@ -254,7 +256,7 @@ class SQL
         $table = self::$prefix . $from;
         $keys = [];
         $values = [];
-        foreach($data as $key => $value){
+        foreach ($data as $key => $value) {
             $keys[] = "`" . $key . "`";
             $values[] = "'" . self::escape_string($value) . "'";
         }
@@ -265,14 +267,14 @@ class SQL
     public static function delete(string $from, array $where = [])
     {
         $table = self::$prefix . $from;
-        if(sizeof($where) > 0){
+        if (sizeof($where) > 0) {
             $rows = [];
-            foreach($where as $key => $value){
+            foreach ($where as $key => $value) {
                 $rows[] = "`" . $key . "` = '" . self::escape_string($value) . "'";
             }
             $sql = "DELETE FROM `" . $table . "` WHERE " . implode(" AND ", $rows);
-        }else{
-            $sql = "DELETE FROM `".$table."` WHERE ".self::query_where_create();
+        } else {
+            $sql = "DELETE FROM `" . $table . "` WHERE " . self::query_where_create();
         }
         return $sql;
     }
@@ -281,11 +283,11 @@ class SQL
     {
         $table = self::$prefix . $from;
         $rows = [];
-        foreach($data as $key => $value){
+        foreach ($data as $key => $value) {
             $rows[] = "`" . $key . "` = '" . self::escape_string($value) . "'";
         }
 
-        $sql = "UPDATE `" . $table . "` SET " . implode(", ", $rows) . " WHERE ".self::query_where_create();
+        $sql = "UPDATE `" . $table . "` SET " . implode(", ", $rows) . " WHERE " . self::query_where_create();
         return $sql;
     }
 

@@ -16,8 +16,6 @@ $config['charset'] = "UTF-8";
  */
 $config['timezone'] = "Europe/Istanbul";
 
-
-
 /**
  * It tries to minimize the html output.
  * If you want minify applied to HTML output; Change it to true.

@@ -1,96 +1,59 @@
-<?php 
+<?php
 /**
  * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * Project: PHPXI MVC Framework <phpxi.net>
  */
 namespace PHPXI\Libraries\Config;
 
-use \PHPXI\Libraries\Debugging\Logger as Logger;
+use \PHPXI\Libraries\Base\Base as Base;
 
-class Config{
+class Config
+{
 
-    private static $application_config_file = [
-        "autoload",
-        "cache",
-        "config",
-        "cookie",
-        "database",
-        "filters",
-        "language",
-        "session",
-        "upload"
-    ];
-
-    private static $config = [];
-
-    public static function main()
+    public static function get($key, $type = false)
     {
-            
-        foreach(self::$application_config_file as $file){
-            self::load($file);
-        }
-
-        $autoload_config = self::get("autoload.config");
-        if(is_array($autoload_config) and sizeof($autoload_config) > 0){
-            foreach ($autoload_config as $row) {
-                self::load($row);
-            }
-        }
-    }
-
-    protected static function load($fileName)
-    {
-        $path = APPLICATION_PATH . 'Config/' . ucfirst($fileName) . '.php';
-        if(file_exists($path) || DEVELOPMENT){
-            $config = [];
-            require $path;
-            foreach($config as $key => $value){
-                self::$config[$fileName][$key] = $value;
-            }
-        }
-    }
-
-    public static function get($key, $type = false){
         $ids = explode(".", $key);
-        if(sizeof($ids) > 1){
-            if(isset(self::$config[$ids[0]])){
-                $return = self::$config[$ids[0]];
+        if (sizeof($ids) > 1) {
+            if (Base::get($ids[0], "config")) {
+                $return = Base::get($ids[0], "config");
                 unset($ids[0]);
-                foreach($ids as $id){
-                    if(isset($return[$id])){
+                foreach ($ids as $id) {
+                    if (isset($return[$id])) {
                         $return = $return[$id];
-                    }else{
+                    } else {
                         $return = false;
                     }
                 }
             }
-        }else{
-            if(isset(self::$config[$key])){
-                $return = self::$config[$key];
+        } else {
+            if (Base::get($key, "config")) {
+                $return = Base::get($key, "config");
             }
         }
-        if(isset($return)){
-            if($type and is_array($return)){
+        if (isset($return)) {
+            if ($type and is_array($return)) {
                 $return = arrayObject($return);
             }
-        }else{
+        } else {
             $return = false;
         }
         return $return;
     }
 
-    public static function set($key, $value){
+    public static function set($key, $value)
+    {
         $ids = explode(".", $key);
-        if(sizeof($ids) == 1){
-            self::$config[$key] = $value;
+        if (sizeof($ids) == 1) {
+            Base::set($key, $value, "config");
             return true;
-        }elseif(sizeof($ids) == 2){
-            self::$config[$ids[0]][$ids[1]] = $value;
+        } elseif (sizeof($ids) == 2) {
+            $configs = Base::get("", "config");
+            $configs[$ids[0]][$ids[1]] = $value;
+            Base::set("", $configs, "config");
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-
 
 }

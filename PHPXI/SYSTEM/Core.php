@@ -5,10 +5,9 @@
  */
 namespace PHPXI;
 
-use \PHPXI\Libraries\Config\Config as Config;
-use \PHPXI\Libraries\Debugging\Logger as Logger;
-use \PHPXI\Libraries\Routing\Route as Route;
 use \PHPXI\Libraries\Cache\Cache as Cache;
+use \PHPXI\Libraries\Config\Config as Config;
+use \PHPXI\Libraries\Routing\Route as Route;
 
 class Core
 {
@@ -17,23 +16,23 @@ class Core
 
     public static function output()
     {
-        if(Config::get("cache.HTML.status")){
+        if (Config::get("cache.HTML.status")) {
             Cache::path(Config::get("cache.HTML.path"));
             Cache::timeout(Config::get("cache.HTML.timeout"));
             Cache::file("%%" . md5(current_url()) . "%%.html");
-            if(!Cache::is() || Cache::is_timeout()){
+            if (!Cache::is() || Cache::is_timeout()) {
                 self::execute();
                 Cache::content(self::$html_output);
-                if(!Cache::is()){
+                if (!Cache::is()) {
                     Cache::create();
-                }else{
+                } else {
                     Cache::write();
                 }
                 return self::$html_output;
-            }else{
+            } else {
                 return Cache::read();
             }
-        }else{
+        } else {
             return self::execute();
         }
     }
@@ -43,10 +42,10 @@ class Core
         ob_start();
         Route::dispatch();
         self::$html_output = ob_get_clean();
-        if(ob_get_length() > 0){
+        if (ob_get_length() > 0) {
             ob_end_flush();
         }
-        if(Config::get("config.minify")){
+        if (Config::get("config.minify")) {
             self::$html_output = minify(self::$html_output);
         }
         return self::$html_output;

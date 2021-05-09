@@ -5,24 +5,20 @@
  */
 namespace PHPXI\Libraries\Session;
 
-class Session{
-    
-    private static $session = [];
-    
-    public static function autoload()
-    {
-        self::$session = $_SESSION;
-    }
+use \PHPXI\Libraries\Base\Base as Base;
 
-    function __destruct()
+class Session
+{
+
+    public function __destruct()
     {
-        if(sizeof(self::$session) == 0){
+        if (sizeof(Base::$data['session']) == 0) {
             self::unset();
             self::destroy();
         }
     }
-    
-    public static function unset()
+
+    function unset()
     {
         session_unset();
     }
@@ -39,34 +35,28 @@ class Session{
 
     public static function get($key)
     {
-        if(isset(self::$session[$key]) and self::$session[$key] != ""){
-            return self::$session[$key];
-        }else{
-            return false;
-        }
+        return Base::get($key, "session");
     }
 
     public static function set($key, $value)
     {
-        self::$session[$key] = $value;
+        Base::set($key, $value, "session");
         $_SESSION[$key] = $value;
     }
-    
+
     public static function add($key, $value)
     {
         self::set($key, $value);
     }
 
-    
     public static function update($key, $value)
     {
         self::set($key, $value);
     }
-    
+
     public static function delete($key)
     {
-        self::$session[$key] = null;
-        $_SESSION[$key] = null;
+        self::set($key, null);
         unset(self::$session[$key]);
         unset($_SESSION[$key]);
     }

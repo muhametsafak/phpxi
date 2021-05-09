@@ -5,8 +5,8 @@
  */
 namespace PHPXI\Libraries\Database;
 
-use \PHPXI\Libraries\Debugging\Logger as Logger;
 use \PHPXI\Libraries\Database\SQL as SQL;
+use \PHPXI\Libraries\Debugging\Logger as Logger;
 
 class PDO
 {
@@ -29,7 +29,7 @@ class PDO
     private $insert_id = 0;
     private $query_size = 0;
 
-    function __contruct(array $config)
+    public function __contruct(array $config)
     {
         $this->host = $config['host'];
         $this->user = $config['user'];
@@ -43,22 +43,21 @@ class PDO
         $this->connect();
     }
 
-    function __destroy()
+    public function __destroy()
     {
         $this->disconnect();
     }
 
-
     private function connect()
     {
-        try{
+        try {
             $con_link = $this->driver . ":host=" . $this->host . ";dbname=" . $this->name . ";charset=" . $this->charset;
             $this->pdo = new \PDO($con_link, $this->user, $this->password);
             $this->pdo->exec("SET NAMES '" . $this->charset . "' COLLATION '" . $this->collation . "'");
             $this->pdo->exec("SET CHARACTER SET '" . $this->charset . "'");
             $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             $this->pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_OBJ);
-        }catch(\PDOException $e){
+        } catch (\PDOException $e) {
             Logger::system(
                 "PDO DB Connect ERROR : {error}",
                 ["error" => $e->getMessage()]
@@ -71,7 +70,6 @@ class PDO
     {
         $this->pdo = null;
     }
-
 
     public function select($select = "*")
     {
@@ -90,7 +88,7 @@ class PDO
         SQL::join($from);
         return $this;
     }
-    
+
     public function join_where($join_table, $join_column, $from_table, $from_column)
     {
         SQL::join_where(
@@ -144,7 +142,7 @@ class PDO
 
     public function get($from = "")
     {
-        if($from != ""){
+        if ($from != "") {
             SQL::from($from);
         }
         return $this->get = $this->query(SQL::query());
@@ -152,23 +150,24 @@ class PDO
 
     public function row($query = "")
     {
-        if($query == ""){
+        if ($query == "") {
             return $this->get->fetch();
-        }else{
+        } else {
             return $query->fetch();
         }
     }
 
     public function rows($query = "")
     {
-        if($query == ""){
+        if ($query == "") {
             return $this->get->fetchAll();
-        }else{
+        } else {
             return $query->fetchAll();
         }
     }
 
-    public function count(){
+    public function count()
+    {
         $query = $this->pdo->query(SQL::query());
         $this->query_size++;
         return $query->rowCount();
@@ -176,9 +175,9 @@ class PDO
 
     public function column($query = "")
     {
-        if($query == ""){
+        if ($query == "") {
             return $this->get->fetchColumn();
-        }else{
+        } else {
             return $query->fetchColumn();
         }
     }
@@ -191,9 +190,9 @@ class PDO
     public function query($sql, $params = null)
     {
         try {
-            if(is_null($params)){
+            if (is_null($params)) {
                 $query = $this->pdo->query($sql);
-            }else{
+            } else {
                 $query = $this->pdo->prepare($sql);
                 $query->execute($params);
             }
@@ -202,13 +201,13 @@ class PDO
                 "SQL QUERY ERROR : {error} - QUERY : {sql}",
                 [
                     "error" => $e->getMessage(),
-                    "sql" => $sql
+                    "sql" => $sql,
                 ]
             );
         }
-        if($this->pdo->lastInsertId()){
+        if ($this->pdo->lastInsertId()) {
             $this->insert_id = $this->pdo->lastInsertId();
-        }else{
+        } else {
             $this->insert_id = 0;
         }
         $this->num_rows = $query->rowCount();
@@ -216,7 +215,7 @@ class PDO
         $this->query_size++;
         return $query;
     }
-    
+
     public function exec($sql)
     {
         $this->query_size++;
@@ -225,11 +224,11 @@ class PDO
 
     public function insert(array $data, string $from = "")
     {
-        if($from == ""){
+        if ($from == "") {
             $from = SQL::$seleted_from;
         }
-        if(sizeof($data) > 0){
-            if($this->query(SQL::insert($from, $data))){
+        if (sizeof($data) > 0) {
+            if ($this->query(SQL::insert($from, $data))) {
                 return true;
             }
         }
@@ -238,34 +237,35 @@ class PDO
 
     public function update(array $data, string $from = "")
     {
-        if($from == ""){
+        if ($from == "") {
             $from = SQL::$selected_from;
         }
         $query = $this->query(SQL::update($from, $data));
-        if($query->rowCount()){
+        if ($query->rowCount()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function delete(array $where = [], string $from = ""){
-        if($from == ""){
+    public function delete(array $where = [], string $from = "")
+    {
+        if ($from == "") {
             $from = SQL::$selected_from;
         }
         $query = $this->query(SQL::delete($from, $data));
-        if($query->rowCount()){
+        if ($query->rowCount()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     public function num_rows($query = "")
     {
-        if($query != ""){
+        if ($query != "") {
             return $query->rowCount();
-        }else{
+        } else {
             return $this->num_rows;
         }
     }
@@ -280,11 +280,13 @@ class PDO
         return $this->query_size;
     }
 
-    public function drop(string $table){
+    public function drop(string $table)
+    {
         return $this->exec(SQL::drop($table));
     }
 
-    public function truncate(string $table){
+    public function truncate(string $table)
+    {
         return $this->exec(SQL::truncate($table));
     }
 
@@ -293,12 +295,12 @@ class PDO
         $query = $this->pdo->query("SHOW TABLES");
         $this->query_size++;
         $query->setFetchMode(\PDO::FETCH_NUM);
-        if($query){
-            foreach($query as $table){
-                if($this->prefix != ""){
+        if ($query) {
+            foreach ($query as $table) {
+                if ($this->prefix != "") {
                     $len = strlen($this->prefix);
                     $from = substr($table[0], $len, strlen($table[0]));
-                    if($table[0] != $from){
+                    if ($table[0] != $from) {
                         $this->exec(SQL::check($from));
                         $this->exec(SQL::analyze($from));
                         $this->exec(SQL::repair($from));
@@ -307,11 +309,11 @@ class PDO
                             "The table {database}.{table} has been maintained.",
                             [
                                 "database" => $this->name,
-                                "table" => $table[0]
+                                "table" => $table[0],
                             ]
                         );
                     }
-                }else{
+                } else {
                     $from = $table[0];
                     $this->exec(SQL::check($from));
                     $this->exec(SQL::analyze($from));
@@ -321,7 +323,7 @@ class PDO
                         "The table {database}.{table} has been maintained.",
                         [
                             "database" => $this->name,
-                            "table" => $from
+                            "table" => $from,
                         ]
                     );
                 }

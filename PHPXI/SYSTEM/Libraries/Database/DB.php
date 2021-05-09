@@ -21,27 +21,27 @@ class DB
 
     public static function connect($name)
     {
-        if(is_array($name)){
+        if (is_array($name)) {
             self::$host = $name['host'];
             self::$user = $name['user'];
             self::$password = $name['password'];
             self::$name = $name['name'];
-            if(isset($name['prefix']) and $name['prefix'] != ""){
+            if (isset($name['prefix']) and $name['prefix'] != "") {
                 self::$prefix = $name['prefix'];
             }
-            if(isset($name['charset']) and $name['charset'] != ""){
+            if (isset($name['charset']) and $name['charset'] != "") {
                 self::$charset = $name['charset'];
             }
-            if(isset($name['collation']) and $name['collation'] != ""){
+            if (isset($name['collation']) and $name['collation'] != "") {
                 self::$collation = $name['collation'];
             }
-            if(isset($name['driver']) and $name['driver'] != ""){
+            if (isset($name['driver']) and $name['driver'] != "") {
                 self::$driver = $name['driver'];
             }
-            if(isset($name['class']) and $name['class'] != ""){
+            if (isset($name['class']) and $name['class'] != "") {
                 self::$class = $name['class'];
             }
-        }else{
+        } else {
             self::$host = Config::get("database." . $name . ".host");
             self::$user = Config::get("database." . $name . ".user");
             self::$password = Config::get("database." . $name . ".password");
@@ -54,21 +54,21 @@ class DB
         }
 
         $connection_config = [
-            "host"      => self::$host,
-            "user"      => self::$user,
-            "password"  => self::$password,
-            "name"      => self::$name,
-            "prefix"    => self::$prefix,
-            "charset"   => self::$charset,
+            "host" => self::$host,
+            "user" => self::$user,
+            "password" => self::$password,
+            "name" => self::$name,
+            "prefix" => self::$prefix,
+            "charset" => self::$charset,
             "collation" => self::$collation,
-            "driver"    => self::$driver
+            "driver" => self::$driver,
         ];
 
         switch (strtolower(self::$class)) {
-            case 'mysqli': 
+            case 'mysqli':
                 return new \PHPXI\Libraries\Database\MySQLi($connection_config);
                 break;
-            case 'pdo': 
+            case 'pdo':
                 return new \PHPXI\Libraries\Database\PDO($connection_config);
                 break;
             default:

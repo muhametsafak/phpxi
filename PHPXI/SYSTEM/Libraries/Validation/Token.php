@@ -5,47 +5,28 @@
  */
 namespace PHPXI\Libraries\Validation;
 
-use \PHPXI\Libraries\Session\Session as Session;
-use \PHPXI\Libraries\Server\Server as Server;
-use \PHPXI\Libraries\Input\Input as Input;
+use \PHPXI\Libraries\Input\Base as Base;
 
 class Token
 {
-    private static $token;
-
-    public static function autoload()
-    {
-        if(Server::get("REQUEST_METHOD") !== "POST"){
-            self::create();
-        }else{
-            self::$token = Session::get("_token");
-        }
-    }
-
-    public static function create()
-    {
-        self::$token = time() . Session::id() . rand(0, 999);
-        self::$token = md5(self::$token);
-        self::set(self::$token);
-    }
-
-    public static function set($value)
-    {
-        Session::set("_token", $value);
-    }
 
     public static function get()
     {
-        return self::$token;
+        return Base::get("_token", "validation");
     }
 
     public static function verify()
     {
-        if(Input::post("_token") === self::$token){
-            return true;
+        if(Base::get("_token", "validation")){
+            if (Input::post("_token") == Base::get("_token", "validation")) {
+                return true;
+            } else {
+                return false;
+            }
         }else{
             return false;
         }
+
     }
 
 }
