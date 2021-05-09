@@ -5,7 +5,7 @@
  */
 namespace PHPXI;
 
-define("VERSION", "1.5.1");
+define("VERSION", "1.5.2");
 
 $memory_use_starting = memory_get_usage();
 $msure = microtime();
