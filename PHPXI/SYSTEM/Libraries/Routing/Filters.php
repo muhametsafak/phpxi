@@ -5,30 +5,49 @@
  */
 namespace PHPXI\Libraries\Routing;
 
-use \PHPXI\Libraries\Config\Config as Config;
-use \PHPXI\Libraries\Http\Request as Request;
-use \PHPXI\Libraries\Http\Responsive as Responsive;
+use PHPXI\Libraries\Base\Base as Base;
 
 class Filters
 {
+    /**
+     * @var array
+     */
     private static $filters = [];
 
+    /**
+     * @var array
+     */
     private static $only_before = [];
 
+    /**
+     * @var array
+     */
     private static $only_after = [];
 
+    /**
+     * @var array
+     */
     private static $run_before = [];
 
+    /**
+     * @var array
+     */
     private static $run_after = [];
 
+    /**
+     * @var array
+     */
     public static $patterns = [
         '{int[0-9]?}' => '([0-9]+)',
         '{string[0-9]?}' => '([a-zA-Z0-9-_]+)',
         ':id[0-9]?' => '([0-9]+)',
         ':str[0-9]?' => '([a-zA-Z0-9-_]+)',
-        ':any' => '(.*)',
+        ':any' => '(.*)'
     ];
 
+    /**
+     * @param $name
+     */
     private static function filter_load($name)
     {
         if (!in_array($name, self::$filters)) {
@@ -37,12 +56,18 @@ class Filters
         }
     }
 
+    /**
+     * @param string $name
+     */
     public static function add(string $name)
     {
         self::add_before($name);
         self::add_after($name);
     }
 
+    /**
+     * @param string $name
+     */
     public static function add_before(string $name)
     {
         if (!in_array($name, self::$only_before)) {
@@ -50,6 +75,9 @@ class Filters
         }
     }
 
+    /**
+     * @param string $name
+     */
     public static function add_after(string $name)
     {
         if (!in_array($name, self::$only_after)) {
@@ -59,21 +87,22 @@ class Filters
 
     public static function prepare()
     {
-        $global_filters = Config::get("filters.globals.filters");
+        $global = \Config\Filters::GLOBALS;
+        $global_filters = $global['filters'];
         if (is_array($global_filters) and sizeof($global_filters) > 0) {
             foreach ($global_filters as $row) {
                 self::add($row);
             }
         }
 
-        $global_before = Config::get("filters.globals.before");
+        $global_before = $global['before'];
         if (is_array($global_before) and sizeof($global_before) > 0) {
             foreach ($global_before as $row) {
                 self::add_before($row);
             }
         }
 
-        $global_after = Config::get("filters.globals.after");
+        $global_after = $global['after'];
         if (is_array($global_after) and sizeof($global_after) > 0) {
             foreach ($global_after as $row) {
                 self::add_after($row);
@@ -81,6 +110,9 @@ class Filters
         }
     }
 
+    /**
+     * @param $filters
+     */
     public static function route_filter($filters)
     {
         if (is_array($filters) and sizeof($filters) > 0) {
@@ -93,9 +125,12 @@ class Filters
         }
     }
 
+    /**
+     * @param $url
+     */
     public static function global_route_filter($url)
     {
-        $filters = Config::get("filters.filters");
+        $filters = \Config\Filters::FILTERS;
         if (is_array($filters) and sizeof($filters) > 0) {
             foreach ($filters as $filterName => $apply) {
 
@@ -133,13 +168,14 @@ class Filters
             foreach (self::$only_before as $row) {
                 self::filter_load($row);
                 if (!in_array($row, self::$run_before)) {
-                    if (self::$filters[$row]->before(new Request()) === false) {
+                    if (self::$filters[$row]->before(Base::$models['request']) === false) {
                         return false;
                     }
                     self::$run_before[] = $row;
                 }
             }
         }
+
         return true;
     }
 
@@ -149,13 +185,14 @@ class Filters
             foreach (self::$only_after as $row) {
                 self::filter_load($row);
                 if (!in_array($row, self::$run_after)) {
-                    if (self::$filters[$row]->after(new Request(), new Responsive()) === false) {
+                    if (self::$filters[$row]->after(Base::$models['request'], Base::$models['response']) === false) {
                         return false;
                     }
                     self::$run_after[] = $row;
                 }
             }
         }
+
         return true;
     }
 

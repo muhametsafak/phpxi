@@ -1,5 +1,18 @@
 # Sürüm Notları
 
+### v1.6.0
+
+-   Debug işlemlerinde kullanılabilecek hata raporlama aracı geliştirildi. Artık raporlar daha fazla detay içeriyor.
+-   Hata ayıklayıcıda farklı raporlama seçeneklerinin yanında tüm hata rapolarını gizleme seçeneği eklendi.
+-   PHPXI dahili hata ayıklayıcısı yerine PHP'nin hata raporlama sistemi kullanılabilir ve bunlar özelleştirilebilir.
+-   Input kütüphanesinde iyileştirme yapıldı. Doğrudan validation işlemi yapılabiliyor.
+-   Config sistemi geliştirildi.
+-   HTML önbellekleme belli rotalar (route) için deaktif edilebilir.
+-   Dahili kütüphane modellerine static ya da non-static şekilde erişilebilir.
+-   JQuery (3.6.0), Bootstrap (5.0.0) ve Font-Awesome (4.7.0) dahil edildi.
+-   Kullanımı öğrenme adına basit bir login ve dashboard arayüzü dahil edildi.
+-   Bir 404 hata sayfası şablonu dahil edildi.
+
 ### v1.5.2
 
 -   Base kütüphanesi geliştirildi. Artık kütüphaneler evrensel parametreleri için ortak tek bir kütüphane kullanıyor.

@@ -1,35 +1,99 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * SQL.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    SQL.php @ 2021-05-11T20:46:47.213Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace PHPXI\Libraries\Database;
 
 class SQL
 {
 
+    /**
+     * @var mixed
+     */
     private static $prefix;
+    /**
+     * @var array
+     */
     private static $select = [];
+    /**
+     * @var array
+     */
     private static $from = [];
+    /**
+     * @var string
+     */
     public static $selected_from = '';
+    /**
+     * @var array
+     */
     private static $where = [];
+    /**
+     * @var array
+     */
     private static $and_where = [];
+    /**
+     * @var array
+     */
     private static $or_where = [];
+    /**
+     * @var array
+     */
     private static $having = [];
+    /**
+     * @var array
+     */
     private static $group_by = [];
+    /**
+     * @var mixed
+     */
     private static $limit;
+    /**
+     * @var array
+     */
     private static $order_by = [];
 
+    /**
+     * @param string $prefix
+     */
     public static function prefix(string $prefix)
     {
         self::$prefix = $prefix;
     }
 
+    /**
+     * @param $value
+     */
     private static function escape_string($value)
     {
         return preg_replace('~[\x00\x0A\x0D\x1A\x22\x27\x5C]~u', '\\\$0', $value);
     }
 
+    /**
+     * @param $select
+     */
     public static function select($select)
     {
         if ($select != '*') {
@@ -65,6 +129,9 @@ class SQL
 
     }
 
+    /**
+     * @param $from
+     */
     public static function from($from)
     {
         self::$from[] = $from;
@@ -72,16 +139,26 @@ class SQL
 
     }
 
+    /**
+     * @param $from
+     */
     public static function selected_from($from)
     {
         self::$selected_from = $from;
     }
 
+    /**
+     * @param $from
+     */
     public static function join($from)
     {
         return self::from($from);
     }
 
+    /**
+     * @param array $join_column
+     * @param array $from_column
+     */
     public static function join_where(array $join_column, array $from_column)
     {
         $join = '`' . self::$prefix . $join_column[0] . '`.`' . $join_column[1] . '`';
@@ -92,26 +169,52 @@ class SQL
 
     }
 
+    /**
+     * @param $column
+     * @param $value
+     * @param $operator
+     */
     public static function where($column, $value, $operator)
     {
         self::$where[] = self::operator_where($column, $value, $operator);
     }
 
+    /**
+     * @param $column
+     * @param $value
+     * @param $operator
+     */
     public static function and_where($column, $value, $operator)
     {
         self::$and_where[] = self::operator_where($column, $value, $operator);
     }
 
+    /**
+     * @param $column
+     * @param $value
+     * @param $operator
+     */
     public static function or_where($column, $value, $operator)
     {
         self::$or_where[] = self::operator_where($column, $value, $operator);
     }
 
+    /**
+     * @param $column
+     * @param $value
+     * @param $operator
+     */
     public static function having($column, $value, $operator)
     {
         self::$having[] = self::operator_where($column, $value, $operator);
     }
 
+    /**
+     * @param $column
+     * @param $value
+     * @param $operator
+     * @return mixed
+     */
     private static function operator_where($column, $value, $operator)
     {
         $table = self::$prefix . self::$selected_from;
@@ -159,19 +262,31 @@ class SQL
                 $return = "`" . $table . "`.`" . $column . "` " . $operator . " '" . $value . "'";
                 break;
         }
+
         return $return;
     }
 
+    /**
+     * @param $group
+     */
     public static function group_by($group)
     {
         self::$group_by[] = $group;
     }
 
+    /**
+     * @param $limit
+     */
     public static function limit($limit)
     {
         self::$limit = $limit;
     }
 
+    /**
+     * @param $by
+     * @param $oder
+     * @param $from
+     */
     public static function order_by($by = "", $oder = "", $from = "")
     {
         if ($from == "") {
@@ -190,6 +305,9 @@ class SQL
 
     }
 
+    /**
+     * @return mixed
+     */
     private static function query_where_create()
     {
         $wheres = [];
@@ -207,9 +325,13 @@ class SQL
         } else {
             $where = '1';
         }
+
         return $where;
     }
 
+    /**
+     * @return mixed
+     */
     public static function query()
     {
         $sqls = [];
@@ -248,9 +370,15 @@ class SQL
         foreach ($sqls as $key => $value) {
             $sql .= " " . $key . " " . $value;
         }
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @param array $data
+     * @return mixed
+     */
     public static function insert(string $from, array $data)
     {
         $table = self::$prefix . $from;
@@ -261,9 +389,15 @@ class SQL
             $values[] = "'" . self::escape_string($value) . "'";
         }
         $sql = "INSERT INTO `" . $table . "` (" . implode(", ", $keys) . ") VALUES (" . implode(", ", $value) . ");";
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @param array $where
+     * @return mixed
+     */
     public static function delete(string $from, array $where = [])
     {
         $table = self::$prefix . $from;
@@ -276,9 +410,15 @@ class SQL
         } else {
             $sql = "DELETE FROM `" . $table . "` WHERE " . self::query_where_create();
         }
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @param array $data
+     * @return mixed
+     */
     public static function update(string $from, array $data)
     {
         $table = self::$prefix . $from;
@@ -288,42 +428,73 @@ class SQL
         }
 
         $sql = "UPDATE `" . $table . "` SET " . implode(", ", $rows) . " WHERE " . self::query_where_create();
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @return mixed
+     */
     public static function drop(string $from)
     {
         $sql = "DROP TABLE `" . self::$prefix . $from . "`";
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @return mixed
+     */
     public static function truncate(string $from)
     {
         $sql = "TRUNCATE `" . self::$prefix . $from . "`";
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @return mixed
+     */
     public static function analyze(string $from)
     {
         $sql = "ANALYZE TABLE `" . self::$prefix . $from . "`";
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @return mixed
+     */
     public static function check(string $from)
     {
         $sql = "CHECK TABLE `" . self::$prefix . $from . "`";
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @return mixed
+     */
     public static function repair(string $from)
     {
         $sql = "REPAIR TABLE `" . self::$prefix . $from . "`";
+
         return $sql;
     }
 
+    /**
+     * @param string $from
+     * @return mixed
+     */
     public static function optimize(string $from)
     {
         $sql = "OPTIMIZE TABLE `" . self::$prefix . $from . "`";
+
         return $sql;
     }
 

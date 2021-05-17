@@ -1,26 +1,56 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * Executive.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    Executive.php @ 2021-05-11T18:31:10.035Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace PHPXI;
 
-define("VERSION", "1.5.2");
-
-$memory_use_starting = memory_get_usage();
+define("VERSION", "1.6.0");
 $msure = microtime();
 $msure = explode(' ', $msure);
 $msure = $msure[1] + $msure[0];
 define("TIMER_START", $msure);
+$phpxi_starting_mermory_use = memory_get_usage();
 
-require_once APPLICATION_PATH . "Config/Define.php";
+require_once SYSTEM_PATH . 'Libraries/Autoloader/Autoloader.php';
 
-require_once SYSTEM_PATH . 'Libraries/Autoloader/Autoload_PSR4.php';
+$autoloader = new \PHPXI\Libraries\Autoloader\PSR4();
+$autoloader->register();
+$autoloader->addNamespace("PHPXI", SYSTEM_PATH . "/");
+$autoloader->addNamespace("Interfaces", SYSTEM_PATH . "/Interfaces/");
+$autoloader->addNamespace("Application", APPLICATION_PATH . "/");
+$autoloader->addNamespace("Config", APPLICATION_PATH . "/Config/");
 
-$autoload = new \Autoloader\Psr4AutoloaderClass();
-$autoload->register();
-$autoload->addNamespace("PHPXI", SYSTEM_PATH . "/");
-$autoload->addNamespace("Application", APPLICATION_PATH . "/");
+$autoload_prefix = \Config\Autoload::PREFIX;
+if (sizeof($autoload_prefix) > 0) {
+    foreach ($autoload_prefix as $prefix => $path) {
+        $autoloader->addNamespace($prefix, $path);
+    }
+    unset($prefix);unset($path);
+}
+unset($autoload_prefix);
 
 require SYSTEM_PATH . 'Libraries/Autoloader/ClassMapping.php';
 
@@ -29,44 +59,38 @@ foreach ($class_map as $alias => $origin) {
         class_alias($origin, $alias);
     }
 }
+unset($class_map);
 
-if (!defined("DEVELOPMENT")) {
-    define("DEVELOPMENT", false);
-}
-
-error_reporting(0);
-ini_set("display_errors", 0);
-
-if (DEVELOPMENT) {
-    new \PHPXI\Libraries\Debugging\Debug();
-}
-
-use \PHPXI\Libraries\Base\Base as Base;
-Base::main();
-
-use \PHPXI\Libraries\Config\Config as Config;
-
-date_default_timezone_set(Config::get("config.timezone"));
-
-if (function_exists("mb_internal_encoding")) {
-    mb_internal_encoding(Config::get("config.charset"));
+if (\Config\Development::PHP_DEFAULT_ERROR_REPORTING_STATUS) {
+    error_reporting(array_sum(array_keys(\Config\Development::PHP_DEFAULT_ERROR_REPORTING_ACTION, $search = true)));
+    ini_set("display_errors", 1);
 } else {
-    require_once SYSTEM_PATH . "Helpers/MBString_helper.php";
+    error_reporting(0);
+    ini_set("display_errors", 0);
 }
+new \PHPXI\Libraries\Debugging\Debug();
 
 session_set_cookie_params(
-    Config::get("session.time"),
-    Config::get("session.path"),
-    Config::get("session.domain"),
-    Config::get("session.secure"),
-    Config::get("session.httponly")
+    \Config\Session::TIME,
+    \Config\Session::PATH,
+    \Config\Session::DOMAIN,
+    \Config\Session::SECURE,
+    \Config\Session::HTTPONLY
 );
 
-session_save_path(Config::get("session.repository"));
+session_save_path(\Config\Session::REPOSITORY);
 
 session_start();
 
-session_regenerate_id(Config::get("session.regenerate_id"));
+session_regenerate_id(\Config\Session::REGENERATE_ID);
+
+date_default_timezone_set(\Config\Config::TIMEZONE);
+
+if (function_exists("mb_internal_encoding")) {
+    mb_internal_encoding(\Config\Config::CHARSET);
+} else {
+    require_once SYSTEM_PATH . "Helpers/MBString_helper.php";
+}
 
 require_once SYSTEM_PATH . "Helpers/Url_helper.php";
 
@@ -80,36 +104,29 @@ require_once SYSTEM_PATH . "Helpers/Object_helper.php";
 
 require_once SYSTEM_PATH . "Helpers/String_helper.php";
 
+define("CURRENT_URL", current_url());
+define("CURRENT_LANGUAGE", current_language());
 
-if (sizeof(Config::get("autoload.helper")) > 0) {
-    foreach (Config::get("autoload.helper") as $row) {
-        require APPLICATION_PATH . 'Helpers/' . ucfirst($row) . '_helper.php';
-    }
-}
-
-require_once SYSTEM_PATH . 'Model.php';
-require_once SYSTEM_PATH . 'Controller.php';
-
-if (is_array(Config::get("autoload.model")) and sizeof(Config::get("autoload.model")) > 0) {
-    foreach (Config::get("autoload.model") as $alias => $origin) {
-        if (class_exists($origin)) {
-            class_alias($origin, $alias);
-        }
-    }
-}
-
-require_once SYSTEM_PATH . "Interfaces/FilterInterface.php";
+new \PHPXI\Libraries\Base\Base();
 
 $core = new \PHPXI\Core();
 
-require_once APPLICATION_PATH . 'Route/Web.php';
+require_once APPLICATION_PATH . 'Route/Main.php';
 
 $msure = microtime();
 $msure = explode(' ', $msure);
 $msure = $msure[1] + $msure[0];
-define("MEMORY_USE", round((memory_get_usage() - $memory_use_starting) / 1048576, 4));
-unset($memory_use_starting);
+
+$memory_use_kb = (memory_get_usage() - $phpxi_starting_mermory_use) / 1024;
+$memory_use_mb = $memory_use_kb / 1024;
+if ($memory_use_mb >= 1) {
+    define("MEMORY_USE", ceil($memory_use_mb) . 'MB');
+} else {
+    define("MEMORY_USE", ceil($memory_use_kb) . 'KB');
+}
+
 define("MEMORY_USE_MAX", round(memory_get_peak_usage() / 1048576, 3));
 define("LOAD_TIME", round(($msure - TIMER_START), 5));
+unset($msure);
 
 echo $core->output();

@@ -1,19 +1,45 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * Session.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    Session.php @ 2021-05-11T23:08:41.382Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-$config['repository'] = WEIGHT_PATH . 'Session/';
+namespace Config;
 
-$config['path'] = '/';
+class Session
+{
+    const REPOSITORY = WEIGHT_PATH . 'Session';
 
-$config['time'] = null;
+    const PATH = '/';
 
-$config['domain'] = 'localhost';
+    const TIME = null;
 
-$config['secure'] = false; //SSL
+    const DOMAIN = 'localhost';
 
-$config['httponly'] = true;
+    const SECURE = false;
 
-$config['regenerate_id'] = false;
+    const HTTPONLY = true;
+
+    const REGENERATE_ID = false;
+}

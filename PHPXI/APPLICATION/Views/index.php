@@ -74,7 +74,6 @@
         </p>
         <div class="footer">
 <?php
-//echo 'This page was submitted using ' . MEMORY_USE . ' MB memory per ' . LOAD_TIME . ' seconds.';
 Lang::e("footer_load_time_info", ["memory_use" => MEMORY_USE, "load_time" => LOAD_TIME]);
 ?>
         </div>

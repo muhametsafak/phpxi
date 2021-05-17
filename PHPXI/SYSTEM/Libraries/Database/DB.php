@@ -1,70 +1,126 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * DB.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    DB.php @ 2021-05-11T20:44:36.315Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
-namespace PHPXI\Libraries\Database;
 
-use \PHPXI\Libraries\Config\Config as Config;
+namespace PHPXI\Libraries\Database;
 
 class DB
 {
-    private static $host = 'localhost';
-    private static $user;
-    private static $password;
-    private static $name;
-    private static $prefix = '';
-    private static $charset = 'utf-8';
-    private static $collation = 'utf8mb4_general_ci';
-    private static $driver = 'mysql';
-    private static $class = 'mysqli';
+    /**
+     * @var string
+     */
+    private $host = 'localhost';
+    /**
+     * @var mixed
+     */
+    private $user;
+    /**
+     * @var mixed
+     */
+    private $password;
+    /**
+     * @var mixed
+     */
+    private $name;
+    /**
+     * @var string
+     */
+    private $prefix = '';
+    /**
+     * @var string
+     */
+    private $charset = 'utf-8';
+    /**
+     * @var string
+     */
+    private $collation = 'utf8mb4_general_ci';
+    /**
+     * @var string
+     */
+    private $driver = 'mysql';
+    /**
+     * @var string
+     */
+    private $class = 'mysqli';
 
-    public static function connect($name)
+    /**
+     * @var mixed
+     */
+    private $db;
+
+    /**
+     * @param $db_info
+     * @return mixed
+     */
+    public function __construct($db_info)
+    {
+        $this->db = $this->connect($db_info);
+
+        return $this->db;
+    }
+
+    /**
+     * @param array $name
+     */
+    public function connect(array $name)
     {
         if (is_array($name)) {
-            self::$host = $name['host'];
-            self::$user = $name['user'];
-            self::$password = $name['password'];
-            self::$name = $name['name'];
+            $this->host = $name['host'];
+            $this->user = $name['user'];
+            $this->password = $name['password'];
+            $this->name = $name['name'];
             if (isset($name['prefix']) and $name['prefix'] != "") {
-                self::$prefix = $name['prefix'];
+                $this->prefix = $name['prefix'];
             }
             if (isset($name['charset']) and $name['charset'] != "") {
-                self::$charset = $name['charset'];
+                $this->charset = $name['charset'];
             }
             if (isset($name['collation']) and $name['collation'] != "") {
-                self::$collation = $name['collation'];
+                $this->collation = $name['collation'];
             }
             if (isset($name['driver']) and $name['driver'] != "") {
-                self::$driver = $name['driver'];
+                $this->driver = $name['driver'];
             }
             if (isset($name['class']) and $name['class'] != "") {
-                self::$class = $name['class'];
+                $this->class = $name['class'];
             }
-        } else {
-            self::$host = Config::get("database." . $name . ".host");
-            self::$user = Config::get("database." . $name . ".user");
-            self::$password = Config::get("database." . $name . ".password");
-            self::$name = Config::get("database." . $name . ".name");
-            self::$prefix = Config::get("database." . $name . ".prefix");
-            self::$charset = Config::get("database." . $name . ".charset");
-            self::$collation = Config::get("database." . $name . ".collation");
-            self::$driver = Config::get("database." . $name . ".driver");
-            self::$class = Config::get("database." . $name . ".class");
         }
 
         $connection_config = [
-            "host" => self::$host,
-            "user" => self::$user,
-            "password" => self::$password,
-            "name" => self::$name,
-            "prefix" => self::$prefix,
-            "charset" => self::$charset,
-            "collation" => self::$collation,
-            "driver" => self::$driver,
+            "host" => $this->host,
+            "user" => $this->user,
+            "password" => $this->password,
+            "name" => $this->name,
+            "prefix" => $this->prefix,
+            "charset" => $this->charset,
+            "collation" => $this->collation,
+            "driver" => $this->driver
         ];
 
-        switch (strtolower(self::$class)) {
+        switch (strtolower($this->class)) {
             case 'mysqli':
                 return new \PHPXI\Libraries\Database\MySQLi($connection_config);
                 break;
@@ -72,10 +128,30 @@ class DB
                 return new \PHPXI\Libraries\Database\PDO($connection_config);
                 break;
             default:
-                $custom_db_class_name = self::$class;
+                $custom_db_class_name = $this->class;
+
                 return new $custom_db_class_name($connection_config);
                 break;
         }
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        return $this->db->$name(...$arguments);
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        return (new self())->$name(...$arguments);
     }
 
 }

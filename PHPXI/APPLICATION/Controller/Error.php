@@ -1,14 +1,13 @@
 <?php
 namespace Application\Controller;
 
-use \PHPXI\Controller;
-
-class Error extends Controller
+class Error extends \PHPXI\Controller
 {
 
     public function error_404()
     {
-        die("PHPXI - Error 404 : File Not Found");
+        $this->http->response(404);
+        $this->load->view("error/404.php");
     }
 
 }

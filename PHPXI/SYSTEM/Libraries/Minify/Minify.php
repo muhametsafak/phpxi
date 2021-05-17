@@ -1,20 +1,60 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * Minify.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    Minify.php @ 2021-05-11T22:47:13.102Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace PHPXI\Libraries\Minify;
 
 class Minify
 {
     // Settings
+    /**
+     * @var mixed
+     */
     private static $compress_css = true;
+    /**
+     * @var mixed
+     */
     private static $compress_js = false;
+    /**
+     * @var mixed
+     */
     private static $info_comment = false;
+    /**
+     * @var mixed
+     */
     private static $remove_comments = true;
     // Variables
+    /**
+     * @var mixed
+     */
     private static $html;
 
+    /**
+     * @param $html
+     */
     public function __construct($html)
     {
         if (!empty($html)) {
@@ -27,6 +67,9 @@ class Minify
         return self::$html;
     }
 
+    /**
+     * @param $html
+     */
     public static function parseHTML($html)
     {
         self::$html = self::minifyHTML($html);
@@ -35,6 +78,10 @@ class Minify
         }
     }
 
+    /**
+     * @param $raw
+     * @param $compressed
+     */
     private static function bottomComment($raw, $compressed)
     {
         $raw = strlen($raw);
@@ -47,6 +94,10 @@ class Minify
         return '<!--HTML compressed, size saved ' . $savings . '%. From ' . $raw . ' bytes, now ' . $compressed . ' bytes-->';
     }
 
+    /**
+     * @param $html
+     * @return mixed
+     */
     private static function minifyHTML($html)
     {
         $pattern = '/<(?<script>script).*?<\/script\s*>|<(?<style>style).*?<\/style\s*>|<!(?<comment>--).*?-->|<(?<tag>[\/\w.:-]*)(?:".*?"|\'.*?\'|[^\'">]+)*>|(?<text>((<[^!\/\w.:-])?[^<]*)+)|/si';
@@ -63,14 +114,14 @@ class Minify
             if (is_null($tag)) {
                 if (!empty($token['script'])) {
                     $strip = self::$compress_js;
-                } else if (!empty($token['style'])) {
+                } elseif (!empty($token['style'])) {
                     $strip = self::$compress_css;
-                } else if ($content == '<!--wp-html-compression no compression-->') {
+                } elseif ($content == '<!--wp-html-compression no compression-->') {
                     $overriding = !$overriding;
 
                     // Don't print the comment
                     continue;
-                } else if (self::$remove_comments) {
+                } elseif (self::$remove_comments) {
                     if (!$overriding && $raw_tag != 'textarea') {
                         // Remove any HTML comments, except MSIE conditional comments
                         $content = preg_replace('/<!--(?!\s*(?:\[if [^\]]+]|<!|>))(?:(?!-->).)*-->/s', '', $content);
@@ -103,9 +154,14 @@ class Minify
             }
             $html .= $content;
         }
+
         return $html;
     }
 
+    /**
+     * @param $str
+     * @return mixed
+     */
     private static function removeWhiteSpace($str)
     {
         $str = str_replace("\t", ' ', $str);
@@ -114,6 +170,7 @@ class Minify
         while (stristr($str, '  ')) {
             $str = str_replace('  ', ' ', $str);
         }
+
         return $str;
     }
 }

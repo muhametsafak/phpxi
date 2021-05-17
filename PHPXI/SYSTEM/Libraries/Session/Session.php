@@ -1,64 +1,57 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * Session.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    Session.php @ 2021-05-11T22:04:23.413Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
-namespace PHPXI\Libraries\Session;
 
-use \PHPXI\Libraries\Base\Base as Base;
+namespace PHPXI\Libraries\Session;
 
 class Session
 {
+    private Library $session;
 
-    public function __destruct()
+    public function __construct()
     {
-        if (sizeof(Base::$data['session']) == 0) {
-            self::unset();
-            self::destroy();
-        }
+        $this->session = new \PHPXI\Libraries\Session\Library();
     }
 
-    function unset()
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
     {
-        session_unset();
+        return $this->session->$name(...$arguments);
     }
 
-    public static function destroy()
+    /**
+     * @param $name
+     * @param $arguments
+     */
+    public static function __callStatic($name, $arguments)
     {
-        session_destroy();
+        return (new self())->$name(...$arguments);
     }
-
-    public static function id()
-    {
-        return session_id();
-    }
-
-    public static function get($key)
-    {
-        return Base::get($key, "session");
-    }
-
-    public static function set($key, $value)
-    {
-        Base::set($key, $value, "session");
-        $_SESSION[$key] = $value;
-    }
-
-    public static function add($key, $value)
-    {
-        self::set($key, $value);
-    }
-
-    public static function update($key, $value)
-    {
-        self::set($key, $value);
-    }
-
-    public static function delete($key)
-    {
-        self::set($key, null);
-        unset(self::$session[$key]);
-        unset($_SESSION[$key]);
-    }
-
 }

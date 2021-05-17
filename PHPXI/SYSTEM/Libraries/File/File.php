@@ -1,167 +1,59 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * File.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    File.php @ 2021-05-11T21:19:49.040Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace PHPXI\Libraries\File;
 
 class File
 {
-    public static $path;
 
-    private static $file;
+    private Library $file;
 
-    public static function load($path)
+    public function __construct()
     {
-        if (self::exists($path)) {
-            self::$path = $path;
-        }
+        $this->file = new \PHPXI\Libraries\File\Library();
     }
 
-    public static function exists($path = "")
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
     {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (file_exists($path)) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->file->$name(...$arguments);
     }
 
-    public static function read($path = "")
+    /**
+     * @param $name
+     * @param $arguments
+     */
+    public static function __callStatic($name, $arguments)
     {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (self::exists($path)) {
-            self::$path = $path;
-            self::$filesize = filesize(self::$path);
-            self::$file = fopen(self::$path);
-            $return = fread(self::$file, self::size());
-            fclose(self::$file);
-            return $return;
-        } else {
-            return false;
-        }
-    }
-
-    function empty($path = "") {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (self::exists($path)) {
-            return self::rewrite("", $path);
-        } else {
-            return false;
-        }
-    }
-
-    public static function write($string = "", $path = "")
-    {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (self::exists($path)) {
-            self::$file = fopen($path, 'a');
-            if (fwrite($path, $string) !== false) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public static function rewrite($string = "", $path = "")
-    {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (self::exists($path)) {
-            self::$file = fopen($path, 'w+');
-            if (fwrite($path, $string) !== false) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public static function time($path = "")
-    {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (self::exists($path)) {
-            return filemtime($path);
-        } else {
-            return false;
-        }
-    }
-
-    public static function size($path = "")
-    {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (self::exists($path)) {
-            return filesize($path);
-        } else {
-            return false;
-        }
-    }
-
-    public static function mime($path = "")
-    {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (self::exists($path)) {
-            return mime_content_type($path);
-        } else {
-            return false;
-        }
-    }
-
-    public static function copy($copy_path, $file_path = "")
-    {
-        if ($file_path == "") {
-            $file_path = self::$path;
-        }
-        if (copy($file_path, $copy_path)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static function rename($new_path, $path = "")
-    {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (rename($path, $new_path)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static function move($new_path, $path = "")
-    {
-        if ($path == "") {
-            $path = self::$path;
-        }
-        if (rename($path, $new_path)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (new self())->$name(...$arguments);
     }
 
 }

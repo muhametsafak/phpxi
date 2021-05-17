@@ -1,103 +1,58 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * Cache.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    Cache.php @ 2021-05-11T19:49:36.982Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace PHPXI\Libraries\Cache;
 
 class Cache
 {
+    private Library $cache;
 
-    private static $cache_file = WEIGHT_PATH . 'Cache/';
-    private static $timeout = 86400;
-    private static $content;
-    private static $cache_path;
-    private static $fullpath;
-    private static $gzip_compressor = false;
-
-    public static function path($path)
+    public function __construct()
     {
-        self::$cache_path = $path;
-        self::$fullpath = self::$cache_path . '/' . self::$cache_file;
-
+        $this->cache = new \PHPXI\Libraries\Cache\Library();
     }
 
-    public static function timeout($second = 86400)
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
     {
-        self::$timeout = $second;
+        return $this->cache->$name(...$arguments);
     }
 
-    public static function content($content = "")
+    /**
+     * @param $name
+     * @param $arguments
+     */
+    public static function __callStatic($name, $arguments)
     {
-        self::$content = $content;
-    }
-
-    public static function file($file)
-    {
-        self::$cache_file = $file;
-        self::$fullpath = self::$cache_path . '/' . self::$cache_file;
-    }
-
-    public static function gzip($gzip)
-    {
-        self::$gzip_compressor = $gzip;
-    }
-
-    public static function cache()
-    {
-        if (self::is()) {
-            if (self::is_timeout()) {
-                return self::write();
-            } else {
-                return self::read();
-            }
-        } else {
-            self::create();
-        }
-        return self::$content;
-    }
-
-    public static function create()
-    {
-        touch(self::$fullpath);
-        $open = fopen(self::$fullpath, "w+");
-        fwrite($open, self::$content);
-        fclose($open);
-        return self::$content;
-    }
-
-    public static function is()
-    {
-        if (file_exists(self::$fullpath)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static function is_timeout()
-    {
-        if ((time() - filemtime(self::$fullpath)) > self::$timeout) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static function read()
-    {
-        $open = fopen(self::$fullpath, "r");
-        self::$content = fread($open, filesize(self::$fullpath));
-        fclose($open);
-        return self::$content;
-    }
-
-    public static function write()
-    {
-        $open = fopen(self::$fullpath, "w+");
-        fwrite($open, self::$content);
-        fclose($open);
-        return self::$content;
+        return (new self())->$name(...$arguments);
     }
 
 }

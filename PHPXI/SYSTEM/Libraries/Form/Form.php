@@ -1,117 +1,59 @@
 <?php
 /**
- * Author: Muhammet ŞAFAK <info@muhammetsafak.com.tr>
- * Project: PHPXI MVC Framework <phpxi.net>
+ * Form.php
+ *
+ * This file is part of PHPXI.
+ *
+ * @package    Form.php @ 2021-05-11T21:27:09.827Z
+ * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
+ * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
+ * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
+ * @version    1.6
+ * @link       http://phpxi.net
+ *
+ * PHPXI is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * PHPXI is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 namespace PHPXI\Libraries\Form;
 
 class Form
 {
-    private static $output;
 
-    public static function start($form = [])
+    private Library $form;
+
+    public function __construct()
     {
-        self::$output = '<form';
-        foreach ($form as $key => $value) {
-            if ($key == "action") {
-                self::$output .= ' ' . $key . '="' . htmlspecialchars($value) . '"';
-            } else {
-                self::$output .= ' ' . $key . '="' . $value . '"';
-            }
-        }
-        self::$output .= '>';
+        $this->form = new \PHPXI\Libraries\Form\Library();
     }
 
-    public static function open_div($div = [])
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments)
     {
-        self::$output .= ' <div';
-        foreach ($div as $key => $value) {
-            self::$output .= ' ' . $key . '="' . $value . '" ';
-        }
-        self::$output .= '> ';
+        return $this->form->$name(...$arguments);
     }
 
-    public static function close_div()
+    /**
+     * @param $name
+     * @param $arguments
+     */
+    public static function __callStatic($name, $arguments)
     {
-        self::$output .= ' </div> ';
+        return (new self())->$name(...$arguments);
     }
 
-    public static function label($key = "", $value = "")
-    {
-        $return = '<label for="' . $key . '">' . $value . '</label>';
-        self::$output .= $return;
-    }
-
-    public static function input($input = "")
-    {
-        $return = '<input ';
-        if (is_array($input)) {
-            if (!isset($input['type'])) {
-                $return .= ' type="text" ';
-            }
-            foreach ($input as $key => $value) {
-                $return .= $key . '="' . $value . '" ';
-            }
-        } else {
-            $return .= ' type="text" ';
-        }
-        $return .= ' />';
-        self::$output .= $return;
-    }
-
-    public static function select($select = [], $options = [], $selected_id = null)
-    {
-        self::$output .= '<select ';
-        foreach ($select as $key => $value) {
-            self::$output .= $key . '="' . $value . '" ';
-        }
-        self::$output .= '> ';
-        foreach ($options as $key => $value) {
-            self::$output .= self::option($key, $value, $selected_id);
-        }
-        self::$output .= ' </select>';
-    }
-
-    public static function textarea($textarea = [], $textarea_value = "")
-    {
-        $return = ' <textarea ';
-        foreach ($textarea as $key => $value) {
-            $return .= $key . '="' . $value . '" ';
-        }
-        $return .= '>' . $textarea_value . '</textarea>';
-        self::$output .= $return;
-    }
-
-    public static function button($button = [], $text = "")
-    {
-        $return = '<button';
-        foreach ($button as $key => $value) {
-            $return .= ' ' . $key . '="' . $value . '"';
-        }
-        $return .= '>' . $text . '</button>';
-        self::$output .= $return;
-    }
-
-    public static function option($key, $value, $selected_id = "")
-    {
-        if ($selected_id == $key) {
-            $return = '<option value="' . $key . '" selected>' . $value . '</option>';
-        } else {
-            $return = '<option value="' . $key . '">' . $value . '</option>';
-        }
-        self::$output .= $return;
-    }
-
-    public static function html($html = "")
-    {
-        self::$output .= $html;
-    }
-
-    public static function output()
-    {
-        self::$output .= '</form>';
-        $return = self::$output;
-        self::$output = null;
-        return $return;
-    }
 }
