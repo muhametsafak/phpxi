@@ -28,7 +28,7 @@
 namespace PHPXI\Libraries\Database;
 
 use PHPXI\Libraries\Database\SQL as SQL;
-use PHPXI\Libraries\Debugging\Logger as Logger;
+use PHPXI\Libraries\Logger\Logger as Logger;
 
 class PDO
 {
