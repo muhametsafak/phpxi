@@ -30,15 +30,13 @@ namespace PHPXI\Libraries\Response;
 class Library
 {
 
-    public function get()
+    public function getStatus()
     {
         return http_response_code();
     }
 
-    /**
-     * @param int $response
-     */
-    public function set(int $response = 200)
+
+    public function setStatus(int $response = 200)
     {
         return http_response_code($response);
     }

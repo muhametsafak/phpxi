@@ -29,14 +29,45 @@ namespace PHPXI\Libraries\Request;
 
 class Library
 {
+    public array $params = [];
 
-    public function method()
+    function __construct()
+    {
+        if(isset($_POST)){
+            foreach($_POST as $key => $value){
+                $this->params[$key] = $value;
+            }
+        }
+        if(isset($_GET)){
+            foreach($_GET as $key => $value){
+                $this->params[$key] = $value;
+            }
+        }
+
+        $params = file_get_contents("php://input");
+        if(!empty($params)){
+            $params = json_decode($params);
+            foreach($params as $key => $value){
+                $this->params[$key] = $value;
+            }
+        }
+    }
+
+    public function method(): string
     {
         if (isset($_SERVER["REQUEST_METHOD"])) {
             return strtolower($_SERVER["REQUEST_METHOD"]);
         }
-
         return "get";
+    }
+
+    public function param($key)
+    {
+        if(isset($this->params[$key])){
+            return $this->params[$keys];
+        }else{
+            return false;
+        }
     }
 
 }

@@ -258,6 +258,7 @@ class Base
         if (file_exists($path) || DEVELOPMENT) {
             $config = [];
             require_once $path;
+            $file = strtolower($file);
             foreach ($config as $key => $value) {
                 self::$data['config'][$file][$key] = $value;
             }
