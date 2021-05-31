@@ -1,14 +1,14 @@
 <?php
 /**
- * Request.php
+ * Hash.php
  *
  * This file is part of PHPXI.
  *
- * @package    Request.php @ 2021-05-17T09:12:20.106Z
+ * @package    Hash.php @ 2021-05-28T06:25:29.607Z
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -25,54 +25,35 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace PHPXI\Libraries\Request;
+namespace Config;
 
-use PHPXI\Libraries\Base\Base as Base;
-
-class Request
+class Hash
 {
-
-    private Library $request;
-
-    public function __construct()
-    {
-        $this->request = new \PHPXI\Libraries\Request\Library();
-    }
+    /**
+     * Hash::hash() and Hash::hash_file() vaccination default algorithm for.
+     * You can use hash_algos() to see the algorithms you can use.
+     */
+    const ALGORITHM = 'md5';
 
     /**
-     * @param $name
-     * @param $arguments
-     * @return mixed
+     * Hash::encrypt() and Hash::decrypt() vaccination default method for.
+     * You can use openssl_get_cipher_methods() to see the methods you can use.
      */
-    public function __call($name, $arguments)
-    {
-        return $this->request->$name(...$arguments);
-    }
+    const METHOD = 'aes-128-cbc';
 
     /**
-     * @param $name
-     * @param $arguments
+     * Hash::encrypt() and Hash::decrypt() default key.
      */
-    public static function __callStatic($name, $arguments)
-    {
-        return (new self())->$name(...$arguments);
-    }
+    const KEY = 'ahmet';
 
     /**
-     * @param $property
-     * @param $value
+     * Hash::encrypt() and Hash::decrypt() default iv.
      */
-    public function __set($property, $value)
-    {
-        Base::set($property, $value, "request");
-    }
+    const IV = '1234567890123456'; //16 bytes length STRING
 
     /**
-     * @param $property
+     * Hash::encrypt() and Hash::decrypt() default salt.
      */
-    public function __get($property)
-    {
-        return Base::get($property, "request");
-    }
+    const SALT = 'y680+tU+@Gsq;gWw1x?dB?8J`2';
 
 }

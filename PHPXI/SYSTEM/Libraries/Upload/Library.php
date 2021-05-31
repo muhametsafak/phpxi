@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -183,22 +183,22 @@ class Library
         $this->file = $file;
         if (!is_dir($this->path)) {
             if (!mkdir($self::path)) {
-                $this->error = "ERROR : Could not create path : " . $this->path;
+                $this->error = __r("upload_error_not_create_path", "ERROR : Could not create path : {path}", ["path" => $path]);
                 $this->continue = false;
             }
         }
         if ($this->continue) {
             if (isset($file['error']) and $file['error'] != 0) {
-                $this->error = "ERROR : File Error : " . $file['error'];
+                $this->error = __r("upload_error_file_error", "ERROR : File Error : {error}", ["error" => $file['error']]);
                 $this->continue = false;
             } elseif ($file['size'] > $this->sizeLimit) {
-                $this->error = "ERROR : Max File Limit : " . $this->sizeLimit;
+                $this->error = __r("upload_error_file_max_limit", "ERROR : Max File Limit : {limit}", ["limit" => $this->sizeLimit]);
                 $this->continue = false;
             } elseif (!in_array(strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)), $this->file_extension)) {
-                $this->error = "ERROR : Unsupported File Extension! Supported : " . implode(", ", $this->file_extension);
+                $this->error = __r("upload_error_unsupported_extension", "ERROR : Unsupported File Extension! Supported : {file_extensions}", ["file_extensions" => implode(", ", $this->file_extension)]);
                 $this->continue = false;
             } elseif (!in_array($file['type'], $this->file_type) and !in_array(mime_content_type($file["tmp_name"]), $this->file_type)) {
-                $this->error = "ERROR : Unsupported File Type! Supported : " . implode(", ", $this->file_type);
+                $this->error = __r("upload_error_unsupported_type", "ERROR : Unsupported File Type! Supported : {file_types}", ["file_types" => implode(", ", $this->file_type)]);
                 $this->continue = false;
             } else {
                 if ($this->fileName == "") {
@@ -247,7 +247,7 @@ class Library
             if ($upload) {
                 $this->continue = true;
             } else {
-                $this->error = "";
+                $this->error = __r("upload_error_handler_error", "An error occurred during the uploaded process.");
                 $this->continue = false;
             }
         }

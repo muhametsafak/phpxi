@@ -1,5 +1,15 @@
 # Sürüm Notları
 
+### v1.6.2
+
+-   Basit bir hash sınıfı yazıldı.
+-   Oluşan hatalar dil dosyalarından özelleştirilebilir.
+-   Veritabanı bağlantı bilgilerinde port bilgisi verilebilir.
+-   Dil kütüphanesini kullanabileceğiniz `__r()` ve `__e()` fonksiyonları eklendi.
+-   Dahili Config kütüphanesi kaldırıldı.
+-   Response ve Request kütüphanelerine birkaç kullanışlı metod eklendi.
+-   SQL kütüphanesindeki söz dizimi hatası düzeltildi.
+
 ### v1.6.0
 
 -   Debug işlemlerinde kullanılabilecek hata raporlama aracı geliştirildi. Artık raporlar daha fazla detay içeriyor.
@@ -31,7 +41,7 @@
 -   Dahili bir PDO kütüphanesi geliştirildi.
 -   Kütüphane yapıları güncellendi.
 -   Bellek tüketimi azaltıldı.
--   Dahili bir Token doğrulama kütüphanesi geliştirildi.
+-   Dahili bir CSRF Token doğrulama kütüphanesi geliştirildi.
 -   Filter sistemi eklendi. Artık kontrolcülerin öncesinde ve sonrasında filtreler uygulayabileceksiniz.
 -   Sistem içerisinde kullanılan `mb_` fonksiyonları bazı sistemlerde sorunlara yol açıyordı. Sistemin MBString fonksiyon ihtiyaçları için bir yardımcı yazıldı.
 -   Log tutma işlemleri için dahili bir logger kütüphanesi eklendi.

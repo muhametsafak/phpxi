@@ -1,14 +1,14 @@
 <?php
 /**
- * Response.php
+ * ResponseLibrary.php
  *
  * This file is part of PHPXI.
  *
- * @package    Response.php @ 2021-05-17T09:12:20.106Z
+ * @package    ResponseLibrary.php @ 2021-05-17T09:12:12.398Z
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -25,54 +25,43 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-namespace PHPXI\Libraries\Response;
+namespace PHPXI\Libraries\Http;
 
-use PHPXI\Libraries\Base\Base as Base;
-
-class Response
+class ResponseLibrary
 {
 
-    private Library $response;
-
-    public function __construct()
+    public function getStatus()
     {
-        $this->response = new \PHPXI\Libraries\Response\Library();
+        return http_response_code();
     }
 
-    /**
-     * @param $name
-     * @param $arguments
-     * @return mixed
-     */
-    public function __call($name, $arguments)
+
+    public function setStatus(int $response = 200)
     {
-        return $this->response->$name(...$arguments);
+        return http_response_code($response);
     }
 
-    /**
-     * @param $name
-     * @param $arguments
-     */
-    public static function __callStatic($name, $arguments)
+    public function header(string $name, string $value): self
     {
-        return (new self())->$name(...$arguments);
+        header($name . ": " . $value);
+        return $this;
     }
 
-    /**
-     * @param $property
-     * @param $value
-     */
-    public function __set($property, $value)
+    public function content(string $content = "", int $response = 200)
     {
-        Base::set($property, $value, "request");
+        $this->setStatus($response);
+        echo $content;
+        return $this;
     }
 
-    /**
-     * @param $property
-     */
-    public function __get($property)
+    public function download($path)
     {
-        return Base::get($property, "request");
+        if(file_exists($path)){
+            $this->header("Content-length", filesize($path));
+            $this->header("Content-Type", "application/octet-stream");
+            $this->header("Content-Disposition", 'attachment; filename="' . $path . '"');
+            readfile($path);
+        }
     }
 
 }

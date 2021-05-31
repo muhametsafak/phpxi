@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -25,8 +25,8 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (phpversion() < "7.2") {
-    echo "Your PHP Version : " . phpversion() . "\n<br />";
+if (PHP_VERSION < "7.2") {
+    echo "Your PHP Version : " . PHP_VERSION . "\n<br />";
     echo "Please, Upgrade PHP (7.2) Version";
     exit;
 }

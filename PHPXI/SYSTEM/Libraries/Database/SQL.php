@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -284,10 +284,10 @@ class SQL
 
     /**
      * @param $by
-     * @param $oder
+     * @param $order
      * @param $from
      */
-    public static function order_by($by = "", $oder = "", $from = "")
+    public static function order_by($by = "", $order = "", $from = "")
     {
         if ($from == "") {
             $from = self::$selected_from;

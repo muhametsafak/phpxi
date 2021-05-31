@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -29,52 +29,29 @@ namespace PHPXI\Libraries\Database;
 
 class DB
 {
-    /**
-     * @var string
-     */
+
     private $host = 'localhost';
-    /**
-     * @var mixed
-     */
+
+    private $port = 3306;
+
     private $user;
-    /**
-     * @var mixed
-     */
+
     private $password;
-    /**
-     * @var mixed
-     */
+
     private $name;
-    /**
-     * @var string
-     */
+
     private $prefix = '';
-    /**
-     * @var string
-     */
+
     private $charset = 'utf-8';
-    /**
-     * @var string
-     */
+
     private $collation = 'utf8mb4_general_ci';
-    /**
-     * @var string
-     */
+
     private $driver = 'mysql';
-    /**
-     * @var string
-     */
+
     private $class = 'mysqli';
 
-    /**
-     * @var mixed
-     */
     private $db;
 
-    /**
-     * @param $db_info
-     * @return mixed
-     */
     public function __construct($db_info)
     {
         $this->db = $this->connect($db_info);
@@ -89,6 +66,7 @@ class DB
     {
         if (is_array($name)) {
             $this->host = $name['host'];
+            $this->port = $name['port'];
             $this->user = $name['user'];
             $this->password = $name['password'];
             $this->name = $name['name'];
@@ -111,6 +89,7 @@ class DB
 
         $connection_config = [
             "host" => $this->host,
+            "port" => $this->port,
             "user" => $this->user,
             "password" => $this->password,
             "name" => $this->name,

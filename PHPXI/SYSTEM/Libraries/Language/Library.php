@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ class Library
 
     public function load(): void
     {
-        $path = APPLICATION_PATH . "Languages/" . Base::$data['language']['settings']['set'] . "/app.php";
+        $path = APPLICATION_PATH . "Languages/" . Base::$data['language']['settings']['set'] . "/Main.php";
         if (file_exists($path)) {
             $lang = array();
             require_once $path;
@@ -66,51 +66,21 @@ class Library
     }
 
     /**
-     * @param string $message
+     * @param string $key
      * @param array $context
+     * @return string
      */
-    private function interpolate(string $message, array $context = []): string
+    public function r(string $key, string $default = "", array $context = []): string
     {
-        $replace = array();
-        $i = 0;
-        foreach ($context as $key => $val) {
-            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
-                $replace['{' . $key . '}'] = $val;
-                $replace['{' . $i . '}'] = $val;
-                $i++;
-            }
-        }
-
-        return strtr($message, $replace);
-    }
-
-    /**
-     * @param string $key
-     * @param array $value
-     * @return mixed
-     */
-    public function r(string $key, array $value = []): string
-    {
-        $lang = Base::get("lang", "language");
-        if (isset($lang[$key])) {
-            $return = $lang[$key];
+        if (isset(Base::$data['language']['lang'][$key])) {
+            $return = Base::$data['language']['lang'][$key];
         } else {
-            $return = $key;
+            $return = $default;
         }
-        if (sizeof($value) > 0) {
-            $return = $this->interpolate($return, $value);
+        if (sizeof($context) > 0) {
+            $return = interpolate($return, $context);
         }
-
         return $return;
-    }
-
-    /**
-     * @param string $key
-     * @param array $value
-     */
-    public function e(string $key, array $value = [])
-    {
-        echo $this->r($key, $value);
     }
 
 }

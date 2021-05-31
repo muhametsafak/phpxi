@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 
 namespace PHPXI;
 
-define("VERSION", "1.6.0");
+define("VERSION", "1.6.2");
 $msure = microtime();
 $msure = explode(' ', $msure);
 $msure = $msure[1] + $msure[0];
@@ -92,17 +92,18 @@ if (function_exists("mb_internal_encoding")) {
     require_once SYSTEM_PATH . "Helpers/MBString_helper.php";
 }
 
+require_once SYSTEM_PATH . "Helpers/Global_helper.php";
+
+require_once SYSTEM_PATH . "Helpers/Language_helper.php";
+
 require_once SYSTEM_PATH . "Helpers/Url_helper.php";
+
+require_once SYSTEM_PATH . "Helpers/Current_helper.php";
 
 require_once SYSTEM_PATH . "Helpers/Database_helper.php";
 
 require_once SYSTEM_PATH . "Helpers/Path_helper.php";
 
-require_once SYSTEM_PATH . "Helpers/Current_helper.php";
-
-require_once SYSTEM_PATH . "Helpers/Object_helper.php";
-
-require_once SYSTEM_PATH . "Helpers/String_helper.php";
 
 define("CURRENT_URL", current_url());
 define("CURRENT_LANGUAGE", current_language());
@@ -119,14 +120,22 @@ $msure = $msure[1] + $msure[0];
 
 $memory_use_kb = (memory_get_usage() - $phpxi_starting_mermory_use) / 1024;
 $memory_use_mb = $memory_use_kb / 1024;
-if ($memory_use_mb >= 1) {
+$memory_use_gb = $memory_use_mb / 1024;
+if($memory_use_gb >= 1){
+    define("MEMORY_USE", ceil($memory_use_gb) . 'GB');
+}elseif ($memory_use_mb >= 1) {
     define("MEMORY_USE", ceil($memory_use_mb) . 'MB');
 } else {
     define("MEMORY_USE", ceil($memory_use_kb) . 'KB');
 }
+unset($memory_use_kb);
+unset($memory_use_mb);
+unset($memory_use_gb);
 
 define("MEMORY_USE_MAX", round(memory_get_peak_usage() / 1048576, 3));
 define("LOAD_TIME", round(($msure - TIMER_START), 5));
 unset($msure);
 
 echo $core->output();
+
+unset($core);

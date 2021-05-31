@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -74,10 +74,10 @@ class Autoload
      */
     const LIBRARIES = [
         "benchmark" => "\PHPXI\Libraries\Benchmark\Benchmark",
-        "config" => "\PHPXI\Libraries\Config\Config",
         "cookie" => "\PHPXI\Libraries\Cookie\Cookie",
         "file" => "\PHPXI\Libraries\File\File",
         "form" => "\PHPXI\Libraries\Form\Form",
+        "hash" => "\PHPXI\Libraries\Hash\Hash",
         "hook" => "\PHPXI\Libraries\Hooking\Hook",
         "http" => "\PHPXI\Libraries\Http\Http",
         "input" => "\PHPXI\Libraries\Input\Input",

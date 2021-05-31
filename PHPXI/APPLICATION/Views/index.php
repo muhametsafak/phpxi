@@ -2,7 +2,7 @@
 <html lang="en" >
     <head>
         <meta charset="UTF-8">
-        <title><?php echo Lang::r("welcome_title"); ?></title>
+        <title><?php echo __r("welcome_title", "Hello World"); ?></title>
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
         <style type="text/css">
@@ -74,7 +74,7 @@
         </p>
         <div class="footer">
 <?php
-Lang::e("footer_load_time_info", ["memory_use" => MEMORY_USE, "load_time" => LOAD_TIME]);
+echo __r("footer_load_time_info", "{load_time} saniyede {memory_use} bellek kullanıldı.", ["memory_use" => MEMORY_USE, "load_time" => LOAD_TIME]);
 ?>
         </div>
     </body>

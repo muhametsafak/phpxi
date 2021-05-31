@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -33,68 +33,34 @@ use PHPXI\Libraries\Logger\Logger as Logger;
 class MySQLi
 {
 
-    /**
-     * @var mixed
-     */
-    private $host;
-    /**
-     * @var mixed
-     */
-    private $user;
-    /**
-     * @var mixed
-     */
-    private $password;
-    /**
-     * @var mixed
-     */
-    private $name;
-    /**
-     * @var mixed
-     */
+
+    private string $host = 'localhost';
+    private int $port = 3306;
+    private string $user = '';
+    private string $password = '';
+    private string $name = '';
+
     private $prefix;
-    /**
-     * @var mixed
-     */
     private $charset;
-    /**
-     * @var mixed
-     */
     private $collation;
 
-    /**
-     * @var mixed
-     */
     public $mysqli;
 
-    /**
-     * @var array
-     */
     protected $error = [];
 
-    /**
-     * @var mixed
-     */
     protected $get;
-    /**
-     * @var int
-     */
+
     private $num_rows = 0;
-    /**
-     * @var int
-     */
+
     private $insert_id = 0;
-    /**
-     * @var int
-     */
+
     private $query_size = 0;
 
-    /**
-     * @param array $config
-     */
+
     public function __construct(array $config)
     {
         $this->host = $config['host'];
+        $this->port = $config['port'];
         $this->user = $config['user'];
         $this->password = $config['password'];
         $this->name = $config['name'];
@@ -115,7 +81,12 @@ class MySQLi
      */
     public function connect()
     {
-        $this->mysqli = new \mysqli($this->host, $this->user, $this->password, $this->name);
+        if($this->port == 0 || $this->port == null){
+            $this->mysqli = new \mysqli($this->host, $this->user, $this->password, $this->name);
+        }else{
+            $this->mysqli = new \mysqli($this->host, $this->user, $this->password, $this->name, $this->port);
+        }
+        
         if ($this->mysqli->connect_errno) {
             Logger::system(
                 "MySQLI DB Connect ERROR : {connect_errno} : {connect_error}",

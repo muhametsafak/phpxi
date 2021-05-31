@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -27,8 +27,8 @@
 
 namespace Interfaces;
 
-use \PHPXI\Libraries\Request\Request;
-use \PHPXI\Libraries\Response\Response;
+use \PHPXI\Libraries\Http\Request;
+use \PHPXI\Libraries\Http\Response;
 
 interface Filter
 {

@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -99,6 +99,7 @@ class Base
      */
     public static $route = [
         'patterns' => [
+            '\*' => '(.*)',
             ':all[0-9]?' => '(.*)',
             ':any[0-9]?' => '([^/]+)',
             ':id[0-9]?' => '(\d+)',
@@ -121,13 +122,6 @@ class Base
 
     public function __construct()
     {
-
-        $autoload_config = \Config\Autoload::CONFIG;
-        if (is_array($autoload_config) and sizeof($autoload_config) > 0) {
-            foreach ($autoload_config as $row) {
-                self::config_load($row);
-            }
-        }
 
         if (isset($_SERVER)) {
             self::$data['server'] = $_SERVER;
@@ -179,8 +173,8 @@ class Base
             self::set("_token", self::get("_token", "session"), "validation");
         }
 
-        self::$models['request'] = new \PHPXI\Libraries\Request\Request();
-        self::$models['response'] = new \PHPXI\Libraries\Response\Response();
+        self::$models['request'] = new \PHPXI\Libraries\Http\Request();
+        self::$models['response'] = new \PHPXI\Libraries\Http\Response();
         self::$models['load'] = new \PHPXI\Libraries\Load\Load();
 
         $autoload_libraries = \Config\Autoload::LIBRARIES;
@@ -249,22 +243,6 @@ class Base
         }
     }
 
-    /**
-     * @param string $file
-     */
-    private static function config_load(string $file): void
-    {
-        $path = APPLICATION_PATH . 'Config/' . ucfirst($file) . '.php';
-        if (file_exists($path) || DEVELOPMENT) {
-            $config = [];
-            require_once $path;
-            $file = strtolower($file);
-            foreach ($config as $key => $value) {
-                self::$data['config'][$file][$key] = $value;
-            }
-        }
-    }
-
     private static function token_create(): void
     {
         $token = rand(0, 999) . time() . rand(0, 999);
@@ -279,7 +257,7 @@ class Base
      */
     private static function lang_load(string $file): void
     {
-        $path = APPLICATION_PATH . "Languages/" . $file . "/app.php";
+        $path = APPLICATION_PATH . "Languages/" . $file . "/Main.php";
         if (file_exists($path)) {
             $lang = [];
             require_once $path;

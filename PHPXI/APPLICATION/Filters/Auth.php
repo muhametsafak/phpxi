@@ -1,8 +1,8 @@
 <?php
 namespace Application\Filters;
 
-use \PHPXI\Libraries\Request\Request;
-use \PHPXI\Libraries\Response\Response;
+use \PHPXI\Libraries\Http\Request;
+use \PHPXI\Libraries\Http\Response;
 
 use \PHPXI\Libraries\Session\Session as Session;
 

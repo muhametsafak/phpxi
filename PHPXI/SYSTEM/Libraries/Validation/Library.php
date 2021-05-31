@@ -8,7 +8,7 @@
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6
+ * @version    1.6.2
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -105,8 +105,7 @@ class Library
         if (filter_var($mail, \FILTER_VALIDATE_EMAIL)) {
             return true;
         } else {
-            $this->error[] = $mail . "e-mail address is not valid";
-
+            $this->error[] = __r("validation_error_invalid_mail", "{mail} e-mail address is not valid.", ["mail" => $mail]);
             return false;
         }
     }
@@ -119,8 +118,7 @@ class Library
         if (filter_var($url, \FILTER_VALIDATE_URL)) {
             return true;
         } else {
-            $this->error[] = "URL address is not valid";
-
+            $this->error[] = __r("validation_error_invalid_url", "{url} URL address is not valid.", ["url" => $url]);
             return false;
         }
     }
@@ -133,8 +131,7 @@ class Library
         if (filter_var($ip, \FILTER_VALIDATE_IP)) {
             return true;
         } else {
-            $this->error[] = "IP address is not valid";
-
+            $this->error[] = __r("validation_error_invalid_ip", "{ip} IP address is not valid", ["ip" => $ip]);
             return false;
         }
     }
@@ -147,8 +144,7 @@ class Library
         if (filter_var($ip, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV4)) {
             return true;
         } else {
-            $this->error[] = "IPv4 address is not valid";
-
+            $this->error[] = __r("validation_error_invalid_ipv4", "{ipv4} IPv4 address is not valid", ["ipv4" => $ip]);
             return false;
         }
     }
@@ -161,8 +157,7 @@ class Library
         if (filter_var($ip, \FILTER_VALIDATE_IP, \FILTER_FLAG_IPV6)) {
             return true;
         } else {
-            $this->error[] = "IPv6 address is not valid";
-
+            $this->error[] = __r("validation_error_invalid_ipv6", "{ipv6} IPv6 address is not valid", ["ipv6" => $ip]);
             return false;
         }
     }
@@ -188,8 +183,7 @@ class Library
         if ($this->stringLength($value) >= $min_length) {
             return true;
         } else {
-            $this->error[] = "The text must contain at least " . $min_length . " characters.";
-
+            $this->error[] = __r("validation_error_invalid_min_length", "The text must contain at least {min_length} characters.", ["min_length" => $min_length]);
             return false;
         }
     }
@@ -203,8 +197,7 @@ class Library
         if ($this->stringLength($value) <= $max_length) {
             return true;
         } else {
-            $this->error[] = "Text can contain up to " . $max_length . " characters.";
-
+            $this->error[] = __r("validation_error_invalid_max_length", "Text can contain up to {max_length} characters.", ["max_length" => $max_length]);
             return false;
         }
     }
@@ -218,8 +211,7 @@ class Library
         if ($min >= $value) {
             return true;
         } else {
-            $this->error[] = "Must be a number less than or equal to " . $min . ".";
-
+            $this->error[] = __r("validation_error_invalid_min", "Must be a number less than or equal to {min}", ["min" => $min]);
             return false;
         }
     }
@@ -233,7 +225,7 @@ class Library
         if ($max <= $value) {
             return true;
         } else {
-            $this->error[] = "Must be a number greater than or equal to " . $max . ".";
+            $this->error[] = __r("validation_error_invalid_max", "Must be a number greater than or equal to {max}", ["max" => $max]);
 
             return false;
         }
@@ -248,8 +240,7 @@ class Library
         if (preg_match($this->pattern_regex($pattern), $value)) {
             return true;
         } else {
-            $this->error[] = "Data is not in valid format";
-
+            $this->error[] = __r("validation_error_invalid_format", "{data} is not in valid {pattern} format", ["data" => $value, "pattern" => $pattern]);
             return false;
         }
     }
@@ -276,7 +267,7 @@ class Library
             $isDate = strtotime($value) !== false;
         }
         if (!$isDate) {
-            $this->error[] = "Is not a valid date";
+            $this->error[] = __r("validation_error_invalid_date", "{date} Is not a valid date", ["date" => $value]);
         }
 
         return $isDate;
@@ -293,8 +284,11 @@ class Library
         if ($dateFormat['error_count'] === 0 && $dateFormat['warning_count'] === 0) {
             return true;
         } else {
-            $this->error[] = "Not a valid date format";
-
+            $this->error[] = __r(
+                "validation_error_invalid_date_format",
+                "{value} Not a valid {format} date format",
+                ["value" => $value, "format" => $format]
+            );
             return false;
         }
     }
@@ -307,7 +301,7 @@ class Library
         if (trim($value) != "") {
             return true;
         } else {
-            $this->error[] = "Cannot be left blank";
+            $this->error[] = __r("validation_error_invalid_required", "Cannot be left blank");
 
             return false;
         }

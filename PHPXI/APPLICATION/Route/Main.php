@@ -11,6 +11,8 @@ Route::prefix("/admin")->group(function () {
     Route::post("/login", "Admin@login")->filter("Login");
     Route::get("/logout", "Admin@logout");
 });
+
+
 /*
 Route::get("/profile/@:user", function ($username) {
 echo "Your Username : " . $username;
