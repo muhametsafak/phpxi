@@ -27,6 +27,8 @@
 
 namespace PHPXI\Libraries\Benchmark;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 class Benchmark
 {
 

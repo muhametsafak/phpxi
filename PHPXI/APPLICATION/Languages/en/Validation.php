@@ -1,4 +1,6 @@
 <?php
+
+if(!defined("INDEX")){ die("You are not authorized to access"); }
 $lang['validation_error_invalid_required'] = "Cannot be left blank";
 $lang['validation_error_invalid_mail'] = "{mail} e-mail address is not valid.";
 $lang['validation_error_invalid_url'] = "{url} URL address is not valid.";

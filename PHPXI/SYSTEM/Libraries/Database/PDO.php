@@ -27,6 +27,8 @@
 
 namespace PHPXI\Libraries\Database;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 use PHPXI\Libraries\Database\SQL as SQL;
 use PHPXI\Libraries\Logger\Logger as Logger;
 

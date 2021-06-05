@@ -27,6 +27,8 @@
 
 namespace PHPXI\Libraries\Cookie;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 class Cookie
 {
     private Library $cookie;

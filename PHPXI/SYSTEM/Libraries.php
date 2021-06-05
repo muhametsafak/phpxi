@@ -1,14 +1,14 @@
 <?php
 /**
- * Response.php
+ * Libraries.php
  *
  * This file is part of PHPXI.
  *
- * @package    Response.php @ 2021-05-17T09:12:20.106Z
+ * @package    Libraries.php @ 2021-06-05T16:36:40.214Z
  * @author     Muhammet ŞAFAK <info@muhammetsafak.com.tr>
  * @copyright  Copyright © 2021 PHPXI Open Source MVC Framework
  * @license    http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL 3.0
- * @version    1.6.2
+ * @version    1.6
  * @link       http://phpxi.net
  *
  * PHPXI is free software: you can redistribute it and/or modify
@@ -25,57 +25,26 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
-namespace PHPXI\Libraries\Http;
+namespace PHPXI;
 
 if(!defined("INDEX")){ die("You are not authorized to access"); }
 
-use \PHPXI\Libraries\Base\Base as Base;
 
-class Response
+use PHPXI\Libraries\Base\Base as Base;
+
+class Libraries
 {
-
-    private ResponseLibrary $response;
 
     public function __construct()
     {
-        $this->response = new \PHPXI\Libraries\Http\ResponseLibrary();
-    }
 
-    /**
-     * @param $name
-     * @param $arguments
-     * @return mixed
-     */
-    public function __call($name, $arguments)
-    {
-        return $this->response->$name(...$arguments);
-    }
+        $models = Base::$models;
+        if (sizeof($models) > 0) {
+            foreach ($models as $model_id => $model_class) {
+                $this->$model_id = $model_class;
+            }
+        }
 
-    /**
-     * @param $name
-     * @param $arguments
-     */
-    public static function __callStatic($name, $arguments)
-    {
-        return (new self())->$name(...$arguments);
-    }
-
-    /**
-     * @param $property
-     * @param $value
-     */
-    public function __set($property, $value)
-    {
-        Base::set($property, $value, "response");
-    }
-
-    /**
-     * @param $property
-     */
-    public function __get($property)
-    {
-        return Base::get($property, "response");
     }
 
 }

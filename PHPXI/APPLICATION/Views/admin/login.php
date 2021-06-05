@@ -1,4 +1,6 @@
-<!doctype html>
+<?php
+    if(!defined("INDEX")){ die("You are not authorized to access"); }
+?><!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">

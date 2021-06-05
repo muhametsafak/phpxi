@@ -1,6 +1,8 @@
 <?php
 namespace Application\Controller;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 class Error extends \PHPXI\Controller
 {
 

@@ -25,7 +25,10 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 namespace PHPXI;
+
+if(!defined("INDEX")){ die("You are not authorized to access"); }
 
 use \PHPXI\Libraries\Cache\Cache as Cache;
 use \PHPXI\Libraries\Routing\Route as Route;

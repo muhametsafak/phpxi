@@ -27,6 +27,8 @@
 
 namespace PHPXI;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 $class_map = [
     "Benchmark" => "\PHPXI\Libraries\Benchmark\Benchmark",
     "Cache" => "\PHPXI\Libraries\Cache\Cache",

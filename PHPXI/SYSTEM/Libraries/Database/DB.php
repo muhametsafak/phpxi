@@ -27,6 +27,8 @@
 
 namespace PHPXI\Libraries\Database;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 class DB
 {
 

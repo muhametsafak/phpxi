@@ -1,4 +1,6 @@
 <?php
+
+if(!defined("INDEX")){ die("You are not authorized to access"); }
 $lang['upload_error_handler_error'] = "Yükleme işlemi sırasında bir hata oluştu.";
 $lang['upload_error_not_create_path'] = "HATA : Yükleme yolu oluşturulamadı : {path}";
 $lang['upload_error_file_error'] = "HATA : Dosya Hatası : {error}";

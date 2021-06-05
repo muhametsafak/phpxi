@@ -1,4 +1,6 @@
 <?php
+
+if(!defined("INDEX")){ die("You are not authorized to access"); }
 $lang['upload_error_handler_error'] = "An error occurred during the uploaded process.";
 $lang['upload_error_not_create_path'] = "ERROR : Could not create path : {path}";
 $lang['upload_error_file_error'] = "ERROR : File Error : {error}";

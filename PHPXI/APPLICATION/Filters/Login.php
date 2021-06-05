@@ -1,6 +1,8 @@
 <?php
 namespace Application\Filters;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 use \PHPXI\Libraries\Http\Request;
 use \PHPXI\Libraries\Http\Response;
 

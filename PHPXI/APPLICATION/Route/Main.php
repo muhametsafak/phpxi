@@ -1,6 +1,8 @@
 <?php
 namespace Application;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 use PHPXI\Libraries\Routing\Route as Route;
 
 Route::any("/", "Welcome@main");

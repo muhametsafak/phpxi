@@ -27,6 +27,8 @@
 
 namespace PHPXI\Libraries\Cache;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 class Cache
 {
     private Library $cache;

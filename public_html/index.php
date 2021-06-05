@@ -31,6 +31,8 @@ if (PHP_VERSION < "7.2") {
     exit;
 }
 
+const INDEX = TRUE;
+
 const PUBLIC_PATH = __DIR__;
 
 define("PHPXI_PATH", realpath("../PHPXI/"));

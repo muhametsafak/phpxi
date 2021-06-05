@@ -27,6 +27,8 @@
 
 namespace PHPXI\Libraries\Benchmark;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 use PHPXI\Libraries\Base\Base as Base;
 
 class Library

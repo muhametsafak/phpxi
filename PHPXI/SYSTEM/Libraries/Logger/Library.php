@@ -25,7 +25,10 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 namespace PHPXI\Libraries\Logger;
+
+if(!defined("INDEX")){ die("You are not authorized to access"); }
 
 class Library
 {

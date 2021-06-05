@@ -27,6 +27,8 @@
 
 namespace Config;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 class Session
 {
     const REPOSITORY = WEIGHT_PATH . 'Session';

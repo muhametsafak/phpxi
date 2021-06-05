@@ -25,6 +25,9 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 if (!isset($file)) {
     $file = "";
 }

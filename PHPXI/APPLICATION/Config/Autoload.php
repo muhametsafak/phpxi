@@ -27,6 +27,8 @@
 
 namespace Config;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 class Autoload
 {
 
@@ -64,7 +66,7 @@ class Autoload
      * const MODEL = [];
      */
     const MODEL = [
-        "mymodel" => "\\Application\\Model\\MyModel"
+        "mymodel" => "\Application\Model\MyModel"
     ];
 
     /**

@@ -27,6 +27,8 @@
 
 namespace PHPXI\Libraries\Base;
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 class Base
 {
 

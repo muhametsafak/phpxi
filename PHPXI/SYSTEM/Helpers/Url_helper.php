@@ -25,6 +25,8 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+if(!defined("INDEX")){ die("You are not authorized to access"); }
+
 use \PHPXI\Libraries\Config\Config as Config;
 
 if (!function_exists("base_url")) {

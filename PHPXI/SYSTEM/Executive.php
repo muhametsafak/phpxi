@@ -25,7 +25,10 @@
  * along with PHPXI.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 namespace PHPXI;
+
+if(!defined("INDEX")){ die("You are not authorized to access"); }
 
 define("VERSION", "1.6.2");
 $msure = microtime();
