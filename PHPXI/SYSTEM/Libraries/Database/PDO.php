@@ -59,7 +59,7 @@ class PDO
     private $query_size = 0;
 
     
-    public function __contruct(array $config)
+    public function __construct(array $config)
     {
         $this->host = $config['host'];
         $this->port = $config['port'];
