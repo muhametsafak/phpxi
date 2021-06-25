@@ -52,8 +52,10 @@ class RequestLibrary
         $params = file_get_contents("php://input");
         if(!empty($params)){
             $params = json_decode($params);
-            foreach($params as $key => $value){
-                $this->params[$key] = $value;
+            if(is_array($params)){
+                foreach($params as $key => $value){
+                    $this->params[$key] = $value;
+                }
             }
         }
     }
